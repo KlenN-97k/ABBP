@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5F5D74D0-7C11-4D56-8BC5-AFB10863F368}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Presentacion</RootNamespace>
+    <AssemblyName>Presentacion</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FrmAreas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmAreas.Designer.cs">
+      <DependentUpon>FrmAreas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmIncidencias.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmIncidencias.Designer.cs">
+      <DependentUpon>FrmIncidencias.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmLogin.Designer.cs">
+      <DependentUpon>FrmLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmPrincipal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmPrincipal.Designer.cs">
+      <DependentUpon>FrmPrincipal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmPruebaReportes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmPruebaReportes.Designer.cs">
+      <DependentUpon>FrmPruebaReportes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmUsuarios.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmUsuarios.Designer.cs">
+      <DependentUpon>FrmUsuarios.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FrmLogin.resx">
+      <DependentUpon>FrmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmPrincipal.resx">
+      <DependentUpon>FrmPrincipal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmPruebaReportes.resx">
+      <DependentUpon>FrmPruebaReportes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="imagenes\Thumbs.db" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Entidades\Entidades.csproj">
+      <Project>{6248895f-7f79-4bf6-8e41-368be5238e48}</Project>
+      <Name>Entidades</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logica\Logica.csproj">
+      <Project>{8af9ab50-c1f8-4e48-8c38-f60f46460a9b}</Project>
+      <Name>Logica</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reportes\Reportes.csproj">
+      <Project>{a4f7802d-1f7b-4da0-994d-f17053bf289d}</Project>
+      <Name>Reportes</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="imagenes\16 colors.png" />
+    <Content Include="imagenes\256 colors.png" />
+    <Content Include="imagenes\3d bar chart.png" />
+    <Content Include="imagenes\3d chart.png" />
+    <Content Include="imagenes\3d graph.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_apply.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_button_cancel.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_button_cancel1.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_edit.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_editpaste.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_exit.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_fileprint.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_info.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_reload.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_seyon.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_action_stop.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_aim2.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_aim3.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_calc.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_download_manager.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_filetypes.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_gaimphone2.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_Internet_Connection_Tools.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_kaddressbook.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_kfloppy.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_kfloppy1.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_korganizer.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_kwrite.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_Login_Manager.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_printer.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_restart.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_app_wp.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_filesystem_folder_print.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_filesystem_socket.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_filesystem_trashcan_full.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_kdmconfig-danger.png" />
+    <Content Include="imagenes\48px-Crystal_Clear_kuser2.png" />
+    <Content Include="imagenes\About.png" />
+    <Content Include="imagenes\Actions-document-save-icon.png" />
+    <Content Include="imagenes\Add folder.png" />
+    <Content Include="imagenes\Add.png" />
+    <Content Include="imagenes\administrar.png" />
+    <Content Include="imagenes\agregarAbono.png" />
+    <Content Include="imagenes\agregarProducto.png" />
+    <Content Include="imagenes\alert.ico" />
+    <Content Include="imagenes\alert1.ico" />
+    <Content Include="imagenes\AllDay.ru_96.png" />
+    <Content Include="imagenes\AllDay.ru_961.png" />
+    <Content Include="imagenes\AllDay.ru_962.png" />
+    <Content Include="imagenes\Angle.png" />
+    <Content Include="imagenes\Animation.gif" />
+    <Content Include="imagenes\Apply.png" />
+    <Content Include="imagenes\Arc.png" />
+    <Content Include="imagenes\Arrow.png" />
+    <Content Include="imagenes\Attach.png" />
+    <Content Include="imagenes\b-n\aAgenda.png" />
+    <Content Include="imagenes\b-n\acerca.png" />
+    <Content Include="imagenes\b-n\Actions-document-save-icon.png" />
+    <Content Include="imagenes\b-n\actualizar.png" />
+    <Content Include="imagenes\b-n\actualizar32.png" />
+    <Content Include="imagenes\b-n\aFacturacion.png" />
+    <Content Include="imagenes\b-n\agenda.png" />
+    <Content Include="imagenes\b-n\agenda64.png" />
+    <Content Include="imagenes\b-n\aGeneral.png" />
+    <Content Include="imagenes\b-n\agregar.png" />
+    <Content Include="imagenes\b-n\agregar32.png" />
+    <Content Include="imagenes\b-n\ajax-loader.gif" />
+    <Content Include="imagenes\b-n\anticeptico.png" />
+    <Content Include="imagenes\b-n\aPaciente.png" />
+    <Content Include="imagenes\b-n\aSeguridad.png" />
+    <Content Include="imagenes\b-n\ayuda.png" />
+    <Content Include="imagenes\b-n\buscar.png" />
+    <Content Include="imagenes\b-n\cerrarSe.png" />
+    <Content Include="imagenes\b-n\cita.png" />
+    <Content Include="imagenes\b-n\cita64.png" />
+    <Content Include="imagenes\b-n\clave.png" />
+    <Content Include="imagenes\b-n\cliente.png" />
+    <Content Include="imagenes\b-n\cliente64.png" />
+    <Content Include="imagenes\b-n\clinica.png" />
+    <Content Include="imagenes\b-n\ClinicoSoftIcon.ico" />
+    <Content Include="imagenes\b-n\close.png" />
+    <Content Include="imagenes\b-n\confirmar.png" />
+    <Content Include="imagenes\b-n\consultar.png" />
+    <Content Include="imagenes\b-n\doctor.png" />
+    <Content Include="imagenes\b-n\door-windows.png" />
+    <Content Include="imagenes\b-n\eliminar.png" />
+    <Content Include="imagenes\b-n\eliminar32.png" />
+    <Content Include="imagenes\b-n\entrar.png" />
+    <Content Include="imagenes\b-n\entrar1.png" />
+    <Content Include="imagenes\b-n\entrarB.png" />
+    <Content Include="imagenes\b-n\especialidad.png" />
+    <Content Include="imagenes\b-n\especialidad64.png" />
+    <Content Include="imagenes\b-n\estado.png" />
+    <Content Include="imagenes\b-n\factura64.png" />
+    <Content Include="imagenes\b-n\guardar.png" />
+    <Content Include="imagenes\b-n\historial.png" />
+    <Content Include="imagenes\b-n\historialClinico.png" />
+    <Content Include="imagenes\b-n\IconoSoft.ico" />
+    <Content Include="imagenes\b-n\imprimir.png" />
+    <Content Include="imagenes\b-n\imprimir32.png" />
+    <Content Include="imagenes\b-n\info.png" />
+    <Content Include="imagenes\b-n\listar.png" />
+    <Content Include="imagenes\b-n\loading.gif" />
+    <Content Include="imagenes\b-n\medicamento.png" />
+    <Content Include="imagenes\b-n\Misc-User-icon.png" />
+    <Content Include="imagenes\b-n\mi_cuenta.png" />
+    <Content Include="imagenes\b-n\nuevo.png" />
+    <Content Include="imagenes\b-n\paciente.png" />
+    <Content Include="imagenes\b-n\pacientes.png" />
+    <Content Include="imagenes\b-n\password.png" />
+    <Content Include="imagenes\b-n\plus.png" />
+    <Content Include="imagenes\b-n\quitar.png" />
+    <Content Include="imagenes\b-n\refresh.png" />
+    <Content Include="imagenes\b-n\reporte.png" />
+    <Content Include="imagenes\b-n\reporte32.png" />
+    <Content Include="imagenes\b-n\reservaCita.png" />
+    <Content Include="imagenes\b-n\reservaCita64.png" />
+    <Content Include="imagenes\b-n\rol.png" />
+    <Content Include="imagenes\b-n\rol64.png" />
+    <Content Include="imagenes\b-n\salir.png" />
+    <Content Include="imagenes\b-n\salirPro.png" />
+    <Content Include="imagenes\b-n\save.png" />
+    <Content Include="imagenes\b-n\Science-Plus2-Math-icon.png" />
+    <Content Include="imagenes\b-n\search-icon.png" />
+    <Content Include="imagenes\b-n\seleccionar.png" />
+    <Content Include="imagenes\b-n\Sign-Error-icon.png" />
+    <Content Include="imagenes\b-n\tipoCita.png" />
+    <Content Include="imagenes\b-n\tipoCita64.png" />
+    <Content Include="imagenes\b-n\tratamiento.png" />
+    <Content Include="imagenes\b-n\tratamiento64.png" />
+    <Content Include="imagenes\b-n\user.png" />
+    <Content Include="imagenes\b-n\Users-Doctor-icon.png" />
+    <Content Include="imagenes\b-n\usuario.png" />
+    <Content Include="imagenes\b-n\usuario1.png" />
+    <Content Include="imagenes\b-n\usuario64.png" />
+    <Content Include="imagenes\b-n\ver.png" />
+    <Content Include="imagenes\back.ico" />
+    <Content Include="imagenes\Back.png" />
+    <Content Include="imagenes\Bedge.png" />
+    <Content Include="imagenes\Bitmap editor.png" />
+    <Content Include="imagenes\Brightness.png" />
+    <Content Include="imagenes\Brush.png" />
+    <Content Include="imagenes\btningresar2.png" />
+    <Content Include="imagenes\buscar.png" />
+    <Content Include="imagenes\buscarItem.png" />
+    <Content Include="imagenes\buscarLista.png" />
+    <Content Include="imagenes\buscarlistas.png" />
+    <Content Include="imagenes\buscarlistas2.png" />
+    <Content Include="imagenes\cal.ico" />
+    <Content Include="imagenes\cal1.ico" />
+    <Content Include="imagenes\Camera.png" />
+    <Content Include="imagenes\Cancel.png" />
+    <Content Include="imagenes\cancelar.png" />
+    <Content Include="imagenes\cascade.ico" />
+    <Content Include="imagenes\cd.ico" />
+    <Content Include="imagenes\Chart xy.png" />
+    <Content Include="imagenes\chart.ico" />
+    <Content Include="imagenes\chart1.ico" />
+    <Content Include="imagenes\Check boxes.png" />
+    <Content Include="imagenes\Circle.png" />
+    <Content Include="imagenes\Clear.png" />
+    <Content Include="imagenes\cliente.jpg" />
+    <Content Include="imagenes\Clipboard.png" />
+    <Content Include="imagenes\Close file.png" />
+    <Content Include="imagenes\Close folder.png" />
+    <Content Include="imagenes\Close.png" />
+    <Content Include="imagenes\CMYK.png" />
+    <Content Include="imagenes\Coffe.png" />
+    <Content Include="imagenes\Coffee.png" />
+    <Content Include="imagenes\Color balance.png" />
+    <Content Include="imagenes\Color filter.png" />
+    <Content Include="imagenes\Color layers.png" />
+    <Content Include="imagenes\Color palette.png" />
+    <Content Include="imagenes\Color profile.png" />
+    <Content Include="imagenes\Color test.png" />
+    <Content Include="imagenes\Color.png" />
+    <Content Include="imagenes\Comment.png" />
+    <Content Include="imagenes\conference.ico" />
+    <Content Include="imagenes\Contrast.png" />
+    <Content Include="imagenes\copy.ico" />
+    <Content Include="imagenes\Copy.png" />
+    <Content Include="imagenes\Create.png" />
+    <Content Include="imagenes\creditcard.ico" />
+    <Content Include="imagenes\Critical details.png" />
+    <Content Include="imagenes\Curve points.png" />
+    <Content Include="imagenes\Curve.png" />
+    <Content Include="imagenes\cut.ico" />
+    <Content Include="imagenes\Cut.png" />
+    <Content Include="imagenes\Danger.png" />
+    <Content Include="imagenes\db.ico" />
+    <Content Include="imagenes\dbedit.ico" />
+    <Content Include="imagenes\dbedit1.ico" />
+    <Content Include="imagenes\dbs.ico" />
+    <Content Include="imagenes\Decrease time.png" />
+    <Content Include="imagenes\Delete frame.png" />
+    <Content Include="imagenes\Delete frames.png" />
+    <Content Include="imagenes\Delete.png" />
+    <Content Include="imagenes\Designer.png" />
+    <Content Include="imagenes\Diagram.png" />
+    <Content Include="imagenes\display.ico" />
+    <Content Include="imagenes\display2.ico" />
+    <Content Include="imagenes\document-preview.png" />
+    <Content Include="imagenes\document-revert-4.png" />
+    <Content Include="imagenes\document-revert-41.png" />
+    <Content Include="imagenes\document-revert-42.png" />
+    <Content Include="imagenes\document-save-4.png" />
+    <Content Include="imagenes\document-save-41.png" />
+    <Content Include="imagenes\down.ico" />
+    <Content Include="imagenes\Down.png" />
+    <Content Include="imagenes\Download image.png" />
+    <Content Include="imagenes\Download.png" />
+    <Content Include="imagenes\draw-tools.ico" />
+    <Content Include="imagenes\draw.ico" />
+    <Content Include="imagenes\Dropper.png" />
+    <Content Include="imagenes\E-mail.png" />
+    <Content Include="imagenes\Edit page.png" />
+    <Content Include="imagenes\Edit text.png" />
+    <Content Include="imagenes\edit-add-2.png" />
+    <Content Include="imagenes\edit-clear-4.png" />
+    <Content Include="imagenes\edit-undo-3.png" />
+    <Content Include="imagenes\edit.ico" />
+    <Content Include="imagenes\Edit.png" />
+    <Content Include="imagenes\edit2.ico" />
+    <Content Include="imagenes\edit21.ico" />
+    <Content Include="imagenes\eeeeee.png" />
+    <Content Include="imagenes\Ellipse.png" />
+    <Content Include="imagenes\email-attachment.ico" />
+    <Content Include="imagenes\email-error.ico" />
+    <Content Include="imagenes\email.ico" />
+    <Content Include="imagenes\Equipment.png" />
+    <Content Include="imagenes\Erase.png" />
+    <Content Include="imagenes\Eraser.png" />
+    <Content Include="imagenes\error.ico" />
+    <Content Include="imagenes\Error.png" />
+    <Content Include="imagenes\event-icon.png" />
+    <Content Include="imagenes\Exit.png" />
+    <Content Include="imagenes\Export.png" />
+    <Content Include="imagenes\favorite.ico" />
+    <Content Include="imagenes\Favourites.png" />
+    <Content Include="imagenes\Feather.png" />
+    <Content Include="imagenes\fibre-optics-around-planet-16700584.jpg" />
+    <Content Include="imagenes\File exetension.png" />
+    <Content Include="imagenes\Fill.png" />
+    <Content Include="imagenes\Find.png" />
+    <Content Include="imagenes\Fine brush.png" />
+    <Content Include="imagenes\first.ico" />
+    <Content Include="imagenes\Flip horizontally.png" />
+    <Content Include="imagenes\Flip vertically.png" />
+    <Content Include="imagenes\Flip.png" />
+    <Content Include="imagenes\Floppy-Small-icon.png" />
+    <Content Include="imagenes\Flow block.png" />
+    <Content Include="imagenes\Flower.png" />
+    <Content Include="imagenes\Folder.ico" />
+    <Content Include="imagenes\Folder.png" />
+    <Content Include="imagenes\fondeediitar.jpg" />
+    <Content Include="imagenes\fondo1.jpg" />
+    <Content Include="imagenes\fondodeiniciios.jpg" />
+    <Content Include="imagenes\fondoo.png" />
+    <Content Include="imagenes\fonds-ecran-hd_05.jpg" />
+    <Content Include="imagenes\Form.png" />
+    <Content Include="imagenes\forward.ico" />
+    <Content Include="imagenes\Forward.png" />
+    <Content Include="imagenes\forward1.ico" />
+    <Content Include="imagenes\Frames.png" />
+    <Content Include="imagenes\Funnel.png" />
+    <Content Include="imagenes\generar.png" />
+    <Content Include="imagenes\ggggggggggggggggggggg.ico" />
+    <Content Include="imagenes\Go down.png" />
+    <Content Include="imagenes\Go up.png" />
+    <Content Include="imagenes\Go-back-icon.png" />
+    <Content Include="imagenes\gohome.ico" />
+    <Content Include="imagenes\Gpadient.png" />
+    <Content Include="imagenes\Graphic designer.png" />
+    <Content Include="imagenes\Graphic file.png" />
+    <Content Include="imagenes\Graphic tools.png" />
+    <Content Include="imagenes\Grid.png" />
+    <Content Include="imagenes\guardar.png" />
+    <Content Include="imagenes\hacker-hacking-hack-anarchy-virus-internet-computer-sadic-anonymous-dark-code-binary-images-161626.jpg" />
+    <Content Include="imagenes\hardware.ico" />
+    <Content Include="imagenes\hardware1.ico" />
+    <Content Include="imagenes\Help book.png" />
+    <Content Include="imagenes\help.ico" />
+    <Content Include="imagenes\Help.png" />
+    <Content Include="imagenes\help1.ico" />
+    <Content Include="imagenes\Hexagon.png" />
+    <Content Include="imagenes\Hide.png" />
+    <Content Include="imagenes\Hint.png" />
+    <Content Include="imagenes\Hints.png" />
+    <Content Include="imagenes\history.ico" />
+    <Content Include="imagenes\Home.png" />
+    <Content Include="imagenes\Homepage.png" />
+    <Content Include="imagenes\HSL.png" />
+    <Content Include="imagenes\HSV.png" />
+    <Content Include="imagenes\Ico.png" />
+    <Content Include="imagenes\Icon wizard.png" />
+    <Content Include="imagenes\icons8-traveler-30.png" />
+    <Content Include="imagenes\icons8-traveler-80.png" />
+    <Content Include="imagenes\image.ico" />
+    <Content Include="imagenes\Image1.bmp" />
+    <Content Include="imagenes\image2.ico" />
+    <Content Include="imagenes\Import.png" />
+    <Content Include="imagenes\imprimir.png" />
+    <Content Include="imagenes\inbox.ico" />
+    <Content Include="imagenes\inbox1.ico" />
+    <Content Include="imagenes\Increase time.png" />
+    <Content Include="imagenes\Index.png" />
+    <Content Include="imagenes\Info.png" />
+    <Content Include="imagenes\Information.png" />
+    <Content Include="imagenes\insert.ico" />
+    <Content Include="imagenes\kdmconfig-3.png" />
+    <Content Include="imagenes\key.ico" />
+    <Content Include="imagenes\Key.png" />
+    <Content Include="imagenes\key1.ico" />
+    <Content Include="imagenes\kgpg_identity.png" />
+    <Content Include="imagenes\kgpg_identity1.png" />
+    <Content Include="imagenes\Knife.png" />
+    <Content Include="imagenes\kuzer.png" />
+    <Content Include="imagenes\LAB color model.png" />
+    <Content Include="imagenes\last.ico" />
+    <Content Include="imagenes\Layers.png" />
+    <Content Include="imagenes\Left-right.png" />
+    <Content Include="imagenes\Left.png" />
+    <Content Include="imagenes\Line.png" />
+    <Content Include="imagenes\list.ico" />
+    <Content Include="imagenes\List.png" />
+    <Content Include="imagenes\list1.ico" />
+    <Content Include="imagenes\Lock color.png" />
+    <Content Include="imagenes\Lock transparency.png" />
+    <Content Include="imagenes\Lock.png" />
+    <Content Include="imagenes\Login-icon.png" />
+    <Content Include="imagenes\logoreviews11.png" />
+    <Content Include="imagenes\Magic hat.png" />
+    <Content Include="imagenes\man-icon.png" />
+    <Content Include="imagenes\Man-Suit-2.png" />
+    <Content Include="imagenes\Measure.png" />
+    <Content Include="imagenes\Microsoft flag.png" />
+    <Content Include="imagenes\Monitor.png" />
+    <Content Include="imagenes\Monitors.png" />
+    <Content Include="imagenes\Mouse pointer.png" />
+    <Content Include="imagenes\Mouse.png" />
+    <Content Include="imagenes\Move.png" />
+    <Content Include="imagenes\Movie.png" />
+    <Content Include="imagenes\mycomputer.ico" />
+    <Content Include="imagenes\mycomputer2.ico" />
+    <Content Include="imagenes\New clip art.png" />
+    <Content Include="imagenes\New file.png" />
+    <Content Include="imagenes\New frame.png" />
+    <Content Include="imagenes\New frame1.png" />
+    <Content Include="imagenes\New image.png" />
+    <Content Include="imagenes\New imagelist.png" />
+    <Content Include="imagenes\New video.png" />
+    <Content Include="imagenes\new window.ico" />
+    <Content Include="imagenes\new.ico" />
+    <Content Include="imagenes\next.ico" />
+    <Content Include="imagenes\No.png" />
+    <Content Include="imagenes\notice.ico" />
+    <Content Include="imagenes\nuevoR.png" />
+    <Content Include="imagenes\Objects.png" />
+    <Content Include="imagenes\ok.ico" />
+    <Content Include="imagenes\Ok.png" />
+    <Content Include="imagenes\Open colors.png" />
+    <Content Include="imagenes\Open file.png" />
+    <Content Include="imagenes\Open v2.png" />
+    <Content Include="imagenes\Open.png" />
+    <Content Include="imagenes\open2.ico" />
+    <Content Include="imagenes\optical-fibres-around-earth-11010174.jpg" />
+    <Content Include="imagenes\Organizational Unit.ico" />
+    <Content Include="imagenes\organize.ico" />
+    <Content Include="imagenes\Paint over pixels.png" />
+    <Content Include="imagenes\Painter.png" />
+    <Content Include="imagenes\Pantone.png" />
+    <Content Include="imagenes\pasajero.png" />
+    <Content Include="imagenes\pasajero1.png" />
+    <Content Include="imagenes\pass.png" />
+    <Content Include="imagenes\passw.png" />
+    <Content Include="imagenes\paste.ico" />
+    <Content Include="imagenes\Paste.png" />
+    <Content Include="imagenes\Pen.png" />
+    <Content Include="imagenes\Pencil.png" />
+    <Content Include="imagenes\phones.ico" />
+    <Content Include="imagenes\Pick color.png" />
+    <Content Include="imagenes\Picture.png" />
+    <Content Include="imagenes\Pie chart.png" />
+    <Content Include="imagenes\Pin.png" />
+    <Content Include="imagenes\Pinion.png" />
+    <Content Include="imagenes\Pixel editor.png" />
+    <Content Include="imagenes\Pixels.png" />
+    <Content Include="imagenes\Play.png" />
+    <Content Include="imagenes\preferences.ico" />
+    <Content Include="imagenes\Preview.png" />
+    <Content Include="imagenes\previous.ico" />
+    <Content Include="imagenes\Print.png" />
+    <Content Include="imagenes\printer.ico" />
+    <Content Include="imagenes\printer1.ico" />
+    <Content Include="imagenes\Problem.png" />
+    <Content Include="imagenes\products.png" />
+    <Content Include="imagenes\Properties.png" />
+    <Content Include="imagenes\records_notes_journal_edited_9479.png" />
+    <Content Include="imagenes\Red book.png" />
+    <Content Include="imagenes\Red eye removing.png" />
+    <Content Include="imagenes\Redo.png" />
+    <Content Include="imagenes\Refresh.png" />
+    <Content Include="imagenes\Registration.png" />
+    <Content Include="imagenes\Registry.png" />
+    <Content Include="imagenes\reload.ico" />
+    <Content Include="imagenes\remove.ico" />
+    <Content Include="imagenes\remove1.ico" />
+    <Content Include="imagenes\removerAbono.png" />
+    <Content Include="imagenes\removerProducto.png" />
+    <Content Include="imagenes\Rename.png" />
+    <Content Include="imagenes\Replace pixels.png" />
+    <Content Include="imagenes\reservaCita64.png" />
+    <Content Include="imagenes\reservas.png" />
+    <Content Include="imagenes\Resize image.png" />
+    <Content Include="imagenes\Restangle.png" />
+    <Content Include="imagenes\Revert.png" />
+    <Content Include="imagenes\RGB.png" />
+    <Content Include="imagenes\Right.png" />
+    <Content Include="imagenes\Rotate CCW.png" />
+    <Content Include="imagenes\Rotate CW.png" />
+    <Content Include="imagenes\Rotate left.png" />
+    <Content Include="imagenes\Rotate right.png" />
+    <Content Include="imagenes\Rotation.png" />
+    <Content Include="imagenes\Rounded rectangle.png" />
+    <Content Include="imagenes\sale.ico" />
+    <Content Include="imagenes\salir.png" />
+    <Content Include="imagenes\Save as.png" />
+    <Content Include="imagenes\Save color.png" />
+    <Content Include="imagenes\Save data.png" />
+    <Content Include="imagenes\Save image.png" />
+    <Content Include="imagenes\Save picture.png" />
+    <Content Include="imagenes\save.ico" />
+    <Content Include="imagenes\Save.png" />
+    <Content Include="imagenes\save2.ico" />
+    <Content Include="imagenes\saveas.ico" />
+    <Content Include="imagenes\saveas2.ico" />
+    <Content Include="imagenes\savecopy.ico" />
+    <Content Include="imagenes\savecopy2.ico" />
+    <Content Include="imagenes\Scan film.png" />
+    <Content Include="imagenes\Scan image.png" />
+    <Content Include="imagenes\Scanner.png" />
+    <Content Include="imagenes\Scenario.png" />
+    <Content Include="imagenes\Script.png" />
+    <Content Include="imagenes\Search computer.png" />
+    <Content Include="imagenes\Search folder.png" />
+    <Content Include="imagenes\Search online.png" />
+    <Content Include="imagenes\Search text.png" />
+    <Content Include="imagenes\search.ico" />
+    <Content Include="imagenes\Search.png" />
+    <Content Include="imagenes\secury.ico" />
+    <Content Include="imagenes\secury1.ico" />
+    <Content Include="imagenes\seleccionar.png" />
+    <Content Include="imagenes\Select gpadient.png" />
+    <Content Include="imagenes\select-color.ico" />
+    <Content Include="imagenes\select-color1.ico" />
+    <Content Include="imagenes\Selection.png" />
+    <Content Include="imagenes\Settings.png" />
+    <Content Include="imagenes\Sharpness.png" />
+    <Content Include="imagenes\shopping-cart-icon.png" />
+    <Content Include="imagenes\Show.png" />
+    <Content Include="imagenes\SICOSIT.png" />
+    <Content Include="imagenes\Sign-Select-icon.png" />
+    <Content Include="imagenes\signal.ico" />
+    <Content Include="imagenes\Sizes.png" />
+    <Content Include="imagenes\Smooth line.png" />
+    <Content Include="imagenes\Smooth.png" />
+    <Content Include="imagenes\software-update.ico" />
+    <Content Include="imagenes\softwarte-install.ico" />
+    <Content Include="imagenes\Spell checking.png" />
+    <Content Include="imagenes\Spiral.png" />
+    <Content Include="imagenes\Spray.png" />
+    <Content Include="imagenes\Square.png" />
+    <Content Include="imagenes\startup.ico" />
+    <Content Include="imagenes\statistics.ico" />
+    <Content Include="imagenes\statistics2.ico" />
+    <Content Include="imagenes\statistics3.ico" />
+    <Content Include="imagenes\statistics4.ico" />
+    <Content Include="imagenes\statistics41.ico" />
+    <Content Include="imagenes\Stop playing.png" />
+    <Content Include="imagenes\stop-error.ico" />
+    <Content Include="imagenes\Stop.png" />
+    <Content Include="imagenes\suport-F-offline.ico" />
+    <Content Include="imagenes\suport-F-online.ico" />
+    <Content Include="imagenes\suport-M-offline.ico" />
+    <Content Include="imagenes\suport-M-offline1.ico" />
+    <Content Include="imagenes\suport-M-online.ico" />
+    <Content Include="imagenes\Synchronize.png" />
+    <Content Include="imagenes\system-log-out.png" />
+    <Content Include="imagenes\system-log-out1.png" />
+    <Content Include="imagenes\system-log-out2.png" />
+    <Content Include="imagenes\system-shutdown-5.png" />
+    <Content Include="imagenes\table.ico" />
+    <Content Include="imagenes\Tag.png" />
+    <Content Include="imagenes\Target.png" />
+    <Content Include="imagenes\Target1.png" />
+    <Content Include="imagenes\tarjetas.png" />
+    <Content Include="imagenes\temas.png" />
+    <Content Include="imagenes\temas1.png" />
+    <Content Include="imagenes\Test line.png" />
+    <Content Include="imagenes\Text color.png" />
+    <Content Include="imagenes\Text replace.png" />
+    <Content Include="imagenes\Text tool.png" />
+    <Content Include="imagenes\the-background-292720_960_720.png" />
+    <Content Include="imagenes\tile horizontally.ico" />
+    <Content Include="imagenes\tile vertically.ico" />
+    <Content Include="imagenes\Time.png" />
+    <Content Include="imagenes\Tip of the day.png" />
+    <Content Include="imagenes\To do list.png" />
+    <Content Include="imagenes\Tools.png" />
+    <Content Include="imagenes\Touch.png" />
+    <Content Include="imagenes\Transparency.png" />
+    <Content Include="imagenes\Transparent background.png" />
+    <Content Include="imagenes\Transparent color.png" />
+    <Content Include="imagenes\Triangle.png" />
+    <Content Include="imagenes\True color.png" />
+    <Content Include="imagenes\Undo.png" />
+    <Content Include="imagenes\Units.png" />
+    <Content Include="imagenes\Unlock.png" />
+    <Content Include="imagenes\Up-down.png" />
+    <Content Include="imagenes\up.ico" />
+    <Content Include="imagenes\Up.png" />
+    <Content Include="imagenes\Upload image.png" />
+    <Content Include="imagenes\user-add.ico" />
+    <Content Include="imagenes\user-delete-2.png" />
+    <Content Include="imagenes\user-group-properties.png" />
+    <Content Include="imagenes\user-new-3.png" />
+    <Content Include="imagenes\user-new-31.png" />
+    <Content Include="imagenes\user-new-32.png" />
+    <Content Include="imagenes\user-remove.ico" />
+    <Content Include="imagenes\user.png" />
+    <Content Include="imagenes\users.ico" />
+    <Content Include="imagenes\users1.ico" />
+    <Content Include="imagenes\vuelo.png" />
+    <Content Include="imagenes\Wait.png" />
+    <Content Include="imagenes\Warning.png" />
+    <Content Include="imagenes\Web designer.png" />
+    <Content Include="imagenes\web-update.ico" />
+    <Content Include="imagenes\web.ico" />
+    <Content Include="imagenes\Webcam.png" />
+    <Content Include="imagenes\Wide brush.png" />
+    <Content Include="imagenes\Wizard.png" />
+    <Content Include="imagenes\Work area.png" />
+    <Content Include="imagenes\Writing pencil.png" />
+    <Content Include="imagenes\Wrong.png" />
+    <Content Include="imagenes\Yes.png" />
+    <Content Include="imagenes\YUV color space.png" />
+    <Content Include="imagenes\Zoom auto.png" />
+    <Content Include="imagenes\Zoom in.png" />
+    <Content Include="imagenes\Zoom out.png" />
+    <Content Include="imagenes\Zoom.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

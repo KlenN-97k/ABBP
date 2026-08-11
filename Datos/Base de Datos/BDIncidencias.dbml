@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DBIncidencias" Class="BDIncidenciasDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=CAJAMARCADA;Initial Catalog=DBIncidencias;Integrated Security=True;Trust Server Certificate=True" SettingsObjectName="Datos.Properties.Settings" SettingsPropertyName="DBIncidenciasConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Areas" Member="Areas">
+    <Type Name="Areas">
+      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="NombreArea" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Association Name="Areas_Incidencias" Member="Incidencias" ThisKey="IdArea" OtherKey="IdArea" Type="Incidencias" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Estados" Member="Estados">
+    <Type Name="Estados">
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Estados_Incidencias" Member="Incidencias" ThisKey="IdEstado" OtherKey="IdEstado" Type="Incidencias" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Guias" Member="Guias">
+    <Type Name="Guias">
+      <Column Name="IdGuia" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Titulo" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Problema" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Solucion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Incidencias" Member="Incidencias">
+    <Type Name="Incidencias">
+      <Column Name="IdIncidencia" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="NumeroTicket" Type="System.String" DbType="VarChar(14)" IsDbGenerated="true" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Empleado" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TipoIncidencia" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdTecnicoAsignado" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FechaSolucion" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Observaciones" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Association Name="Areas_Incidencias" Member="Areas" ThisKey="IdArea" OtherKey="IdArea" Type="Areas" IsForeignKey="true" />
+      <Association Name="Estados_Incidencias" Member="Estados" ThisKey="IdEstado" OtherKey="IdEstado" Type="Estados" IsForeignKey="true" />
+      <Association Name="Prioridades_Incidencias" Member="Prioridades" ThisKey="IdPrioridad" OtherKey="IdPrioridad" Type="Prioridades" IsForeignKey="true" />
+      <Association Name="Usuarios_Incidencias" Member="Usuarios" ThisKey="IdTecnicoAsignado" OtherKey="IdUsuario" Type="Usuarios" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Prioridades" Member="Prioridades">
+    <Type Name="Prioridades">
+      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Prioridades_Incidencias" Member="Incidencias" ThisKey="IdPrioridad" OtherKey="IdPrioridad" Type="Incidencias" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Usuarios" Member="Usuarios">
+    <Type Name="Usuarios">
+      <Column Name="IdUsuario" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Apellido" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Correo" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Usuario" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Rol" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Estado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Usuarios_Incidencias" Member="Incidencias" ThisKey="IdUsuario" OtherKey="IdTecnicoAsignado" Type="Incidencias" />
+    </Type>
+  </Table>
+  <Function Name="dbo.sp_Areas_Eliminar" Method="sp_Areas_Eliminar">
+    <Parameter Name="IdArea" Parameter="idArea" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Areas_Insertar" Method="sp_Areas_Insertar">
+    <Parameter Name="NombreArea" Parameter="nombreArea" Type="System.String" DbType="VarChar(100)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Areas_Listar" Method="sp_Areas_Listar">
+    <ElementType Name="sp_Areas_ListarResult">
+      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NombreArea" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.sp_Areas_Modificar" Method="sp_Areas_Modificar">
+    <Parameter Name="IdArea" Parameter="idArea" Type="System.Int32" DbType="Int" />
+    <Parameter Name="NombreArea" Parameter="nombreArea" Type="System.String" DbType="VarChar(100)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Estados_Eliminar" Method="sp_Estados_Eliminar">
+    <Parameter Name="IdEstado" Parameter="idEstado" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Estados_Insertar" Method="sp_Estados_Insertar">
+    <Parameter Name="Nombre" Parameter="nombre" Type="System.String" DbType="VarChar(50)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Estados_Listar" Method="sp_Estados_Listar">
+    <ElementType Name="sp_Estados_ListarResult">
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.sp_Estados_Modificar" Method="sp_Estados_Modificar">
+    <Parameter Name="IdEstado" Parameter="idEstado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Nombre" Parameter="nombre" Type="System.String" DbType="VarChar(50)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Guias_Eliminar" Method="sp_Guias_Eliminar">
+    <Parameter Name="IdGuia" Parameter="idGuia" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Guias_Insertar" Method="sp_Guias_Insertar">
+    <Parameter Name="Titulo" Parameter="titulo" Type="System.String" DbType="VarChar(150)" />
+    <Parameter Name="Problema" Parameter="problema" Type="System.String" DbType="VarChar(MAX)" />
+    <Parameter Name="Solucion" Parameter="solucion" Type="System.String" DbType="VarChar(MAX)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Guias_Listar" Method="sp_Guias_Listar">
+    <ElementType Name="sp_Guias_ListarResult">
+      <Column Name="IdGuia" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Titulo" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Problema" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Solucion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.sp_Guias_Modificar" Method="sp_Guias_Modificar">
+    <Parameter Name="IdGuia" Parameter="idGuia" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Titulo" Parameter="titulo" Type="System.String" DbType="VarChar(150)" />
+    <Parameter Name="Problema" Parameter="problema" Type="System.String" DbType="VarChar(MAX)" />
+    <Parameter Name="Solucion" Parameter="solucion" Type="System.String" DbType="VarChar(MAX)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Incidencias_Eliminar" Method="sp_Incidencias_Eliminar">
+    <Parameter Name="IdIncidencia" Parameter="idIncidencia" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Incidencias_Insertar" Method="sp_Incidencias_Insertar">
+    <Parameter Name="Empleado" Parameter="empleado" Type="System.String" DbType="VarChar(150)" />
+    <Parameter Name="IdArea" Parameter="idArea" Type="System.Int32" DbType="Int" />
+    <Parameter Name="TipoIncidencia" Parameter="tipoIncidencia" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="Descripcion" Parameter="descripcion" Type="System.String" DbType="VarChar(MAX)" />
+    <Parameter Name="IdPrioridad" Parameter="idPrioridad" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdEstado" Parameter="idEstado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdTecnicoAsignado" Parameter="idTecnicoAsignado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Observaciones" Parameter="observaciones" Type="System.String" DbType="VarChar(MAX)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Incidencias_Listar" Method="sp_Incidencias_Listar">
+    <ElementType Name="sp_Incidencias_ListarResult">
+      <Column Name="IdIncidencia" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NumeroTicket" Type="System.String" DbType="VarChar(14)" CanBeNull="true" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Empleado" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NombreArea" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="TipoIncidencia" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NombrePrioridad" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NombreEstado" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdTecnicoAsignado" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TecnicoAsignado" Type="System.String" DbType="VarChar(201)" CanBeNull="true" />
+      <Column Name="FechaSolucion" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Observaciones" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.sp_Incidencias_Modificar" Method="sp_Incidencias_Modificar">
+    <Parameter Name="IdIncidencia" Parameter="idIncidencia" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Empleado" Parameter="empleado" Type="System.String" DbType="VarChar(150)" />
+    <Parameter Name="IdArea" Parameter="idArea" Type="System.Int32" DbType="Int" />
+    <Parameter Name="TipoIncidencia" Parameter="tipoIncidencia" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="Descripcion" Parameter="descripcion" Type="System.String" DbType="VarChar(MAX)" />
+    <Parameter Name="IdPrioridad" Parameter="idPrioridad" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdEstado" Parameter="idEstado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdTecnicoAsignado" Parameter="idTecnicoAsignado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="FechaSolucion" Parameter="fechaSolucion" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="Observaciones" Parameter="observaciones" Type="System.String" DbType="VarChar(MAX)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Prioridades_Eliminar" Method="sp_Prioridades_Eliminar">
+    <Parameter Name="IdPrioridad" Parameter="idPrioridad" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Prioridades_Insertar" Method="sp_Prioridades_Insertar">
+    <Parameter Name="Nombre" Parameter="nombre" Type="System.String" DbType="VarChar(50)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Prioridades_Listar" Method="sp_Prioridades_Listar">
+    <ElementType Name="sp_Prioridades_ListarResult">
+      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.sp_Prioridades_Modificar" Method="sp_Prioridades_Modificar">
+    <Parameter Name="IdPrioridad" Parameter="idPrioridad" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Nombre" Parameter="nombre" Type="System.String" DbType="VarChar(50)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Usuarios_Eliminar" Method="sp_Usuarios_Eliminar">
+    <Parameter Name="IdUsuario" Parameter="idUsuario" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Usuarios_Insertar" Method="sp_Usuarios_Insertar">
+    <Parameter Name="Nombre" Parameter="nombre" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="Apellido" Parameter="apellido" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="Correo" Parameter="correo" Type="System.String" DbType="VarChar(150)" />
+    <Parameter Name="Usuario" Parameter="usuario" Type="System.String" DbType="VarChar(50)" />
+    <Parameter Name="Password" Parameter="password" Type="System.String" DbType="VarChar(255)" />
+    <Parameter Name="Rol" Parameter="rol" Type="System.String" DbType="VarChar(50)" />
+    <Parameter Name="Estado" Parameter="estado" Type="System.Boolean" DbType="Bit" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Usuarios_Listar" Method="sp_Usuarios_Listar">
+    <ElementType Name="sp_Usuarios_ListarResult">
+      <Column Name="IdUsuario" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Apellido" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Correo" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Usuario" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Rol" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Estado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.sp_Usuarios_Login" Method="sp_Usuarios_Login">
+    <Parameter Name="Usuario" Parameter="usuario" Type="System.String" DbType="VarChar(50)" />
+    <ElementType Name="sp_Usuarios_LoginResult">
+      <Column Name="IdUsuario" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Apellido" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Correo" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Usuario" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Rol" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Estado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.sp_Usuarios_Modificar" Method="sp_Usuarios_Modificar">
+    <Parameter Name="IdUsuario" Parameter="idUsuario" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Nombre" Parameter="nombre" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="Apellido" Parameter="apellido" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="Correo" Parameter="correo" Type="System.String" DbType="VarChar(150)" />
+    <Parameter Name="Usuario" Parameter="usuario" Type="System.String" DbType="VarChar(50)" />
+    <Parameter Name="Password" Parameter="password" Type="System.String" DbType="VarChar(255)" />
+    <Parameter Name="Rol" Parameter="rol" Type="System.String" DbType="VarChar(50)" />
+    <Parameter Name="Estado" Parameter="estado" Type="System.Boolean" DbType="Bit" />
+    <Return Type="System.Int32" />
+  </Function>
+</Database>
