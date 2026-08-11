@@ -297,9 +297,9 @@ namespace Datos.Base_de_Datos
 		}
 		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Usuarios_Modificar")]
-		public int sp_Usuarios_Modificar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdUsuario", DbType="Int")] System.Nullable<int> idUsuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Nombre", DbType="VarChar(100)")] string nombre, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Apellido", DbType="VarChar(100)")] string apellido, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Correo", DbType="VarChar(150)")] string correo, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Usuario", DbType="VarChar(50)")] string usuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Password", DbType="VarChar(255)")] string password, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Rol", DbType="VarChar(50)")] string rol, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Estado", DbType="Bit")] System.Nullable<bool> estado)
+		public int sp_Usuarios_Modificar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdUsuario", DbType="Int")] System.Nullable<int> idUsuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Nombre", DbType="VarChar(100)")] string nombre, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Apellido", DbType="VarChar(100)")] string apellido, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Correo", DbType="VarChar(150)")] string correo, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Usuario", DbType="VarChar(50)")] string usuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Password", DbType="VarChar(255)")] string password, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Rol", DbType="VarChar(50)")] string rol, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Estado", DbType="Bit")] System.Nullable<bool> estado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="TelegramChatId", DbType="BigInt")] System.Nullable<long> telegramChatId)
 		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idUsuario, nombre, apellido, correo, usuario, password, rol, estado);
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idUsuario, nombre, apellido, correo, usuario, password, rol, estado, telegramChatId);
 			return ((int)(result.ReturnValue));
 		}
 	}
@@ -1292,6 +1292,8 @@ namespace Datos.Base_de_Datos
 		
 		private bool _Estado;
 		
+		private System.Nullable<long> _TelegramChatId;
+		
 		private EntitySet<Incidencias> _Incidencias;
 		
     #region Definiciones de métodos de extensibilidad
@@ -1314,6 +1316,8 @@ namespace Datos.Base_de_Datos
     partial void OnRolChanged();
     partial void OnEstadoChanging(bool value);
     partial void OnEstadoChanged();
+    partial void OnTelegramChatIdChanging(System.Nullable<long> value);
+    partial void OnTelegramChatIdChanged();
     #endregion
 		
 		public Usuarios()
@@ -1478,6 +1482,26 @@ namespace Datos.Base_de_Datos
 					this._Estado = value;
 					this.SendPropertyChanged("Estado");
 					this.OnEstadoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TelegramChatId", DbType="BigInt")]
+		public System.Nullable<long> TelegramChatId
+		{
+			get
+			{
+				return this._TelegramChatId;
+			}
+			set
+			{
+				if ((this._TelegramChatId != value))
+				{
+					this.OnTelegramChatIdChanging(value);
+					this.SendPropertyChanging();
+					this._TelegramChatId = value;
+					this.SendPropertyChanged("TelegramChatId");
+					this.OnTelegramChatIdChanged();
 				}
 			}
 		}
@@ -2055,6 +2079,8 @@ namespace Datos.Base_de_Datos
 		
 		private bool _Estado;
 		
+		private System.Nullable<long> _TelegramChatId;
+		
 		public sp_Usuarios_ListarResult()
 		{
 		}
@@ -2186,6 +2212,22 @@ namespace Datos.Base_de_Datos
 				}
 			}
 		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TelegramChatId", DbType="BigInt")]
+		public System.Nullable<long> TelegramChatId
+		{
+			get
+			{
+				return this._TelegramChatId;
+			}
+			set
+			{
+				if ((this._TelegramChatId != value))
+				{
+					this._TelegramChatId = value;
+				}
+			}
+		}
 	}
 	
 	public partial class sp_Usuarios_LoginResult
@@ -2206,6 +2248,8 @@ namespace Datos.Base_de_Datos
 		private string _Rol;
 		
 		private bool _Estado;
+		
+		private System.Nullable<long> _TelegramChatId;
 		
 		public sp_Usuarios_LoginResult()
 		{
@@ -2335,6 +2379,22 @@ namespace Datos.Base_de_Datos
 				if ((this._Estado != value))
 				{
 					this._Estado = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TelegramChatId", DbType="BigInt")]
+		public System.Nullable<long> TelegramChatId
+		{
+			get
+			{
+				return this._TelegramChatId;
+			}
+			set
+			{
+				if ((this._TelegramChatId != value))
+				{
+					this._TelegramChatId = value;
 				}
 			}
 		}

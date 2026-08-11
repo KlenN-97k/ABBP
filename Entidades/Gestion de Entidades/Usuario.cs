@@ -12,16 +12,15 @@ namespace Entidades.Gestion_de_Entidades
         private string nombre;
         private string apellido;
         private string correo;
-        private string usuarioLogin; // Se renombra a UsuarioLogin porque en C# una propiedad no puede llamarse igual que la clase
+        private string usuarioLogin;
         private string password;
         private string rol;
         private bool estado;
+        private long? telegramChatId;
 
-        public Usuario()
-        {
-        }
+        public Usuario() { }
 
-        public Usuario(int idUsuario, string nombre, string apellido, string correo, string usuarioLogin, string password, string rol, bool estado)
+        public Usuario(int idUsuario, string nombre, string apellido, string correo, string usuarioLogin, string password, string rol, bool estado, long? telegramChatId = null)
         {
             this.IdUsuario = idUsuario;
             this.Nombre = nombre;
@@ -31,6 +30,7 @@ namespace Entidades.Gestion_de_Entidades
             this.Password = password;
             this.Rol = rol;
             this.Estado = estado;
+            this.TelegramChatId = telegramChatId;
         }
 
         public int IdUsuario { get => idUsuario; set => idUsuario = value; }
@@ -41,6 +41,7 @@ namespace Entidades.Gestion_de_Entidades
         public string Password { get => password; set => password = value; }
         public string Rol { get => rol; set => rol = value; }
         public bool Estado { get => estado; set => estado = value; }
+        public long? TelegramChatId { get => telegramChatId; set => telegramChatId = value; }
     }
 
 }

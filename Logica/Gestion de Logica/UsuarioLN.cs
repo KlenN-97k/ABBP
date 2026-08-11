@@ -25,7 +25,7 @@ namespace Logica.Gestion_de_Logica
                 List<sp_Usuarios_ListarResult> auxLista = UsuarioCD.ListarUsuarios();
                 foreach (sp_Usuarios_ListarResult obj in auxLista)
                 {
-                    oc = new Usuario(obj.IdUsuario, obj.Nombre, obj.Apellido, obj.Correo, obj.Usuario, obj.Password, obj.Rol, obj.Estado);
+                    oc = new Usuario(obj.IdUsuario, obj.Nombre, obj.Apellido, obj.Correo, obj.Usuario, obj.Password, obj.Rol, obj.Estado, obj.TelegramChatId);
                     lista.Add(oc);
                 }
             }
@@ -47,7 +47,7 @@ namespace Logica.Gestion_de_Logica
                 if (!passwordValido) return null;
 
                 return new Usuario(encontrado.IdUsuario, encontrado.Nombre, encontrado.Apellido, encontrado.Correo,
-                    encontrado.Usuario, encontrado.Password, encontrado.Rol, encontrado.Estado);
+    encontrado.Usuario, encontrado.Password, encontrado.Rol, encontrado.Estado, encontrado.TelegramChatId);
             }
             catch (Exception ex)
             {
@@ -192,6 +192,39 @@ namespace Logica.Gestion_de_Logica
                 resultado.Append(caracteres[b % caracteres.Length]);
             }
             return resultado.ToString();
+        }
+
+        /// <summary>
+        /// Vincula un chat de Telegram a una cuenta existente. Valida usuario/password
+        /// igual que Login(); si son correctos, guarda el ChatId en esa cuenta.
+        /// </summary>
+        public bool RegistrarChatTelegram(string usuarioLogin, string password, long chatId)
+        {
+            Usuario usuario = Login(usuarioLogin, password);
+            if (usuario == null)
+            {
+                throw new LogicaExcepciones("Usuario o contraseña incorrectos.", null);
+            }
+
+            usuario.TelegramChatId = chatId;
+            return UpdateUsuario(usuario);
+        }
+
+        /// <summary>
+        /// Busca qué usuario del sistema corresponde a un chat de Telegram ya vinculado.
+        /// Devuelve null si ese chat no está registrado a ninguna cuenta.
+        /// </summary>
+        public Usuario BuscarPorChatId(long chatId)
+        {
+            try
+            {
+                List<Usuario> usuarios = ShowUsuario();
+                return usuarios.FirstOrDefault(u => u.TelegramChatId == chatId);
+            }
+            catch (Exception ex)
+            {
+                throw new LogicaExcepciones("Error al buscar usuario por chat de Telegram", ex);
+            }
         }
     }
 

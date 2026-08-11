@@ -84,7 +84,7 @@ namespace Datos.Gestion_de_Datos
             {
                 using (DB = new BDIncidenciasDataContext())
                 {
-                    DB.sp_Usuarios_Modificar(oc.IdUsuario, oc.Nombre, oc.Apellido, oc.Correo, oc.UsuarioLogin, oc.Password, oc.Rol, oc.Estado);
+                    DB.sp_Usuarios_Modificar(oc.IdUsuario, oc.Nombre, oc.Apellido, oc.Correo, oc.UsuarioLogin, oc.Password, oc.Rol, oc.Estado, oc.TelegramChatId);
                     DB.SubmitChanges();
                 }
             }
