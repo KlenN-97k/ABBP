@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="Bot/Bot.csproj" Id="e295ed5b-653b-4649-b503-f320114cd187" />
   <Project Path="Datos/Datos.csproj" Id="fe87223d-362a-420c-800a-3bc9bd6f4c12" />
   <Project Path="Entidades/Entidades.csproj" Id="6248895f-7f79-4bf6-8e41-368be5238e48" />
   <Project Path="Logica/Logica.csproj" Id="8af9ab50-c1f8-4e48-8c38-f60f46460a9b" />
