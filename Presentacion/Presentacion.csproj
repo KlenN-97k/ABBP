@@ -54,11 +54,23 @@
     <Compile Include="FrmAreas.Designer.cs">
       <DependentUpon>FrmAreas.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmIncidencias.cs">
+    <Compile Include="FrmDashboard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmIncidencias.Designer.cs">
-      <DependentUpon>FrmIncidencias.cs</DependentUpon>
+    <Compile Include="FrmDashboard.Designer.cs">
+      <DependentUpon>FrmDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmGuias .cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmGuias .Designer.cs">
+      <DependentUpon>FrmGuias .cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmIncidencias .cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmIncidencias .Designer.cs">
+      <DependentUpon>FrmIncidencias .cs</DependentUpon>
     </Compile>
     <Compile Include="FrmLogin.cs">
       <SubType>Form</SubType>
@@ -66,11 +78,11 @@
     <Compile Include="FrmLogin.Designer.cs">
       <DependentUpon>FrmLogin.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmPrincipal.cs">
+    <Compile Include="FrmPrincipal .cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmPrincipal.Designer.cs">
-      <DependentUpon>FrmPrincipal.cs</DependentUpon>
+    <Compile Include="FrmPrincipal .Designer.cs">
+      <DependentUpon>FrmPrincipal .cs</DependentUpon>
     </Compile>
     <Compile Include="FrmPruebaReportes.cs">
       <SubType>Form</SubType>
@@ -86,14 +98,21 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RendererMenu .cs" />
+    <EmbeddedResource Include="FrmIncidencias .resx">
+      <DependentUpon>FrmIncidencias .cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmLogin.resx">
       <DependentUpon>FrmLogin.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmPrincipal.resx">
-      <DependentUpon>FrmPrincipal.cs</DependentUpon>
+    <EmbeddedResource Include="FrmPrincipal .resx">
+      <DependentUpon>FrmPrincipal .cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPruebaReportes.resx">
       <DependentUpon>FrmPruebaReportes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmUsuarios.resx">
+      <DependentUpon>FrmUsuarios.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -103,6 +122,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="imagenes\Thumbs.db" />
     <None Include="Properties\Settings.settings">
@@ -683,6 +703,16 @@
     <Content Include="imagenes\Zoom in.png" />
     <Content Include="imagenes\Zoom out.png" />
     <Content Include="imagenes\Zoom.png" />
+    <None Include="Resources\fondo4.png" />
+    <None Include="Resources\fondo3.png" />
+    <None Include="Resources\fondo2.png" />
+    <None Include="Resources\fondo1.png" />
+    <None Include="Resources\fondototal.png" />
+    <None Include="Resources\usuario.png" />
+    <None Include="Resources\Logo4.png" />
+    <None Include="Resources\Logo3.png" />
+    <None Include="Resources\Logo2.png" />
+    <None Include="Resources\Logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

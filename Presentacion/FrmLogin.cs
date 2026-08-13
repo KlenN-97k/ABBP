@@ -14,12 +14,17 @@ namespace Presentacion
 {
     public partial class FrmLogin : Form
     {
-        private UsuarioLN _usuarioLN;
+        private UsuarioLN _usuarioLN = new UsuarioLN();
+
         public FrmLogin()
         {
             InitializeComponent();
             _usuarioLN = new UsuarioLN();
+            this.btnIngresar.Location = new System.Drawing.Point(100, 200);
+            txtPassword.UseSystemPasswordChar = !passwordVisible;
+
         }
+
 
         private void btnIngresar_Click(object sender, EventArgs e)
         {
@@ -51,9 +56,31 @@ namespace Presentacion
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error de Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.ToString(), "Error de Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error); ex.ToString();
             }
 
+        }
+
+        private void FrmLogin_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            MessageBox.Show(
+    "Contacta al Administrador del sistema para restablecer tu contraseña.",
+    "Recuperar contraseña",
+    MessageBoxButtons.OK,
+    MessageBoxIcon.Information);
+        }
+        private bool passwordVisible = false;
+
+        private void lblVerPassword_Click(object sender, EventArgs e)
+        {
+            passwordVisible = !passwordVisible;
+            txtPassword.UseSystemPasswordChar = !passwordVisible;
+            lblVerPassword.Text = passwordVisible ? "🙈" : "👁";
         }
 
         private void btnSalir_Click(object sender, EventArgs e)
