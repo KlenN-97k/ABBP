@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gestion de Entidades\Area.cs" />
+    <Compile Include="Gestion de Entidades\Auditoria.cs" />
     <Compile Include="Gestion de Entidades\Estado.cs" />
     <Compile Include="Gestion de Entidades\Guia.cs" />
     <Compile Include="Gestion de Entidades\Incidencia.cs" />

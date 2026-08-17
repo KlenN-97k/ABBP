@@ -1,4 +1,5 @@
-﻿using Datos.Base_de_Datos;
+﻿using Datos;
+using Datos.Base_de_Datos;
 using Datos.Gestion_de_Datos;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,8 @@ namespace Logica.Gestion_de_Logica
                 List<sp_Usuarios_ListarResult> auxLista = UsuarioCD.ListarUsuarios();
                 foreach (sp_Usuarios_ListarResult obj in auxLista)
                 {
-                    oc = new Usuario(obj.IdUsuario, obj.Nombre, obj.Apellido, obj.Correo, obj.Usuario, obj.Password, obj.Rol, obj.Estado, obj.TelegramChatId);
+                    byte[] fotoBytes = obj.FotoPerfil != null ? obj.FotoPerfil.ToArray() : null;
+                    oc = new Usuario(obj.IdUsuario, obj.Nombre, obj.Apellido, obj.Correo, obj.Usuario, obj.Password, obj.Rol, obj.Estado, obj.TelegramChatId, fotoBytes);
                     lista.Add(oc);
                 }
             }
@@ -41,17 +43,66 @@ namespace Logica.Gestion_de_Logica
             try
             {
                 sp_Usuarios_LoginResult encontrado = UsuarioCD.BuscarPorUsuario(usuarioLogin);
-                if (encontrado == null) return null;
+
+                if (encontrado == null)
+                {
+                    return null; // no existe o no está activo
+                }
+
+                if (encontrado.BloqueadoHasta.HasValue && encontrado.BloqueadoHasta.Value > DateTime.Now)
+                {
+                    int minutosRestantes = (int)Math.Ceiling((encontrado.BloqueadoHasta.Value - DateTime.Now).TotalMinutes);
+                    throw new LogicaExcepciones(
+                        $"Cuenta bloqueada temporalmente por intentos fallidos. Intenta de nuevo en {minutosRestantes} minuto(s).",
+                        null);
+                }
 
                 bool passwordValido = BCrypt.Net.BCrypt.Verify(password, encontrado.Password);
-                if (!passwordValido) return null;
 
-                return new Usuario(encontrado.IdUsuario, encontrado.Nombre, encontrado.Apellido, encontrado.Correo,
-    encontrado.Usuario, encontrado.Password, encontrado.Rol, encontrado.Estado, encontrado.TelegramChatId);
+                if (!passwordValido)
+                {
+                    UsuarioCD.RegistrarIntentoFallido(encontrado.IdUsuario);
+                    return null;
+                }
+
+                UsuarioCD.ResetearIntentos(encontrado.IdUsuario);
+
+                byte[] fotoBytes = encontrado.FotoPerfil != null ? encontrado.FotoPerfil.ToArray() : null;
+
+                return new Usuario(
+                    encontrado.IdUsuario, encontrado.Nombre, encontrado.Apellido, encontrado.Correo,
+                    encontrado.Usuario, encontrado.Password, encontrado.Rol, encontrado.Estado,
+                    encontrado.TelegramChatId, fotoBytes
+                );
+            }
+            catch (LogicaExcepciones)
+            {
+                throw;
             }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al validar credenciales de usuario", ex);
+            }
+        }
+
+        private const int TAMANO_MAXIMO_FOTO_BYTES = 2 * 1024 * 1024; // 2 MB
+
+        public bool ActualizarFotoPerfil(Usuario oe, byte[] fotoBytes)
+        {
+            try
+            {
+                if (fotoBytes != null && fotoBytes.Length > TAMANO_MAXIMO_FOTO_BYTES)
+                {
+                    throw new LogicaExcepciones("La imagen no puede superar los 2 MB.", null);
+                }
+
+                oe.FotoPerfil = fotoBytes;
+                return UpdateUsuario(oe);
+            }
+            catch (LogicaExcepciones) { throw; }
+            catch (Exception ex)
+            {
+                throw new LogicaExcepciones("Error al actualizar la foto de perfil", ex);
             }
         }
 
@@ -60,17 +111,19 @@ namespace Logica.Gestion_de_Logica
             try
             {
                 ValidarUsuario(oe);
+
                 if (string.IsNullOrWhiteSpace(oe.Password))
                     throw new LogicaExcepciones("Debe indicar una contraseña.", null);
+
+                if (oe.Password.Length < 6)
+                    throw new LogicaExcepciones("La contraseña debe tener al menos 6 caracteres.", null);
 
                 oe.Password = BCrypt.Net.BCrypt.HashPassword(oe.Password);
                 UsuarioCD.InsertarUsuario(oe);
                 return true;
             }
-            catch (LogicaExcepciones)
-            {
-                throw;
-            }
+            catch (LogicaExcepciones) { throw; }
+            catch (DatosExcepciones dex) { throw new LogicaExcepciones(dex.Message, dex); }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al insertar usuario en la BD", ex);
@@ -85,10 +138,8 @@ namespace Logica.Gestion_de_Logica
                 UsuarioCD.ModificarUsuario(oe);
                 return true;
             }
-            catch (LogicaExcepciones)
-            {
-                throw;
-            }
+            catch (LogicaExcepciones) { throw; }
+            catch (DatosExcepciones dex) { throw new LogicaExcepciones(dex.Message, dex); }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al actualizar usuario en la BD", ex);
@@ -106,10 +157,8 @@ namespace Logica.Gestion_de_Logica
                 UsuarioCD.ModificarUsuario(oe);
                 return true;
             }
-            catch (LogicaExcepciones)
-            {
-                throw;
-            }
+            catch (LogicaExcepciones) { throw; }
+            catch (DatosExcepciones dex) { throw new LogicaExcepciones(dex.Message, dex); }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al cambiar la contraseña del usuario", ex);
@@ -123,6 +172,7 @@ namespace Logica.Gestion_de_Logica
                 UsuarioCD.EliminarUsuario(oe);
                 return true;
             }
+            catch (DatosExcepciones dex) { throw new LogicaExcepciones(dex.Message, dex); }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al eliminar usuario en la BD", ex);
@@ -227,5 +277,4 @@ namespace Logica.Gestion_de_Logica
             }
         }
     }
-
 }

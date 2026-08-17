@@ -84,8 +84,11 @@ namespace Datos.Gestion_de_Datos
             {
                 using (DB = new BDIncidenciasDataContext())
                 {
-                    DB.sp_Usuarios_Modificar(oc.IdUsuario, oc.Nombre, oc.Apellido, oc.Correo, oc.UsuarioLogin, oc.Password, oc.Rol, oc.Estado, oc.TelegramChatId);
-                    DB.SubmitChanges();
+                    System.Data.Linq.Binary fotoBinary = oc.FotoPerfil != null
+                        ? new System.Data.Linq.Binary(oc.FotoPerfil)
+                        : null;
+
+                    DB.sp_Usuarios_Modificar(oc.IdUsuario, oc.Nombre, oc.Apellido, oc.Correo, oc.UsuarioLogin, oc.Password, oc.Rol, oc.Estado, oc.TelegramChatId, fotoBinary);
                 }
             }
             catch (SqlException sqlEx)
@@ -120,6 +123,45 @@ namespace Datos.Gestion_de_Datos
             catch (Exception ex)
             {
                 throw new DatosExcepciones("Error al eliminar en la tabla Usuarios", ex);
+            }
+            finally
+            {
+                DB = null;
+            }
+        }
+        public static void RegistrarIntentoFallido(int idUsuario)
+        {
+            BDIncidenciasDataContext DB = null;
+            try
+            {
+                using (DB = new BDIncidenciasDataContext())
+                {
+                    DB.sp_Usuarios_RegistrarIntentoFallido(idUsuario);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new DatosExcepciones("Error al registrar intento fallido", ex);
+            }
+            finally
+            {
+                DB = null;
+            }
+        }
+
+        public static void ResetearIntentos(int idUsuario)
+        {
+            BDIncidenciasDataContext DB = null;
+            try
+            {
+                using (DB = new BDIncidenciasDataContext())
+                {
+                    DB.sp_Usuarios_ResetearIntentos(idUsuario);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new DatosExcepciones("Error al resetear intentos de login", ex);
             }
             finally
             {

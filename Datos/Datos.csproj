@@ -42,12 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base de Datos\BDIncidencias.cs">
+      <DependentUpon>BDIncidencias.dbml</DependentUpon>
+    </Compile>
     <Compile Include="Base de Datos\BDIncidencias.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>BDIncidencias.dbml</DependentUpon>
     </Compile>
     <Compile Include="DatosExcepciones.cs" />
+    <Compile Include="Gestion de Datos\AuditoriaCD.cs" />
     <Compile Include="SqlErrorTraductor.cs" />
     <Compile Include="Gestion de Datos\AreaCD.cs" />
     <Compile Include="Gestion de Datos\EstadoCD.cs" />

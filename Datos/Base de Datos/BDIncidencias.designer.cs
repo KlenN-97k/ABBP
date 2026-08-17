@@ -30,28 +30,31 @@ namespace Datos.Base_de_Datos
 		
     #region Definiciones de métodos de extensibilidad
     partial void OnCreated();
-    partial void InsertAreas(Areas instance);
-    partial void UpdateAreas(Areas instance);
-    partial void DeleteAreas(Areas instance);
-    partial void InsertEstados(Estados instance);
-    partial void UpdateEstados(Estados instance);
-    partial void DeleteEstados(Estados instance);
-    partial void InsertGuias(Guias instance);
-    partial void UpdateGuias(Guias instance);
-    partial void DeleteGuias(Guias instance);
-    partial void InsertIncidencias(Incidencias instance);
-    partial void UpdateIncidencias(Incidencias instance);
-    partial void DeleteIncidencias(Incidencias instance);
-    partial void InsertPrioridades(Prioridades instance);
-    partial void UpdatePrioridades(Prioridades instance);
-    partial void DeletePrioridades(Prioridades instance);
     partial void InsertUsuarios(Usuarios instance);
     partial void UpdateUsuarios(Usuarios instance);
     partial void DeleteUsuarios(Usuarios instance);
+    partial void InsertPrioridades(Prioridades instance);
+    partial void UpdatePrioridades(Prioridades instance);
+    partial void DeletePrioridades(Prioridades instance);
+    partial void InsertIncidencias(Incidencias instance);
+    partial void UpdateIncidencias(Incidencias instance);
+    partial void DeleteIncidencias(Incidencias instance);
+    partial void InsertGuias(Guias instance);
+    partial void UpdateGuias(Guias instance);
+    partial void DeleteGuias(Guias instance);
+    partial void InsertEstados(Estados instance);
+    partial void UpdateEstados(Estados instance);
+    partial void DeleteEstados(Estados instance);
+    partial void InsertAuditoria(Auditoria instance);
+    partial void UpdateAuditoria(Auditoria instance);
+    partial void DeleteAuditoria(Auditoria instance);
+    partial void InsertAreas(Areas instance);
+    partial void UpdateAreas(Areas instance);
+    partial void DeleteAreas(Areas instance);
     #endregion
 		
 		public BDIncidenciasDataContext() : 
-				base(global::Datos.Properties.Settings.Default.DBIncidenciasConnectionString, mappingSource)
+				base(global::Datos.Properties.Settings.Default.DBIncidenciasConnectionString1, mappingSource)
 		{
 			OnCreated();
 		}
@@ -80,35 +83,11 @@ namespace Datos.Base_de_Datos
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Areas> Areas
+		public System.Data.Linq.Table<Usuarios> Usuarios
 		{
 			get
 			{
-				return this.GetTable<Areas>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Estados> Estados
-		{
-			get
-			{
-				return this.GetTable<Estados>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Guias> Guias
-		{
-			get
-			{
-				return this.GetTable<Guias>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Incidencias> Incidencias
-		{
-			get
-			{
-				return this.GetTable<Incidencias>();
+				return this.GetTable<Usuarios>();
 			}
 		}
 		
@@ -120,11 +99,43 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		public System.Data.Linq.Table<Usuarios> Usuarios
+		public System.Data.Linq.Table<Incidencias> Incidencias
 		{
 			get
 			{
-				return this.GetTable<Usuarios>();
+				return this.GetTable<Incidencias>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Guias> Guias
+		{
+			get
+			{
+				return this.GetTable<Guias>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Estados> Estados
+		{
+			get
+			{
+				return this.GetTable<Estados>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Auditoria> Auditoria
+		{
+			get
+			{
+				return this.GetTable<Auditoria>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Areas> Areas
+		{
+			get
+			{
+				return this.GetTable<Areas>();
 			}
 		}
 		
@@ -154,6 +165,20 @@ namespace Datos.Base_de_Datos
 		{
 			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idArea, nombreArea);
 			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Auditoria_Insertar")]
+		public int sp_Auditoria_Insertar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdUsuario", DbType="Int")] System.Nullable<int> idUsuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="NombreUsuario", DbType="VarChar(150)")] string nombreUsuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Accion", DbType="VarChar(50)")] string accion, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Entidad", DbType="VarChar(50)")] string entidad, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="EntidadId", DbType="Int")] System.Nullable<int> entidadId, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Detalle", DbType="VarChar(MAX)")] string detalle)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idUsuario, nombreUsuario, accion, entidad, entidadId, detalle);
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Auditoria_Listar")]
+		public ISingleResult<sp_Auditoria_ListarResult> sp_Auditoria_Listar()
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())));
+			return ((ISingleResult<sp_Auditoria_ListarResult>)(result.ReturnValue));
 		}
 		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Estados_Eliminar")]
@@ -297,82 +322,339 @@ namespace Datos.Base_de_Datos
 		}
 		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Usuarios_Modificar")]
-		public int sp_Usuarios_Modificar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdUsuario", DbType="Int")] System.Nullable<int> idUsuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Nombre", DbType="VarChar(100)")] string nombre, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Apellido", DbType="VarChar(100)")] string apellido, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Correo", DbType="VarChar(150)")] string correo, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Usuario", DbType="VarChar(50)")] string usuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Password", DbType="VarChar(255)")] string password, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Rol", DbType="VarChar(50)")] string rol, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Estado", DbType="Bit")] System.Nullable<bool> estado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="TelegramChatId", DbType="BigInt")] System.Nullable<long> telegramChatId)
+		public int sp_Usuarios_Modificar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdUsuario", DbType="Int")] System.Nullable<int> idUsuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Nombre", DbType="VarChar(100)")] string nombre, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Apellido", DbType="VarChar(100)")] string apellido, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Correo", DbType="VarChar(150)")] string correo, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Usuario", DbType="VarChar(50)")] string usuario, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Password", DbType="VarChar(255)")] string password, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Rol", DbType="VarChar(50)")] string rol, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Estado", DbType="Bit")] System.Nullable<bool> estado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="TelegramChatId", DbType="BigInt")] System.Nullable<long> telegramChatId, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="FotoPerfil", DbType="VarBinary(MAX)")] System.Data.Linq.Binary fotoPerfil)
 		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idUsuario, nombre, apellido, correo, usuario, password, rol, estado, telegramChatId);
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idUsuario, nombre, apellido, correo, usuario, password, rol, estado, telegramChatId, fotoPerfil);
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Usuarios_RegistrarIntentoFallido")]
+		public int sp_Usuarios_RegistrarIntentoFallido([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdUsuario", DbType="Int")] System.Nullable<int> idUsuario)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idUsuario);
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Usuarios_ResetearIntentos")]
+		public int sp_Usuarios_ResetearIntentos([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdUsuario", DbType="Int")] System.Nullable<int> idUsuario)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idUsuario);
 			return ((int)(result.ReturnValue));
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Areas")]
-	public partial class Areas : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Usuarios")]
+	public partial class Usuarios : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _IdArea;
+		private int _IdUsuario;
 		
-		private string _NombreArea;
+		private string _Nombre;
+		
+		private string _Apellido;
+		
+		private string _Correo;
+		
+		private string _Usuario;
+		
+		private string _Password;
+		
+		private string _Rol;
+		
+		private bool _Estado;
+		
+		private System.Nullable<long> _TelegramChatId;
+		
+		private int _IntentosFallidos;
+		
+		private System.Nullable<System.DateTime> _BloqueadoHasta;
+		
+		private System.Data.Linq.Binary _FotoPerfil;
 		
 		private EntitySet<Incidencias> _Incidencias;
+		
+		private EntitySet<Auditoria> _Auditoria;
 		
     #region Definiciones de métodos de extensibilidad
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdAreaChanging(int value);
-    partial void OnIdAreaChanged();
-    partial void OnNombreAreaChanging(string value);
-    partial void OnNombreAreaChanged();
+    partial void OnIdUsuarioChanging(int value);
+    partial void OnIdUsuarioChanged();
+    partial void OnNombreChanging(string value);
+    partial void OnNombreChanged();
+    partial void OnApellidoChanging(string value);
+    partial void OnApellidoChanged();
+    partial void OnCorreoChanging(string value);
+    partial void OnCorreoChanged();
+    partial void OnUsuarioChanging(string value);
+    partial void OnUsuarioChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
+    partial void OnRolChanging(string value);
+    partial void OnRolChanged();
+    partial void OnEstadoChanging(bool value);
+    partial void OnEstadoChanged();
+    partial void OnTelegramChatIdChanging(System.Nullable<long> value);
+    partial void OnTelegramChatIdChanged();
+    partial void OnIntentosFallidosChanging(int value);
+    partial void OnIntentosFallidosChanged();
+    partial void OnBloqueadoHastaChanging(System.Nullable<System.DateTime> value);
+    partial void OnBloqueadoHastaChanged();
+    partial void OnFotoPerfilChanging(System.Data.Linq.Binary value);
+    partial void OnFotoPerfilChanged();
     #endregion
 		
-		public Areas()
+		public Usuarios()
 		{
 			this._Incidencias = new EntitySet<Incidencias>(new Action<Incidencias>(this.attach_Incidencias), new Action<Incidencias>(this.detach_Incidencias));
+			this._Auditoria = new EntitySet<Auditoria>(new Action<Auditoria>(this.attach_Auditoria), new Action<Auditoria>(this.detach_Auditoria));
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdArea", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int IdArea
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdUsuario", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int IdUsuario
 		{
 			get
 			{
-				return this._IdArea;
+				return this._IdUsuario;
 			}
 			set
 			{
-				if ((this._IdArea != value))
+				if ((this._IdUsuario != value))
 				{
-					this.OnIdAreaChanging(value);
+					this.OnIdUsuarioChanging(value);
 					this.SendPropertyChanging();
-					this._IdArea = value;
-					this.SendPropertyChanged("IdArea");
-					this.OnIdAreaChanged();
+					this._IdUsuario = value;
+					this.SendPropertyChanged("IdUsuario");
+					this.OnIdUsuarioChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombreArea", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
-		public string NombreArea
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Nombre", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
+		public string Nombre
 		{
 			get
 			{
-				return this._NombreArea;
+				return this._Nombre;
 			}
 			set
 			{
-				if ((this._NombreArea != value))
+				if ((this._Nombre != value))
 				{
-					this.OnNombreAreaChanging(value);
+					this.OnNombreChanging(value);
 					this.SendPropertyChanging();
-					this._NombreArea = value;
-					this.SendPropertyChanged("NombreArea");
-					this.OnNombreAreaChanged();
+					this._Nombre = value;
+					this.SendPropertyChanged("Nombre");
+					this.OnNombreChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Areas_Incidencias", Storage="_Incidencias", ThisKey="IdArea", OtherKey="IdArea")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Apellido", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
+		public string Apellido
+		{
+			get
+			{
+				return this._Apellido;
+			}
+			set
+			{
+				if ((this._Apellido != value))
+				{
+					this.OnApellidoChanging(value);
+					this.SendPropertyChanging();
+					this._Apellido = value;
+					this.SendPropertyChanged("Apellido");
+					this.OnApellidoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Correo", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
+		public string Correo
+		{
+			get
+			{
+				return this._Correo;
+			}
+			set
+			{
+				if ((this._Correo != value))
+				{
+					this.OnCorreoChanging(value);
+					this.SendPropertyChanging();
+					this._Correo = value;
+					this.SendPropertyChanged("Correo");
+					this.OnCorreoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Usuario", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Usuario
+		{
+			get
+			{
+				return this._Usuario;
+			}
+			set
+			{
+				if ((this._Usuario != value))
+				{
+					this.OnUsuarioChanging(value);
+					this.SendPropertyChanging();
+					this._Usuario = value;
+					this.SendPropertyChanged("Usuario");
+					this.OnUsuarioChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(255) NOT NULL", CanBeNull=false)]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rol", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Rol
+		{
+			get
+			{
+				return this._Rol;
+			}
+			set
+			{
+				if ((this._Rol != value))
+				{
+					this.OnRolChanging(value);
+					this.SendPropertyChanging();
+					this._Rol = value;
+					this.SendPropertyChanged("Rol");
+					this.OnRolChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Estado", DbType="Bit NOT NULL")]
+		public bool Estado
+		{
+			get
+			{
+				return this._Estado;
+			}
+			set
+			{
+				if ((this._Estado != value))
+				{
+					this.OnEstadoChanging(value);
+					this.SendPropertyChanging();
+					this._Estado = value;
+					this.SendPropertyChanged("Estado");
+					this.OnEstadoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TelegramChatId", DbType="BigInt")]
+		public System.Nullable<long> TelegramChatId
+		{
+			get
+			{
+				return this._TelegramChatId;
+			}
+			set
+			{
+				if ((this._TelegramChatId != value))
+				{
+					this.OnTelegramChatIdChanging(value);
+					this.SendPropertyChanging();
+					this._TelegramChatId = value;
+					this.SendPropertyChanged("TelegramChatId");
+					this.OnTelegramChatIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IntentosFallidos", DbType="Int NOT NULL")]
+		public int IntentosFallidos
+		{
+			get
+			{
+				return this._IntentosFallidos;
+			}
+			set
+			{
+				if ((this._IntentosFallidos != value))
+				{
+					this.OnIntentosFallidosChanging(value);
+					this.SendPropertyChanging();
+					this._IntentosFallidos = value;
+					this.SendPropertyChanged("IntentosFallidos");
+					this.OnIntentosFallidosChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BloqueadoHasta", DbType="DateTime")]
+		public System.Nullable<System.DateTime> BloqueadoHasta
+		{
+			get
+			{
+				return this._BloqueadoHasta;
+			}
+			set
+			{
+				if ((this._BloqueadoHasta != value))
+				{
+					this.OnBloqueadoHastaChanging(value);
+					this.SendPropertyChanging();
+					this._BloqueadoHasta = value;
+					this.SendPropertyChanged("BloqueadoHasta");
+					this.OnBloqueadoHastaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary FotoPerfil
+		{
+			get
+			{
+				return this._FotoPerfil;
+			}
+			set
+			{
+				if ((this._FotoPerfil != value))
+				{
+					this.OnFotoPerfilChanging(value);
+					this.SendPropertyChanging();
+					this._FotoPerfil = value;
+					this.SendPropertyChanged("FotoPerfil");
+					this.OnFotoPerfilChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Usuarios_Incidencias", Storage="_Incidencias", ThisKey="IdUsuario", OtherKey="IdTecnicoAsignado")]
 		public EntitySet<Incidencias> Incidencias
 		{
 			get
@@ -382,6 +664,19 @@ namespace Datos.Base_de_Datos
 			set
 			{
 				this._Incidencias.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Usuarios_Auditoria", Storage="_Auditoria", ThisKey="IdUsuario", OtherKey="IdUsuario")]
+		public EntitySet<Auditoria> Auditoria
+		{
+			get
+			{
+				return this._Auditoria;
+			}
+			set
+			{
+				this._Auditoria.Assign(value);
 			}
 		}
 		
@@ -408,23 +703,35 @@ namespace Datos.Base_de_Datos
 		private void attach_Incidencias(Incidencias entity)
 		{
 			this.SendPropertyChanging();
-			entity.Areas = this;
+			entity.Usuarios = this;
 		}
 		
 		private void detach_Incidencias(Incidencias entity)
 		{
 			this.SendPropertyChanging();
-			entity.Areas = null;
+			entity.Usuarios = null;
+		}
+		
+		private void attach_Auditoria(Auditoria entity)
+		{
+			this.SendPropertyChanging();
+			entity.Usuarios = this;
+		}
+		
+		private void detach_Auditoria(Auditoria entity)
+		{
+			this.SendPropertyChanging();
+			entity.Usuarios = null;
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Estados")]
-	public partial class Estados : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Prioridades")]
+	public partial class Prioridades : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _IdEstado;
+		private int _IdPrioridad;
 		
 		private string _Nombre;
 		
@@ -434,34 +741,34 @@ namespace Datos.Base_de_Datos
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdEstadoChanging(int value);
-    partial void OnIdEstadoChanged();
+    partial void OnIdPrioridadChanging(int value);
+    partial void OnIdPrioridadChanged();
     partial void OnNombreChanging(string value);
     partial void OnNombreChanged();
     #endregion
 		
-		public Estados()
+		public Prioridades()
 		{
 			this._Incidencias = new EntitySet<Incidencias>(new Action<Incidencias>(this.attach_Incidencias), new Action<Incidencias>(this.detach_Incidencias));
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdEstado", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int IdEstado
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdPrioridad", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int IdPrioridad
 		{
 			get
 			{
-				return this._IdEstado;
+				return this._IdPrioridad;
 			}
 			set
 			{
-				if ((this._IdEstado != value))
+				if ((this._IdPrioridad != value))
 				{
-					this.OnIdEstadoChanging(value);
+					this.OnIdPrioridadChanging(value);
 					this.SendPropertyChanging();
-					this._IdEstado = value;
-					this.SendPropertyChanged("IdEstado");
-					this.OnIdEstadoChanged();
+					this._IdPrioridad = value;
+					this.SendPropertyChanged("IdPrioridad");
+					this.OnIdPrioridadChanged();
 				}
 			}
 		}
@@ -486,7 +793,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Estados_Incidencias", Storage="_Incidencias", ThisKey="IdEstado", OtherKey="IdEstado")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Prioridades_Incidencias", Storage="_Incidencias", ThisKey="IdPrioridad", OtherKey="IdPrioridad")]
 		public EntitySet<Incidencias> Incidencias
 		{
 			get
@@ -522,147 +829,13 @@ namespace Datos.Base_de_Datos
 		private void attach_Incidencias(Incidencias entity)
 		{
 			this.SendPropertyChanging();
-			entity.Estados = this;
+			entity.Prioridades = this;
 		}
 		
 		private void detach_Incidencias(Incidencias entity)
 		{
 			this.SendPropertyChanging();
-			entity.Estados = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Guias")]
-	public partial class Guias : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _IdGuia;
-		
-		private string _Titulo;
-		
-		private string _Problema;
-		
-		private string _Solucion;
-		
-    #region Definiciones de métodos de extensibilidad
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdGuiaChanging(int value);
-    partial void OnIdGuiaChanged();
-    partial void OnTituloChanging(string value);
-    partial void OnTituloChanged();
-    partial void OnProblemaChanging(string value);
-    partial void OnProblemaChanged();
-    partial void OnSolucionChanging(string value);
-    partial void OnSolucionChanged();
-    #endregion
-		
-		public Guias()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdGuia", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int IdGuia
-		{
-			get
-			{
-				return this._IdGuia;
-			}
-			set
-			{
-				if ((this._IdGuia != value))
-				{
-					this.OnIdGuiaChanging(value);
-					this.SendPropertyChanging();
-					this._IdGuia = value;
-					this.SendPropertyChanged("IdGuia");
-					this.OnIdGuiaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Titulo", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
-		public string Titulo
-		{
-			get
-			{
-				return this._Titulo;
-			}
-			set
-			{
-				if ((this._Titulo != value))
-				{
-					this.OnTituloChanging(value);
-					this.SendPropertyChanging();
-					this._Titulo = value;
-					this.SendPropertyChanged("Titulo");
-					this.OnTituloChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Problema", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string Problema
-		{
-			get
-			{
-				return this._Problema;
-			}
-			set
-			{
-				if ((this._Problema != value))
-				{
-					this.OnProblemaChanging(value);
-					this.SendPropertyChanging();
-					this._Problema = value;
-					this.SendPropertyChanged("Problema");
-					this.OnProblemaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Solucion", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string Solucion
-		{
-			get
-			{
-				return this._Solucion;
-			}
-			set
-			{
-				if ((this._Solucion != value))
-				{
-					this.OnSolucionChanging(value);
-					this.SendPropertyChanging();
-					this._Solucion = value;
-					this.SendPropertyChanged("Solucion");
-					this.OnSolucionChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
+			entity.Prioridades = null;
 		}
 	}
 	
@@ -696,13 +869,13 @@ namespace Datos.Base_de_Datos
 		
 		private string _Observaciones;
 		
-		private EntityRef<Areas> _Areas;
-		
-		private EntityRef<Estados> _Estados;
-		
 		private EntityRef<Prioridades> _Prioridades;
 		
 		private EntityRef<Usuarios> _Usuarios;
+		
+		private EntityRef<Estados> _Estados;
+		
+		private EntityRef<Areas> _Areas;
 		
     #region Definiciones de métodos de extensibilidad
     partial void OnLoaded();
@@ -736,10 +909,10 @@ namespace Datos.Base_de_Datos
 		
 		public Incidencias()
 		{
-			this._Areas = default(EntityRef<Areas>);
-			this._Estados = default(EntityRef<Estados>);
 			this._Prioridades = default(EntityRef<Prioridades>);
 			this._Usuarios = default(EntityRef<Usuarios>);
+			this._Estados = default(EntityRef<Estados>);
+			this._Areas = default(EntityRef<Areas>);
 			OnCreated();
 		}
 		
@@ -999,74 +1172,6 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Areas_Incidencias", Storage="_Areas", ThisKey="IdArea", OtherKey="IdArea", IsForeignKey=true)]
-		public Areas Areas
-		{
-			get
-			{
-				return this._Areas.Entity;
-			}
-			set
-			{
-				Areas previousValue = this._Areas.Entity;
-				if (((previousValue != value) 
-							|| (this._Areas.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Areas.Entity = null;
-						previousValue.Incidencias.Remove(this);
-					}
-					this._Areas.Entity = value;
-					if ((value != null))
-					{
-						value.Incidencias.Add(this);
-						this._IdArea = value.IdArea;
-					}
-					else
-					{
-						this._IdArea = default(int);
-					}
-					this.SendPropertyChanged("Areas");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Estados_Incidencias", Storage="_Estados", ThisKey="IdEstado", OtherKey="IdEstado", IsForeignKey=true)]
-		public Estados Estados
-		{
-			get
-			{
-				return this._Estados.Entity;
-			}
-			set
-			{
-				Estados previousValue = this._Estados.Entity;
-				if (((previousValue != value) 
-							|| (this._Estados.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Estados.Entity = null;
-						previousValue.Incidencias.Remove(this);
-					}
-					this._Estados.Entity = value;
-					if ((value != null))
-					{
-						value.Incidencias.Add(this);
-						this._IdEstado = value.IdEstado;
-					}
-					else
-					{
-						this._IdEstado = default(int);
-					}
-					this.SendPropertyChanged("Estados");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Prioridades_Incidencias", Storage="_Prioridades", ThisKey="IdPrioridad", OtherKey="IdPrioridad", IsForeignKey=true)]
 		public Prioridades Prioridades
 		{
@@ -1135,6 +1240,74 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Estados_Incidencias", Storage="_Estados", ThisKey="IdEstado", OtherKey="IdEstado", IsForeignKey=true)]
+		public Estados Estados
+		{
+			get
+			{
+				return this._Estados.Entity;
+			}
+			set
+			{
+				Estados previousValue = this._Estados.Entity;
+				if (((previousValue != value) 
+							|| (this._Estados.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Estados.Entity = null;
+						previousValue.Incidencias.Remove(this);
+					}
+					this._Estados.Entity = value;
+					if ((value != null))
+					{
+						value.Incidencias.Add(this);
+						this._IdEstado = value.IdEstado;
+					}
+					else
+					{
+						this._IdEstado = default(int);
+					}
+					this.SendPropertyChanged("Estados");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Areas_Incidencias", Storage="_Areas", ThisKey="IdArea", OtherKey="IdArea", IsForeignKey=true)]
+		public Areas Areas
+		{
+			get
+			{
+				return this._Areas.Entity;
+			}
+			set
+			{
+				Areas previousValue = this._Areas.Entity;
+				if (((previousValue != value) 
+							|| (this._Areas.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Areas.Entity = null;
+						previousValue.Incidencias.Remove(this);
+					}
+					this._Areas.Entity = value;
+					if ((value != null))
+					{
+						value.Incidencias.Add(this);
+						this._IdArea = value.IdArea;
+					}
+					else
+					{
+						this._IdArea = default(int);
+					}
+					this.SendPropertyChanged("Areas");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -1156,13 +1329,147 @@ namespace Datos.Base_de_Datos
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Prioridades")]
-	public partial class Prioridades : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Guias")]
+	public partial class Guias : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _IdPrioridad;
+		private int _IdGuia;
+		
+		private string _Titulo;
+		
+		private string _Problema;
+		
+		private string _Solucion;
+		
+    #region Definiciones de métodos de extensibilidad
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdGuiaChanging(int value);
+    partial void OnIdGuiaChanged();
+    partial void OnTituloChanging(string value);
+    partial void OnTituloChanged();
+    partial void OnProblemaChanging(string value);
+    partial void OnProblemaChanged();
+    partial void OnSolucionChanging(string value);
+    partial void OnSolucionChanged();
+    #endregion
+		
+		public Guias()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdGuia", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int IdGuia
+		{
+			get
+			{
+				return this._IdGuia;
+			}
+			set
+			{
+				if ((this._IdGuia != value))
+				{
+					this.OnIdGuiaChanging(value);
+					this.SendPropertyChanging();
+					this._IdGuia = value;
+					this.SendPropertyChanged("IdGuia");
+					this.OnIdGuiaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Titulo", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
+		public string Titulo
+		{
+			get
+			{
+				return this._Titulo;
+			}
+			set
+			{
+				if ((this._Titulo != value))
+				{
+					this.OnTituloChanging(value);
+					this.SendPropertyChanging();
+					this._Titulo = value;
+					this.SendPropertyChanged("Titulo");
+					this.OnTituloChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Problema", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string Problema
+		{
+			get
+			{
+				return this._Problema;
+			}
+			set
+			{
+				if ((this._Problema != value))
+				{
+					this.OnProblemaChanging(value);
+					this.SendPropertyChanging();
+					this._Problema = value;
+					this.SendPropertyChanged("Problema");
+					this.OnProblemaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Solucion", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string Solucion
+		{
+			get
+			{
+				return this._Solucion;
+			}
+			set
+			{
+				if ((this._Solucion != value))
+				{
+					this.OnSolucionChanging(value);
+					this.SendPropertyChanging();
+					this._Solucion = value;
+					this.SendPropertyChanged("Solucion");
+					this.OnSolucionChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Estados")]
+	public partial class Estados : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _IdEstado;
 		
 		private string _Nombre;
 		
@@ -1172,34 +1479,34 @@ namespace Datos.Base_de_Datos
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdPrioridadChanging(int value);
-    partial void OnIdPrioridadChanged();
+    partial void OnIdEstadoChanging(int value);
+    partial void OnIdEstadoChanged();
     partial void OnNombreChanging(string value);
     partial void OnNombreChanged();
     #endregion
 		
-		public Prioridades()
+		public Estados()
 		{
 			this._Incidencias = new EntitySet<Incidencias>(new Action<Incidencias>(this.attach_Incidencias), new Action<Incidencias>(this.detach_Incidencias));
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdPrioridad", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int IdPrioridad
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdEstado", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int IdEstado
 		{
 			get
 			{
-				return this._IdPrioridad;
+				return this._IdEstado;
 			}
 			set
 			{
-				if ((this._IdPrioridad != value))
+				if ((this._IdEstado != value))
 				{
-					this.OnIdPrioridadChanging(value);
+					this.OnIdEstadoChanging(value);
 					this.SendPropertyChanging();
-					this._IdPrioridad = value;
-					this.SendPropertyChanged("IdPrioridad");
-					this.OnIdPrioridadChanged();
+					this._IdEstado = value;
+					this.SendPropertyChanged("IdEstado");
+					this.OnIdEstadoChanged();
 				}
 			}
 		}
@@ -1224,7 +1531,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Prioridades_Incidencias", Storage="_Incidencias", ThisKey="IdPrioridad", OtherKey="IdPrioridad")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Estados_Incidencias", Storage="_Incidencias", ThisKey="IdEstado", OtherKey="IdEstado")]
 		public EntitySet<Incidencias> Incidencias
 		{
 			get
@@ -1260,74 +1567,110 @@ namespace Datos.Base_de_Datos
 		private void attach_Incidencias(Incidencias entity)
 		{
 			this.SendPropertyChanging();
-			entity.Prioridades = this;
+			entity.Estados = this;
 		}
 		
 		private void detach_Incidencias(Incidencias entity)
 		{
 			this.SendPropertyChanging();
-			entity.Prioridades = null;
+			entity.Estados = null;
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Usuarios")]
-	public partial class Usuarios : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Auditoria")]
+	public partial class Auditoria : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _IdUsuario;
+		private int _IdAuditoria;
 		
-		private string _Nombre;
+		private System.DateTime _Fecha;
 		
-		private string _Apellido;
+		private System.Nullable<int> _IdUsuario;
 		
-		private string _Correo;
+		private string _NombreUsuario;
 		
-		private string _Usuario;
+		private string _Accion;
 		
-		private string _Password;
+		private string _Entidad;
 		
-		private string _Rol;
+		private System.Nullable<int> _EntidadId;
 		
-		private bool _Estado;
+		private string _Detalle;
 		
-		private System.Nullable<long> _TelegramChatId;
-		
-		private EntitySet<Incidencias> _Incidencias;
+		private EntityRef<Usuarios> _Usuarios;
 		
     #region Definiciones de métodos de extensibilidad
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdUsuarioChanging(int value);
+    partial void OnIdAuditoriaChanging(int value);
+    partial void OnIdAuditoriaChanged();
+    partial void OnFechaChanging(System.DateTime value);
+    partial void OnFechaChanged();
+    partial void OnIdUsuarioChanging(System.Nullable<int> value);
     partial void OnIdUsuarioChanged();
-    partial void OnNombreChanging(string value);
-    partial void OnNombreChanged();
-    partial void OnApellidoChanging(string value);
-    partial void OnApellidoChanged();
-    partial void OnCorreoChanging(string value);
-    partial void OnCorreoChanged();
-    partial void OnUsuarioChanging(string value);
-    partial void OnUsuarioChanged();
-    partial void OnPasswordChanging(string value);
-    partial void OnPasswordChanged();
-    partial void OnRolChanging(string value);
-    partial void OnRolChanged();
-    partial void OnEstadoChanging(bool value);
-    partial void OnEstadoChanged();
-    partial void OnTelegramChatIdChanging(System.Nullable<long> value);
-    partial void OnTelegramChatIdChanged();
+    partial void OnNombreUsuarioChanging(string value);
+    partial void OnNombreUsuarioChanged();
+    partial void OnAccionChanging(string value);
+    partial void OnAccionChanged();
+    partial void OnEntidadChanging(string value);
+    partial void OnEntidadChanged();
+    partial void OnEntidadIdChanging(System.Nullable<int> value);
+    partial void OnEntidadIdChanged();
+    partial void OnDetalleChanging(string value);
+    partial void OnDetalleChanged();
     #endregion
 		
-		public Usuarios()
+		public Auditoria()
 		{
-			this._Incidencias = new EntitySet<Incidencias>(new Action<Incidencias>(this.attach_Incidencias), new Action<Incidencias>(this.detach_Incidencias));
+			this._Usuarios = default(EntityRef<Usuarios>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdUsuario", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int IdUsuario
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdAuditoria", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int IdAuditoria
+		{
+			get
+			{
+				return this._IdAuditoria;
+			}
+			set
+			{
+				if ((this._IdAuditoria != value))
+				{
+					this.OnIdAuditoriaChanging(value);
+					this.SendPropertyChanging();
+					this._IdAuditoria = value;
+					this.SendPropertyChanged("IdAuditoria");
+					this.OnIdAuditoriaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Fecha", DbType="DateTime NOT NULL")]
+		public System.DateTime Fecha
+		{
+			get
+			{
+				return this._Fecha;
+			}
+			set
+			{
+				if ((this._Fecha != value))
+				{
+					this.OnFechaChanging(value);
+					this.SendPropertyChanging();
+					this._Fecha = value;
+					this.SendPropertyChanged("Fecha");
+					this.OnFechaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdUsuario", DbType="Int")]
+		public System.Nullable<int> IdUsuario
 		{
 			get
 			{
@@ -1337,6 +1680,10 @@ namespace Datos.Base_de_Datos
 			{
 				if ((this._IdUsuario != value))
 				{
+					if (this._Usuarios.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnIdUsuarioChanging(value);
 					this.SendPropertyChanging();
 					this._IdUsuario = value;
@@ -1346,167 +1693,230 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Nombre", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
-		public string Nombre
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombreUsuario", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
+		public string NombreUsuario
 		{
 			get
 			{
-				return this._Nombre;
+				return this._NombreUsuario;
 			}
 			set
 			{
-				if ((this._Nombre != value))
+				if ((this._NombreUsuario != value))
 				{
-					this.OnNombreChanging(value);
+					this.OnNombreUsuarioChanging(value);
 					this.SendPropertyChanging();
-					this._Nombre = value;
-					this.SendPropertyChanged("Nombre");
-					this.OnNombreChanged();
+					this._NombreUsuario = value;
+					this.SendPropertyChanged("NombreUsuario");
+					this.OnNombreUsuarioChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Apellido", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
-		public string Apellido
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Accion", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Accion
 		{
 			get
 			{
-				return this._Apellido;
+				return this._Accion;
 			}
 			set
 			{
-				if ((this._Apellido != value))
+				if ((this._Accion != value))
 				{
-					this.OnApellidoChanging(value);
+					this.OnAccionChanging(value);
 					this.SendPropertyChanging();
-					this._Apellido = value;
-					this.SendPropertyChanged("Apellido");
-					this.OnApellidoChanged();
+					this._Accion = value;
+					this.SendPropertyChanged("Accion");
+					this.OnAccionChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Correo", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
-		public string Correo
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Entidad", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Entidad
 		{
 			get
 			{
-				return this._Correo;
+				return this._Entidad;
 			}
 			set
 			{
-				if ((this._Correo != value))
+				if ((this._Entidad != value))
 				{
-					this.OnCorreoChanging(value);
+					this.OnEntidadChanging(value);
 					this.SendPropertyChanging();
-					this._Correo = value;
-					this.SendPropertyChanged("Correo");
-					this.OnCorreoChanged();
+					this._Entidad = value;
+					this.SendPropertyChanged("Entidad");
+					this.OnEntidadChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Usuario", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-		public string Usuario
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntidadId", DbType="Int")]
+		public System.Nullable<int> EntidadId
 		{
 			get
 			{
-				return this._Usuario;
+				return this._EntidadId;
 			}
 			set
 			{
-				if ((this._Usuario != value))
+				if ((this._EntidadId != value))
 				{
-					this.OnUsuarioChanging(value);
+					this.OnEntidadIdChanging(value);
 					this.SendPropertyChanging();
-					this._Usuario = value;
-					this.SendPropertyChanged("Usuario");
-					this.OnUsuarioChanged();
+					this._EntidadId = value;
+					this.SendPropertyChanged("EntidadId");
+					this.OnEntidadIdChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(255) NOT NULL", CanBeNull=false)]
-		public string Password
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Detalle", DbType="VarChar(MAX)")]
+		public string Detalle
 		{
 			get
 			{
-				return this._Password;
+				return this._Detalle;
 			}
 			set
 			{
-				if ((this._Password != value))
+				if ((this._Detalle != value))
 				{
-					this.OnPasswordChanging(value);
+					this.OnDetalleChanging(value);
 					this.SendPropertyChanging();
-					this._Password = value;
-					this.SendPropertyChanged("Password");
-					this.OnPasswordChanged();
+					this._Detalle = value;
+					this.SendPropertyChanged("Detalle");
+					this.OnDetalleChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rol", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-		public string Rol
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Usuarios_Auditoria", Storage="_Usuarios", ThisKey="IdUsuario", OtherKey="IdUsuario", IsForeignKey=true)]
+		public Usuarios Usuarios
 		{
 			get
 			{
-				return this._Rol;
+				return this._Usuarios.Entity;
 			}
 			set
 			{
-				if ((this._Rol != value))
+				Usuarios previousValue = this._Usuarios.Entity;
+				if (((previousValue != value) 
+							|| (this._Usuarios.HasLoadedOrAssignedValue == false)))
 				{
-					this.OnRolChanging(value);
 					this.SendPropertyChanging();
-					this._Rol = value;
-					this.SendPropertyChanged("Rol");
-					this.OnRolChanged();
+					if ((previousValue != null))
+					{
+						this._Usuarios.Entity = null;
+						previousValue.Auditoria.Remove(this);
+					}
+					this._Usuarios.Entity = value;
+					if ((value != null))
+					{
+						value.Auditoria.Add(this);
+						this._IdUsuario = value.IdUsuario;
+					}
+					else
+					{
+						this._IdUsuario = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Usuarios");
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Estado", DbType="Bit NOT NULL")]
-		public bool Estado
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Areas")]
+	public partial class Areas : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _IdArea;
+		
+		private string _NombreArea;
+		
+		private EntitySet<Incidencias> _Incidencias;
+		
+    #region Definiciones de métodos de extensibilidad
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdAreaChanging(int value);
+    partial void OnIdAreaChanged();
+    partial void OnNombreAreaChanging(string value);
+    partial void OnNombreAreaChanged();
+    #endregion
+		
+		public Areas()
+		{
+			this._Incidencias = new EntitySet<Incidencias>(new Action<Incidencias>(this.attach_Incidencias), new Action<Incidencias>(this.detach_Incidencias));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdArea", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int IdArea
 		{
 			get
 			{
-				return this._Estado;
+				return this._IdArea;
 			}
 			set
 			{
-				if ((this._Estado != value))
+				if ((this._IdArea != value))
 				{
-					this.OnEstadoChanging(value);
+					this.OnIdAreaChanging(value);
 					this.SendPropertyChanging();
-					this._Estado = value;
-					this.SendPropertyChanged("Estado");
-					this.OnEstadoChanged();
+					this._IdArea = value;
+					this.SendPropertyChanged("IdArea");
+					this.OnIdAreaChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TelegramChatId", DbType="BigInt")]
-		public System.Nullable<long> TelegramChatId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombreArea", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
+		public string NombreArea
 		{
 			get
 			{
-				return this._TelegramChatId;
+				return this._NombreArea;
 			}
 			set
 			{
-				if ((this._TelegramChatId != value))
+				if ((this._NombreArea != value))
 				{
-					this.OnTelegramChatIdChanging(value);
+					this.OnNombreAreaChanging(value);
 					this.SendPropertyChanging();
-					this._TelegramChatId = value;
-					this.SendPropertyChanged("TelegramChatId");
-					this.OnTelegramChatIdChanged();
+					this._NombreArea = value;
+					this.SendPropertyChanged("NombreArea");
+					this.OnNombreAreaChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Usuarios_Incidencias", Storage="_Incidencias", ThisKey="IdUsuario", OtherKey="IdTecnicoAsignado")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Areas_Incidencias", Storage="_Incidencias", ThisKey="IdArea", OtherKey="IdArea")]
 		public EntitySet<Incidencias> Incidencias
 		{
 			get
@@ -1542,13 +1952,13 @@ namespace Datos.Base_de_Datos
 		private void attach_Incidencias(Incidencias entity)
 		{
 			this.SendPropertyChanging();
-			entity.Usuarios = this;
+			entity.Areas = this;
 		}
 		
 		private void detach_Incidencias(Incidencias entity)
 		{
 			this.SendPropertyChanging();
-			entity.Usuarios = null;
+			entity.Areas = null;
 		}
 	}
 	
@@ -1591,6 +2001,158 @@ namespace Datos.Base_de_Datos
 				if ((this._NombreArea != value))
 				{
 					this._NombreArea = value;
+				}
+			}
+		}
+	}
+	
+	public partial class sp_Auditoria_ListarResult
+	{
+		
+		private int _IdAuditoria;
+		
+		private System.DateTime _Fecha;
+		
+		private System.Nullable<int> _IdUsuario;
+		
+		private string _NombreUsuario;
+		
+		private string _Accion;
+		
+		private string _Entidad;
+		
+		private System.Nullable<int> _EntidadId;
+		
+		private string _Detalle;
+		
+		public sp_Auditoria_ListarResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdAuditoria", DbType="Int NOT NULL")]
+		public int IdAuditoria
+		{
+			get
+			{
+				return this._IdAuditoria;
+			}
+			set
+			{
+				if ((this._IdAuditoria != value))
+				{
+					this._IdAuditoria = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Fecha", DbType="DateTime NOT NULL")]
+		public System.DateTime Fecha
+		{
+			get
+			{
+				return this._Fecha;
+			}
+			set
+			{
+				if ((this._Fecha != value))
+				{
+					this._Fecha = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdUsuario", DbType="Int")]
+		public System.Nullable<int> IdUsuario
+		{
+			get
+			{
+				return this._IdUsuario;
+			}
+			set
+			{
+				if ((this._IdUsuario != value))
+				{
+					this._IdUsuario = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombreUsuario", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
+		public string NombreUsuario
+		{
+			get
+			{
+				return this._NombreUsuario;
+			}
+			set
+			{
+				if ((this._NombreUsuario != value))
+				{
+					this._NombreUsuario = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Accion", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Accion
+		{
+			get
+			{
+				return this._Accion;
+			}
+			set
+			{
+				if ((this._Accion != value))
+				{
+					this._Accion = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Entidad", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Entidad
+		{
+			get
+			{
+				return this._Entidad;
+			}
+			set
+			{
+				if ((this._Entidad != value))
+				{
+					this._Entidad = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntidadId", DbType="Int")]
+		public System.Nullable<int> EntidadId
+		{
+			get
+			{
+				return this._EntidadId;
+			}
+			set
+			{
+				if ((this._EntidadId != value))
+				{
+					this._EntidadId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Detalle", DbType="VarChar(MAX)")]
+		public string Detalle
+		{
+			get
+			{
+				return this._Detalle;
+			}
+			set
+			{
+				if ((this._Detalle != value))
+				{
+					this._Detalle = value;
 				}
 			}
 		}
@@ -2081,6 +2643,12 @@ namespace Datos.Base_de_Datos
 		
 		private System.Nullable<long> _TelegramChatId;
 		
+		private int _IntentosFallidos;
+		
+		private System.Nullable<System.DateTime> _BloqueadoHasta;
+		
+		private System.Data.Linq.Binary _FotoPerfil;
+		
 		public sp_Usuarios_ListarResult()
 		{
 		}
@@ -2228,6 +2796,54 @@ namespace Datos.Base_de_Datos
 				}
 			}
 		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IntentosFallidos", DbType="Int NOT NULL")]
+		public int IntentosFallidos
+		{
+			get
+			{
+				return this._IntentosFallidos;
+			}
+			set
+			{
+				if ((this._IntentosFallidos != value))
+				{
+					this._IntentosFallidos = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BloqueadoHasta", DbType="DateTime")]
+		public System.Nullable<System.DateTime> BloqueadoHasta
+		{
+			get
+			{
+				return this._BloqueadoHasta;
+			}
+			set
+			{
+				if ((this._BloqueadoHasta != value))
+				{
+					this._BloqueadoHasta = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)")]
+		public System.Data.Linq.Binary FotoPerfil
+		{
+			get
+			{
+				return this._FotoPerfil;
+			}
+			set
+			{
+				if ((this._FotoPerfil != value))
+				{
+					this._FotoPerfil = value;
+				}
+			}
+		}
 	}
 	
 	public partial class sp_Usuarios_LoginResult
@@ -2250,6 +2866,12 @@ namespace Datos.Base_de_Datos
 		private bool _Estado;
 		
 		private System.Nullable<long> _TelegramChatId;
+		
+		private int _IntentosFallidos;
+		
+		private System.Nullable<System.DateTime> _BloqueadoHasta;
+		
+		private System.Data.Linq.Binary _FotoPerfil;
 		
 		public sp_Usuarios_LoginResult()
 		{
@@ -2395,6 +3017,54 @@ namespace Datos.Base_de_Datos
 				if ((this._TelegramChatId != value))
 				{
 					this._TelegramChatId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IntentosFallidos", DbType="Int NOT NULL")]
+		public int IntentosFallidos
+		{
+			get
+			{
+				return this._IntentosFallidos;
+			}
+			set
+			{
+				if ((this._IntentosFallidos != value))
+				{
+					this._IntentosFallidos = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BloqueadoHasta", DbType="DateTime")]
+		public System.Nullable<System.DateTime> BloqueadoHasta
+		{
+			get
+			{
+				return this._BloqueadoHasta;
+			}
+			set
+			{
+				if ((this._BloqueadoHasta != value))
+				{
+					this._BloqueadoHasta = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)")]
+		public System.Data.Linq.Binary FotoPerfil
+		{
+			get
+			{
+				return this._FotoPerfil;
+			}
+			set
+			{
+				if ((this._FotoPerfil != value))
+				{
+					this._FotoPerfil = value;
 				}
 			}
 		}

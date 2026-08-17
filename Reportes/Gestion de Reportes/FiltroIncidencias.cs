@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reportes.Gestion_de_Reportes
+namespace Reportes
 {
     public class FiltroIncidencias
     {
