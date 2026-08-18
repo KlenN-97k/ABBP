@@ -260,6 +260,30 @@ namespace Presentacion
             txtEmpleado.Focus();
         }
 
+        private void EnviarNotificacionSiCorresponde(Incidencia incidencia, string nombreEstadoNuevo)
+        {
+            if (nombreEstadoNuevo != "Resuelto" && nombreEstadoNuevo != "Cerrado") return;
+            if (!incidencia.IdTecnicoAsignado.HasValue) return;
+
+            try
+            {
+                Usuario tecnico = usuarioLN.ShowUsuario()
+                    .FirstOrDefault(u => u.IdUsuario == incidencia.IdTecnicoAsignado.Value);
+
+                if (tecnico?.TelegramChatId == null) return; // técnico no vinculado, no se puede avisar
+
+                string mensaje =
+                    $"✅ Incidencia {incidencia.NumeroTicket} marcada como {nombreEstadoNuevo}.\n\n" +
+                    $"Empleado: {incidencia.Empleado}\nTipo: {incidencia.TipoIncidencia}";
+
+                Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensaje);
+            }
+            catch
+            {
+                // Best effort: si falla el envío, no debe romper el guardado de la incidencia.
+            }
+        }
+
         private void btnGuardar_Click(object sender, EventArgs e)
         {
             if (!ValidarCampos()) return;
@@ -311,6 +335,7 @@ namespace Presentacion
                         incidenciaSeleccionada.IdIncidencia,
                         $"Ticket: {incidenciaSeleccionada.NumeroTicket} | Estado: {estadoAnterior} → {nuevoEstado}"
                     );
+                    EnviarNotificacionSiCorresponde(incidenciaSeleccionada, nuevoEstado);
                 }
 
                 CargarGrid();

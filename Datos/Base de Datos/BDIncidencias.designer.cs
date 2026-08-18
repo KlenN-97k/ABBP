@@ -36,9 +36,6 @@ namespace Datos.Base_de_Datos
     partial void InsertPrioridades(Prioridades instance);
     partial void UpdatePrioridades(Prioridades instance);
     partial void DeletePrioridades(Prioridades instance);
-    partial void InsertIncidencias(Incidencias instance);
-    partial void UpdateIncidencias(Incidencias instance);
-    partial void DeleteIncidencias(Incidencias instance);
     partial void InsertGuias(Guias instance);
     partial void UpdateGuias(Guias instance);
     partial void DeleteGuias(Guias instance);
@@ -51,10 +48,13 @@ namespace Datos.Base_de_Datos
     partial void InsertAreas(Areas instance);
     partial void UpdateAreas(Areas instance);
     partial void DeleteAreas(Areas instance);
+    partial void InsertIncidencias(Incidencias instance);
+    partial void UpdateIncidencias(Incidencias instance);
+    partial void DeleteIncidencias(Incidencias instance);
     #endregion
 		
 		public BDIncidenciasDataContext() : 
-				base(global::Datos.Properties.Settings.Default.DBIncidenciasConnectionString1, mappingSource)
+				base(global::Datos.Properties.Settings.Default.DBIncidenciasConnectionString2, mappingSource)
 		{
 			OnCreated();
 		}
@@ -99,14 +99,6 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		public System.Data.Linq.Table<Incidencias> Incidencias
-		{
-			get
-			{
-				return this.GetTable<Incidencias>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Guias> Guias
 		{
 			get
@@ -136,6 +128,14 @@ namespace Datos.Base_de_Datos
 			get
 			{
 				return this.GetTable<Areas>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Incidencias> Incidencias
+		{
+			get
+			{
+				return this.GetTable<Incidencias>();
 			}
 		}
 		
@@ -373,9 +373,9 @@ namespace Datos.Base_de_Datos
 		
 		private System.Data.Linq.Binary _FotoPerfil;
 		
-		private EntitySet<Incidencias> _Incidencias;
-		
 		private EntitySet<Auditoria> _Auditoria;
+		
+		private EntitySet<Incidencias> _Incidencias;
 		
     #region Definiciones de métodos de extensibilidad
     partial void OnLoaded();
@@ -409,8 +409,8 @@ namespace Datos.Base_de_Datos
 		
 		public Usuarios()
 		{
-			this._Incidencias = new EntitySet<Incidencias>(new Action<Incidencias>(this.attach_Incidencias), new Action<Incidencias>(this.detach_Incidencias));
 			this._Auditoria = new EntitySet<Auditoria>(new Action<Auditoria>(this.attach_Auditoria), new Action<Auditoria>(this.detach_Auditoria));
+			this._Incidencias = new EntitySet<Incidencias>(new Action<Incidencias>(this.attach_Incidencias), new Action<Incidencias>(this.detach_Incidencias));
 			OnCreated();
 		}
 		
@@ -634,7 +634,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary FotoPerfil
 		{
 			get
@@ -654,19 +654,6 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Usuarios_Incidencias", Storage="_Incidencias", ThisKey="IdUsuario", OtherKey="IdTecnicoAsignado")]
-		public EntitySet<Incidencias> Incidencias
-		{
-			get
-			{
-				return this._Incidencias;
-			}
-			set
-			{
-				this._Incidencias.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Usuarios_Auditoria", Storage="_Auditoria", ThisKey="IdUsuario", OtherKey="IdUsuario")]
 		public EntitySet<Auditoria> Auditoria
 		{
@@ -677,6 +664,19 @@ namespace Datos.Base_de_Datos
 			set
 			{
 				this._Auditoria.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Usuarios_Incidencias", Storage="_Incidencias", ThisKey="IdUsuario", OtherKey="IdTecnicoAsignado")]
+		public EntitySet<Incidencias> Incidencias
+		{
+			get
+			{
+				return this._Incidencias;
+			}
+			set
+			{
+				this._Incidencias.Assign(value);
 			}
 		}
 		
@@ -700,18 +700,6 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		private void attach_Incidencias(Incidencias entity)
-		{
-			this.SendPropertyChanging();
-			entity.Usuarios = this;
-		}
-		
-		private void detach_Incidencias(Incidencias entity)
-		{
-			this.SendPropertyChanging();
-			entity.Usuarios = null;
-		}
-		
 		private void attach_Auditoria(Auditoria entity)
 		{
 			this.SendPropertyChanging();
@@ -719,6 +707,18 @@ namespace Datos.Base_de_Datos
 		}
 		
 		private void detach_Auditoria(Auditoria entity)
+		{
+			this.SendPropertyChanging();
+			entity.Usuarios = null;
+		}
+		
+		private void attach_Incidencias(Incidencias entity)
+		{
+			this.SendPropertyChanging();
+			entity.Usuarios = this;
+		}
+		
+		private void detach_Incidencias(Incidencias entity)
 		{
 			this.SendPropertyChanging();
 			entity.Usuarios = null;
@@ -836,496 +836,6 @@ namespace Datos.Base_de_Datos
 		{
 			this.SendPropertyChanging();
 			entity.Prioridades = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Incidencias")]
-	public partial class Incidencias : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _IdIncidencia;
-		
-		private string _NumeroTicket;
-		
-		private System.DateTime _Fecha;
-		
-		private string _Empleado;
-		
-		private int _IdArea;
-		
-		private string _TipoIncidencia;
-		
-		private string _Descripcion;
-		
-		private int _IdPrioridad;
-		
-		private int _IdEstado;
-		
-		private System.Nullable<int> _IdTecnicoAsignado;
-		
-		private System.Nullable<System.DateTime> _FechaSolucion;
-		
-		private string _Observaciones;
-		
-		private EntityRef<Prioridades> _Prioridades;
-		
-		private EntityRef<Usuarios> _Usuarios;
-		
-		private EntityRef<Estados> _Estados;
-		
-		private EntityRef<Areas> _Areas;
-		
-    #region Definiciones de métodos de extensibilidad
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdIncidenciaChanging(int value);
-    partial void OnIdIncidenciaChanged();
-    partial void OnNumeroTicketChanging(string value);
-    partial void OnNumeroTicketChanged();
-    partial void OnFechaChanging(System.DateTime value);
-    partial void OnFechaChanged();
-    partial void OnEmpleadoChanging(string value);
-    partial void OnEmpleadoChanged();
-    partial void OnIdAreaChanging(int value);
-    partial void OnIdAreaChanged();
-    partial void OnTipoIncidenciaChanging(string value);
-    partial void OnTipoIncidenciaChanged();
-    partial void OnDescripcionChanging(string value);
-    partial void OnDescripcionChanged();
-    partial void OnIdPrioridadChanging(int value);
-    partial void OnIdPrioridadChanged();
-    partial void OnIdEstadoChanging(int value);
-    partial void OnIdEstadoChanged();
-    partial void OnIdTecnicoAsignadoChanging(System.Nullable<int> value);
-    partial void OnIdTecnicoAsignadoChanged();
-    partial void OnFechaSolucionChanging(System.Nullable<System.DateTime> value);
-    partial void OnFechaSolucionChanged();
-    partial void OnObservacionesChanging(string value);
-    partial void OnObservacionesChanged();
-    #endregion
-		
-		public Incidencias()
-		{
-			this._Prioridades = default(EntityRef<Prioridades>);
-			this._Usuarios = default(EntityRef<Usuarios>);
-			this._Estados = default(EntityRef<Estados>);
-			this._Areas = default(EntityRef<Areas>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdIncidencia", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int IdIncidencia
-		{
-			get
-			{
-				return this._IdIncidencia;
-			}
-			set
-			{
-				if ((this._IdIncidencia != value))
-				{
-					this.OnIdIncidenciaChanging(value);
-					this.SendPropertyChanging();
-					this._IdIncidencia = value;
-					this.SendPropertyChanged("IdIncidencia");
-					this.OnIdIncidenciaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NumeroTicket", AutoSync=AutoSync.Always, DbType="VarChar(14)", IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
-		public string NumeroTicket
-		{
-			get
-			{
-				return this._NumeroTicket;
-			}
-			set
-			{
-				if ((this._NumeroTicket != value))
-				{
-					this.OnNumeroTicketChanging(value);
-					this.SendPropertyChanging();
-					this._NumeroTicket = value;
-					this.SendPropertyChanged("NumeroTicket");
-					this.OnNumeroTicketChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Fecha", DbType="DateTime NOT NULL")]
-		public System.DateTime Fecha
-		{
-			get
-			{
-				return this._Fecha;
-			}
-			set
-			{
-				if ((this._Fecha != value))
-				{
-					this.OnFechaChanging(value);
-					this.SendPropertyChanging();
-					this._Fecha = value;
-					this.SendPropertyChanged("Fecha");
-					this.OnFechaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Empleado", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
-		public string Empleado
-		{
-			get
-			{
-				return this._Empleado;
-			}
-			set
-			{
-				if ((this._Empleado != value))
-				{
-					this.OnEmpleadoChanging(value);
-					this.SendPropertyChanging();
-					this._Empleado = value;
-					this.SendPropertyChanged("Empleado");
-					this.OnEmpleadoChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdArea", DbType="Int NOT NULL")]
-		public int IdArea
-		{
-			get
-			{
-				return this._IdArea;
-			}
-			set
-			{
-				if ((this._IdArea != value))
-				{
-					if (this._Areas.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnIdAreaChanging(value);
-					this.SendPropertyChanging();
-					this._IdArea = value;
-					this.SendPropertyChanged("IdArea");
-					this.OnIdAreaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TipoIncidencia", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
-		public string TipoIncidencia
-		{
-			get
-			{
-				return this._TipoIncidencia;
-			}
-			set
-			{
-				if ((this._TipoIncidencia != value))
-				{
-					this.OnTipoIncidenciaChanging(value);
-					this.SendPropertyChanging();
-					this._TipoIncidencia = value;
-					this.SendPropertyChanged("TipoIncidencia");
-					this.OnTipoIncidenciaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Descripcion", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string Descripcion
-		{
-			get
-			{
-				return this._Descripcion;
-			}
-			set
-			{
-				if ((this._Descripcion != value))
-				{
-					this.OnDescripcionChanging(value);
-					this.SendPropertyChanging();
-					this._Descripcion = value;
-					this.SendPropertyChanged("Descripcion");
-					this.OnDescripcionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdPrioridad", DbType="Int NOT NULL")]
-		public int IdPrioridad
-		{
-			get
-			{
-				return this._IdPrioridad;
-			}
-			set
-			{
-				if ((this._IdPrioridad != value))
-				{
-					if (this._Prioridades.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnIdPrioridadChanging(value);
-					this.SendPropertyChanging();
-					this._IdPrioridad = value;
-					this.SendPropertyChanged("IdPrioridad");
-					this.OnIdPrioridadChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdEstado", DbType="Int NOT NULL")]
-		public int IdEstado
-		{
-			get
-			{
-				return this._IdEstado;
-			}
-			set
-			{
-				if ((this._IdEstado != value))
-				{
-					if (this._Estados.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnIdEstadoChanging(value);
-					this.SendPropertyChanging();
-					this._IdEstado = value;
-					this.SendPropertyChanged("IdEstado");
-					this.OnIdEstadoChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdTecnicoAsignado", DbType="Int")]
-		public System.Nullable<int> IdTecnicoAsignado
-		{
-			get
-			{
-				return this._IdTecnicoAsignado;
-			}
-			set
-			{
-				if ((this._IdTecnicoAsignado != value))
-				{
-					if (this._Usuarios.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnIdTecnicoAsignadoChanging(value);
-					this.SendPropertyChanging();
-					this._IdTecnicoAsignado = value;
-					this.SendPropertyChanged("IdTecnicoAsignado");
-					this.OnIdTecnicoAsignadoChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FechaSolucion", DbType="DateTime")]
-		public System.Nullable<System.DateTime> FechaSolucion
-		{
-			get
-			{
-				return this._FechaSolucion;
-			}
-			set
-			{
-				if ((this._FechaSolucion != value))
-				{
-					this.OnFechaSolucionChanging(value);
-					this.SendPropertyChanging();
-					this._FechaSolucion = value;
-					this.SendPropertyChanged("FechaSolucion");
-					this.OnFechaSolucionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Observaciones", DbType="VarChar(MAX)")]
-		public string Observaciones
-		{
-			get
-			{
-				return this._Observaciones;
-			}
-			set
-			{
-				if ((this._Observaciones != value))
-				{
-					this.OnObservacionesChanging(value);
-					this.SendPropertyChanging();
-					this._Observaciones = value;
-					this.SendPropertyChanged("Observaciones");
-					this.OnObservacionesChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Prioridades_Incidencias", Storage="_Prioridades", ThisKey="IdPrioridad", OtherKey="IdPrioridad", IsForeignKey=true)]
-		public Prioridades Prioridades
-		{
-			get
-			{
-				return this._Prioridades.Entity;
-			}
-			set
-			{
-				Prioridades previousValue = this._Prioridades.Entity;
-				if (((previousValue != value) 
-							|| (this._Prioridades.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Prioridades.Entity = null;
-						previousValue.Incidencias.Remove(this);
-					}
-					this._Prioridades.Entity = value;
-					if ((value != null))
-					{
-						value.Incidencias.Add(this);
-						this._IdPrioridad = value.IdPrioridad;
-					}
-					else
-					{
-						this._IdPrioridad = default(int);
-					}
-					this.SendPropertyChanged("Prioridades");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Usuarios_Incidencias", Storage="_Usuarios", ThisKey="IdTecnicoAsignado", OtherKey="IdUsuario", IsForeignKey=true)]
-		public Usuarios Usuarios
-		{
-			get
-			{
-				return this._Usuarios.Entity;
-			}
-			set
-			{
-				Usuarios previousValue = this._Usuarios.Entity;
-				if (((previousValue != value) 
-							|| (this._Usuarios.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Usuarios.Entity = null;
-						previousValue.Incidencias.Remove(this);
-					}
-					this._Usuarios.Entity = value;
-					if ((value != null))
-					{
-						value.Incidencias.Add(this);
-						this._IdTecnicoAsignado = value.IdUsuario;
-					}
-					else
-					{
-						this._IdTecnicoAsignado = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Usuarios");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Estados_Incidencias", Storage="_Estados", ThisKey="IdEstado", OtherKey="IdEstado", IsForeignKey=true)]
-		public Estados Estados
-		{
-			get
-			{
-				return this._Estados.Entity;
-			}
-			set
-			{
-				Estados previousValue = this._Estados.Entity;
-				if (((previousValue != value) 
-							|| (this._Estados.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Estados.Entity = null;
-						previousValue.Incidencias.Remove(this);
-					}
-					this._Estados.Entity = value;
-					if ((value != null))
-					{
-						value.Incidencias.Add(this);
-						this._IdEstado = value.IdEstado;
-					}
-					else
-					{
-						this._IdEstado = default(int);
-					}
-					this.SendPropertyChanged("Estados");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Areas_Incidencias", Storage="_Areas", ThisKey="IdArea", OtherKey="IdArea", IsForeignKey=true)]
-		public Areas Areas
-		{
-			get
-			{
-				return this._Areas.Entity;
-			}
-			set
-			{
-				Areas previousValue = this._Areas.Entity;
-				if (((previousValue != value) 
-							|| (this._Areas.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Areas.Entity = null;
-						previousValue.Incidencias.Remove(this);
-					}
-					this._Areas.Entity = value;
-					if ((value != null))
-					{
-						value.Incidencias.Add(this);
-						this._IdArea = value.IdArea;
-					}
-					else
-					{
-						this._IdArea = default(int);
-					}
-					this.SendPropertyChanged("Areas");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 	
@@ -1959,6 +1469,496 @@ namespace Datos.Base_de_Datos
 		{
 			this.SendPropertyChanging();
 			entity.Areas = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Incidencias")]
+	public partial class Incidencias : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _IdIncidencia;
+		
+		private System.DateTime _Fecha;
+		
+		private string _Empleado;
+		
+		private int _IdArea;
+		
+		private string _TipoIncidencia;
+		
+		private string _Descripcion;
+		
+		private int _IdPrioridad;
+		
+		private int _IdEstado;
+		
+		private System.Nullable<int> _IdTecnicoAsignado;
+		
+		private System.Nullable<System.DateTime> _FechaSolucion;
+		
+		private string _Observaciones;
+		
+		private string _NumeroTicket;
+		
+		private EntityRef<Areas> _Areas;
+		
+		private EntityRef<Estados> _Estados;
+		
+		private EntityRef<Prioridades> _Prioridades;
+		
+		private EntityRef<Usuarios> _Usuarios;
+		
+    #region Definiciones de métodos de extensibilidad
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdIncidenciaChanging(int value);
+    partial void OnIdIncidenciaChanged();
+    partial void OnFechaChanging(System.DateTime value);
+    partial void OnFechaChanged();
+    partial void OnEmpleadoChanging(string value);
+    partial void OnEmpleadoChanged();
+    partial void OnIdAreaChanging(int value);
+    partial void OnIdAreaChanged();
+    partial void OnTipoIncidenciaChanging(string value);
+    partial void OnTipoIncidenciaChanged();
+    partial void OnDescripcionChanging(string value);
+    partial void OnDescripcionChanged();
+    partial void OnIdPrioridadChanging(int value);
+    partial void OnIdPrioridadChanged();
+    partial void OnIdEstadoChanging(int value);
+    partial void OnIdEstadoChanged();
+    partial void OnIdTecnicoAsignadoChanging(System.Nullable<int> value);
+    partial void OnIdTecnicoAsignadoChanged();
+    partial void OnFechaSolucionChanging(System.Nullable<System.DateTime> value);
+    partial void OnFechaSolucionChanged();
+    partial void OnObservacionesChanging(string value);
+    partial void OnObservacionesChanged();
+    partial void OnNumeroTicketChanging(string value);
+    partial void OnNumeroTicketChanged();
+    #endregion
+		
+		public Incidencias()
+		{
+			this._Areas = default(EntityRef<Areas>);
+			this._Estados = default(EntityRef<Estados>);
+			this._Prioridades = default(EntityRef<Prioridades>);
+			this._Usuarios = default(EntityRef<Usuarios>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdIncidencia", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int IdIncidencia
+		{
+			get
+			{
+				return this._IdIncidencia;
+			}
+			set
+			{
+				if ((this._IdIncidencia != value))
+				{
+					this.OnIdIncidenciaChanging(value);
+					this.SendPropertyChanging();
+					this._IdIncidencia = value;
+					this.SendPropertyChanged("IdIncidencia");
+					this.OnIdIncidenciaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Fecha", DbType="DateTime NOT NULL")]
+		public System.DateTime Fecha
+		{
+			get
+			{
+				return this._Fecha;
+			}
+			set
+			{
+				if ((this._Fecha != value))
+				{
+					this.OnFechaChanging(value);
+					this.SendPropertyChanging();
+					this._Fecha = value;
+					this.SendPropertyChanged("Fecha");
+					this.OnFechaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Empleado", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
+		public string Empleado
+		{
+			get
+			{
+				return this._Empleado;
+			}
+			set
+			{
+				if ((this._Empleado != value))
+				{
+					this.OnEmpleadoChanging(value);
+					this.SendPropertyChanging();
+					this._Empleado = value;
+					this.SendPropertyChanged("Empleado");
+					this.OnEmpleadoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdArea", DbType="Int NOT NULL")]
+		public int IdArea
+		{
+			get
+			{
+				return this._IdArea;
+			}
+			set
+			{
+				if ((this._IdArea != value))
+				{
+					if (this._Areas.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnIdAreaChanging(value);
+					this.SendPropertyChanging();
+					this._IdArea = value;
+					this.SendPropertyChanged("IdArea");
+					this.OnIdAreaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TipoIncidencia", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
+		public string TipoIncidencia
+		{
+			get
+			{
+				return this._TipoIncidencia;
+			}
+			set
+			{
+				if ((this._TipoIncidencia != value))
+				{
+					this.OnTipoIncidenciaChanging(value);
+					this.SendPropertyChanging();
+					this._TipoIncidencia = value;
+					this.SendPropertyChanged("TipoIncidencia");
+					this.OnTipoIncidenciaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Descripcion", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string Descripcion
+		{
+			get
+			{
+				return this._Descripcion;
+			}
+			set
+			{
+				if ((this._Descripcion != value))
+				{
+					this.OnDescripcionChanging(value);
+					this.SendPropertyChanging();
+					this._Descripcion = value;
+					this.SendPropertyChanged("Descripcion");
+					this.OnDescripcionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdPrioridad", DbType="Int NOT NULL")]
+		public int IdPrioridad
+		{
+			get
+			{
+				return this._IdPrioridad;
+			}
+			set
+			{
+				if ((this._IdPrioridad != value))
+				{
+					if (this._Prioridades.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnIdPrioridadChanging(value);
+					this.SendPropertyChanging();
+					this._IdPrioridad = value;
+					this.SendPropertyChanged("IdPrioridad");
+					this.OnIdPrioridadChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdEstado", DbType="Int NOT NULL")]
+		public int IdEstado
+		{
+			get
+			{
+				return this._IdEstado;
+			}
+			set
+			{
+				if ((this._IdEstado != value))
+				{
+					if (this._Estados.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnIdEstadoChanging(value);
+					this.SendPropertyChanging();
+					this._IdEstado = value;
+					this.SendPropertyChanged("IdEstado");
+					this.OnIdEstadoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdTecnicoAsignado", DbType="Int")]
+		public System.Nullable<int> IdTecnicoAsignado
+		{
+			get
+			{
+				return this._IdTecnicoAsignado;
+			}
+			set
+			{
+				if ((this._IdTecnicoAsignado != value))
+				{
+					if (this._Usuarios.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnIdTecnicoAsignadoChanging(value);
+					this.SendPropertyChanging();
+					this._IdTecnicoAsignado = value;
+					this.SendPropertyChanged("IdTecnicoAsignado");
+					this.OnIdTecnicoAsignadoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FechaSolucion", DbType="DateTime")]
+		public System.Nullable<System.DateTime> FechaSolucion
+		{
+			get
+			{
+				return this._FechaSolucion;
+			}
+			set
+			{
+				if ((this._FechaSolucion != value))
+				{
+					this.OnFechaSolucionChanging(value);
+					this.SendPropertyChanging();
+					this._FechaSolucion = value;
+					this.SendPropertyChanged("FechaSolucion");
+					this.OnFechaSolucionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Observaciones", DbType="VarChar(MAX)")]
+		public string Observaciones
+		{
+			get
+			{
+				return this._Observaciones;
+			}
+			set
+			{
+				if ((this._Observaciones != value))
+				{
+					this.OnObservacionesChanging(value);
+					this.SendPropertyChanging();
+					this._Observaciones = value;
+					this.SendPropertyChanged("Observaciones");
+					this.OnObservacionesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NumeroTicket", AutoSync=AutoSync.Always, DbType="VarChar(15)", IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
+		public string NumeroTicket
+		{
+			get
+			{
+				return this._NumeroTicket;
+			}
+			set
+			{
+				if ((this._NumeroTicket != value))
+				{
+					this.OnNumeroTicketChanging(value);
+					this.SendPropertyChanging();
+					this._NumeroTicket = value;
+					this.SendPropertyChanged("NumeroTicket");
+					this.OnNumeroTicketChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Areas_Incidencias", Storage="_Areas", ThisKey="IdArea", OtherKey="IdArea", IsForeignKey=true)]
+		public Areas Areas
+		{
+			get
+			{
+				return this._Areas.Entity;
+			}
+			set
+			{
+				Areas previousValue = this._Areas.Entity;
+				if (((previousValue != value) 
+							|| (this._Areas.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Areas.Entity = null;
+						previousValue.Incidencias.Remove(this);
+					}
+					this._Areas.Entity = value;
+					if ((value != null))
+					{
+						value.Incidencias.Add(this);
+						this._IdArea = value.IdArea;
+					}
+					else
+					{
+						this._IdArea = default(int);
+					}
+					this.SendPropertyChanged("Areas");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Estados_Incidencias", Storage="_Estados", ThisKey="IdEstado", OtherKey="IdEstado", IsForeignKey=true)]
+		public Estados Estados
+		{
+			get
+			{
+				return this._Estados.Entity;
+			}
+			set
+			{
+				Estados previousValue = this._Estados.Entity;
+				if (((previousValue != value) 
+							|| (this._Estados.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Estados.Entity = null;
+						previousValue.Incidencias.Remove(this);
+					}
+					this._Estados.Entity = value;
+					if ((value != null))
+					{
+						value.Incidencias.Add(this);
+						this._IdEstado = value.IdEstado;
+					}
+					else
+					{
+						this._IdEstado = default(int);
+					}
+					this.SendPropertyChanged("Estados");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Prioridades_Incidencias", Storage="_Prioridades", ThisKey="IdPrioridad", OtherKey="IdPrioridad", IsForeignKey=true)]
+		public Prioridades Prioridades
+		{
+			get
+			{
+				return this._Prioridades.Entity;
+			}
+			set
+			{
+				Prioridades previousValue = this._Prioridades.Entity;
+				if (((previousValue != value) 
+							|| (this._Prioridades.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Prioridades.Entity = null;
+						previousValue.Incidencias.Remove(this);
+					}
+					this._Prioridades.Entity = value;
+					if ((value != null))
+					{
+						value.Incidencias.Add(this);
+						this._IdPrioridad = value.IdPrioridad;
+					}
+					else
+					{
+						this._IdPrioridad = default(int);
+					}
+					this.SendPropertyChanged("Prioridades");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Usuarios_Incidencias", Storage="_Usuarios", ThisKey="IdTecnicoAsignado", OtherKey="IdUsuario", IsForeignKey=true)]
+		public Usuarios Usuarios
+		{
+			get
+			{
+				return this._Usuarios.Entity;
+			}
+			set
+			{
+				Usuarios previousValue = this._Usuarios.Entity;
+				if (((previousValue != value) 
+							|| (this._Usuarios.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Usuarios.Entity = null;
+						previousValue.Incidencias.Remove(this);
+					}
+					this._Usuarios.Entity = value;
+					if ((value != null))
+					{
+						value.Incidencias.Add(this);
+						this._IdTecnicoAsignado = value.IdUsuario;
+					}
+					else
+					{
+						this._IdTecnicoAsignado = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Usuarios");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -2829,7 +2829,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)", CanBeNull=true)]
 		public System.Data.Linq.Binary FotoPerfil
 		{
 			get
@@ -3053,7 +3053,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)", CanBeNull=true)]
 		public System.Data.Linq.Binary FotoPerfil
 		{
 			get

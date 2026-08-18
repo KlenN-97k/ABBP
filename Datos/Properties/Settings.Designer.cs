@@ -26,8 +26,19 @@ namespace Datos.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=tcp:Dereck,1433;Initial Catalog=DBIncidencias;Integrated Security=Tru" +
-            "e;TrustServerCertificate=True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=Dereck;Initial Catalog=DBIncidencias;Integrated Security=True;Encrypt" +
+            "=True;TrustServerCertificate=True")]
+        public string DBIncidenciasConnectionString1 {
+            get {
+                return ((string)(this["DBIncidenciasConnectionString1"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=CAJAMARCADA;Initial Catalog=DBIncidencias;Integrated Security=True;Tr" +
+            "ustServerCertificate=True")]
         public string DBIncidenciasConnectionString {
             get {
                 return ((string)(this["DBIncidenciasConnectionString"]));
@@ -37,11 +48,11 @@ namespace Datos.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=Dereck;Initial Catalog=DBIncidencias;Integrated Security=True;Encrypt" +
-            "=True;TrustServerCertificate=True")]
-        public string DBIncidenciasConnectionString1 {
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=CAJAMARCADA;Initial Catalog=DBIncidencias;Integrated Security=True;En" +
+            "crypt=True;TrustServerCertificate=True")]
+        public string DBIncidenciasConnectionString2 {
             get {
-                return ((string)(this["DBIncidenciasConnectionString1"]));
+                return ((string)(this["DBIncidenciasConnectionString2"]));
             }
         }
     }

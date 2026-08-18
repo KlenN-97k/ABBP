@@ -165,6 +165,15 @@ namespace Presentacion
                 if (confirmacion != DialogResult.Yes)
                 {
                     e.Cancel = true;
+
+                    if (!this.Visible)
+                    {
+                        this.BeginInvoke((MethodInvoker)delegate
+                        {
+                            this.Show();
+                            this.WindowState = FormWindowState.Maximized;
+                        });
+                    }
                 }
             }
         }

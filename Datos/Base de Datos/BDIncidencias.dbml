@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DBIncidencias" Class="BDIncidenciasDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=Dereck;Initial Catalog=DBIncidencias;Integrated Security=True;Encrypt=True;Trust Server Certificate=True" SettingsObjectName="Datos.Properties.Settings" SettingsPropertyName="DBIncidenciasConnectionString1" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=CAJAMARCADA;Initial Catalog=DBIncidencias;Integrated Security=True;Encrypt=True;Trust Server Certificate=True" SettingsObjectName="Datos.Properties.Settings" SettingsPropertyName="DBIncidenciasConnectionString2" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Usuarios" Member="Usuarios">
     <Type Name="Usuarios">
       <Column Name="IdUsuario" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -14,8 +14,8 @@
       <Column Name="IntentosFallidos" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="BloqueadoHasta" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="FotoPerfil" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" UpdateCheck="Never" />
-      <Association Name="Usuarios_Incidencias" Member="Incidencias" ThisKey="IdUsuario" OtherKey="IdTecnicoAsignado" Type="Incidencias" />
       <Association Name="Usuarios_Auditoria" Member="Auditoria" ThisKey="IdUsuario" OtherKey="IdUsuario" Type="Auditoria" />
+      <Association Name="Usuarios_Incidencias" Member="Incidencias" ThisKey="IdUsuario" OtherKey="IdTecnicoAsignado" Type="Incidencias" />
     </Type>
   </Table>
   <Table Name="dbo.Prioridades" Member="Prioridades">
@@ -23,26 +23,6 @@
       <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Association Name="Prioridades_Incidencias" Member="Incidencias" ThisKey="IdPrioridad" OtherKey="IdPrioridad" Type="Incidencias" />
-    </Type>
-  </Table>
-  <Table Name="dbo.Incidencias" Member="Incidencias">
-    <Type Name="Incidencias">
-      <Column Name="IdIncidencia" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="NumeroTicket" Type="System.String" DbType="VarChar(14)" IsDbGenerated="true" CanBeNull="true" UpdateCheck="Never" />
-      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="Empleado" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="TipoIncidencia" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Descripcion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="IdTecnicoAsignado" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="FechaSolucion" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="Observaciones" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Association Name="Prioridades_Incidencias" Member="Prioridades" ThisKey="IdPrioridad" OtherKey="IdPrioridad" Type="Prioridades" IsForeignKey="true" />
-      <Association Name="Usuarios_Incidencias" Member="Usuarios" ThisKey="IdTecnicoAsignado" OtherKey="IdUsuario" Type="Usuarios" IsForeignKey="true" />
-      <Association Name="Estados_Incidencias" Member="Estados" ThisKey="IdEstado" OtherKey="IdEstado" Type="Estados" IsForeignKey="true" />
-      <Association Name="Areas_Incidencias" Member="Areas" ThisKey="IdArea" OtherKey="IdArea" Type="Areas" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Guias" Member="Guias">
@@ -78,6 +58,26 @@
       <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="NombreArea" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
       <Association Name="Areas_Incidencias" Member="Incidencias" ThisKey="IdArea" OtherKey="IdArea" Type="Incidencias" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Incidencias" Member="Incidencias">
+    <Type Name="Incidencias">
+      <Column Name="IdIncidencia" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Empleado" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TipoIncidencia" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdTecnicoAsignado" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FechaSolucion" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Observaciones" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="NumeroTicket" Type="System.String" DbType="VarChar(15)" IsDbGenerated="true" CanBeNull="true" UpdateCheck="Never" />
+      <Association Name="Areas_Incidencias" Member="Areas" ThisKey="IdArea" OtherKey="IdArea" Type="Areas" IsForeignKey="true" />
+      <Association Name="Estados_Incidencias" Member="Estados" ThisKey="IdEstado" OtherKey="IdEstado" Type="Estados" IsForeignKey="true" />
+      <Association Name="Prioridades_Incidencias" Member="Prioridades" ThisKey="IdPrioridad" OtherKey="IdPrioridad" Type="Prioridades" IsForeignKey="true" />
+      <Association Name="Usuarios_Incidencias" Member="Usuarios" ThisKey="IdTecnicoAsignado" OtherKey="IdUsuario" Type="Usuarios" IsForeignKey="true" />
     </Type>
   </Table>
   <Function Name="dbo.sp_Areas_Eliminar" Method="sp_Areas_Eliminar">
