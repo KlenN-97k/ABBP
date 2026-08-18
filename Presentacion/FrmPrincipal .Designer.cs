@@ -61,7 +61,7 @@
             this.panelSidebar.Location = new System.Drawing.Point(0, 0);
             this.panelSidebar.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.panelSidebar.Name = "panelSidebar";
-            this.panelSidebar.Size = new System.Drawing.Size(352, 1055);
+            this.panelSidebar.Size = new System.Drawing.Size(352, 881);
             this.panelSidebar.TabIndex = 0;
             this.panelSidebar.Paint += new System.Windows.Forms.PaintEventHandler(this.panelSidebar_Paint);
             // 
@@ -72,7 +72,7 @@
             this.panelFooterUsuario.Controls.Add(this.btnCerrarSesion);
             this.panelFooterUsuario.Controls.Add(this.picUsuarioIcono);
             this.panelFooterUsuario.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelFooterUsuario.Location = new System.Drawing.Point(0, 906);
+            this.panelFooterUsuario.Location = new System.Drawing.Point(0, 732);
             this.panelFooterUsuario.Name = "panelFooterUsuario";
             this.panelFooterUsuario.Size = new System.Drawing.Size(352, 149);
             this.panelFooterUsuario.TabIndex = 10;
@@ -82,7 +82,7 @@
             this.lblUsuarioSidebar.AutoSize = true;
             this.lblUsuarioSidebar.Location = new System.Drawing.Point(145, 24);
             this.lblUsuarioSidebar.Name = "lblUsuarioSidebar";
-            this.lblUsuarioSidebar.Size = new System.Drawing.Size(79, 31);
+            this.lblUsuarioSidebar.Size = new System.Drawing.Size(65, 25);
             this.lblUsuarioSidebar.TabIndex = 1;
             this.lblUsuarioSidebar.Text = "label1";
             // 
@@ -237,10 +237,10 @@
             // 
             // FrmPrincipal
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 31F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(35)))), ((int)(((byte)(60)))));
-            this.ClientSize = new System.Drawing.Size(1924, 1055);
+            this.ClientSize = new System.Drawing.Size(1444, 881);
             this.Controls.Add(this.panelSidebar);
             this.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.White;
