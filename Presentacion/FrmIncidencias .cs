@@ -6,32 +6,125 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
 
 namespace Presentacion
 {
     public partial class FrmIncidencias : Form
     {
+        private readonly AuditoriaLN auditoriaLN = new AuditoriaLN();
         private readonly IncidenciaLN incidenciaLN = new IncidenciaLN();
         private readonly AreaLN areaLN = new AreaLN();
         private readonly PrioridadLN prioridadLN = new PrioridadLN();
         private readonly EstadoLN estadoLN = new EstadoLN();
         private readonly UsuarioLN usuarioLN = new UsuarioLN();
-
+        private readonly Usuario usuarioActual;
         private List<Incidencia> listaIncidencias;
+        private List<Incidencia> listaIncidenciasCompleta;
         private Incidencia incidenciaSeleccionada;
-        public FrmIncidencias()
+        private FiltroIncidencias filtroActual = new FiltroIncidencias();
+        private string ticketBusquedaActual = string.Empty;
+        private bool ordenAscendente = true;
+        private string columnaOrdenada = null;
+        public FrmIncidencias(Usuario usuarioActual)
         {
             InitializeComponent();
-            grid.SelectionChanged += grid_SelectionChanged; // aseguramos que quede enganchado
+            toolTip1.SetToolTip(btnNuevo, "Limpiar el formulario para crear una nueva incidencia");
+            toolTip1.SetToolTip(btnGuardar, "Guardar los cambios de la incidencia");
+            toolTip1.SetToolTip(btnEliminar, "Eliminar la incidencia seleccionada permanentemente");
+            toolTip1.SetToolTip(btnExportarPdf, "Exportar el listado actual a PDF");
+            toolTip1.SetToolTip(btnExportarExcel, "Exportar el listado actual a Excel");
+            toolTip1.SetToolTip(btnFiltros, "Filtrar por estado o rango de fechas");
+            toolTip1.SetToolTip(txtBusquedaRapida, "Buscar por número de ticket");
+            this.usuarioActual = usuarioActual;
+            grid.SelectionChanged += grid_SelectionChanged;
+            txtBusquedaRapida.TextChanged += txtBusquedaRapida_TextChanged;
+            grid.ColumnHeaderMouseClick += grid_ColumnHeaderMouseClick;  
             CargarCombos();
+            AplicarRestriccionesPorRol();
             CargarGrid();
             LimpiarFormulario();
         }
+        private void txtBusquedaRapida_TextChanged(object sender, EventArgs e)
+        {
+            ticketBusquedaActual = txtBusquedaRapida.Text.Trim();
+            AplicarFiltro();
+        }
+        private void grid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            string propiedad = grid.Columns[e.ColumnIndex].DataPropertyName;
+            if (string.IsNullOrEmpty(propiedad)) return;
+
+            if (columnaOrdenada == propiedad)
+                ordenAscendente = !ordenAscendente;
+            else
+            {
+                columnaOrdenada = propiedad;
+                ordenAscendente = true;
+            }
+
+            var propInfo = typeof(Incidencia).GetProperty(propiedad);
+            if (propInfo == null) return;
+
+            listaIncidencias = ordenAscendente
+                ? listaIncidencias.OrderBy(i => propInfo.GetValue(i)).ToList()
+                : listaIncidencias.OrderByDescending(i => propInfo.GetValue(i)).ToList();
+
+            grid.DataSource = null;
+            grid.DataSource = listaIncidencias;
+            AplicarFormatoColumnas();
+        }
+        private bool ValidarCampos()
+        {
+            errorProvider1.Clear();
+            bool esValido = true;
+
+            if (string.IsNullOrWhiteSpace(txtEmpleado.Text))
+            {
+                errorProvider1.SetError(txtEmpleado, "Este campo es obligatorio.");
+                esValido = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtTipo.Text))
+            {
+                errorProvider1.SetError(txtTipo, "Este campo es obligatorio.");
+                esValido = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtDescripcion.Text))
+            {
+                errorProvider1.SetError(txtDescripcion, "Este campo es obligatorio.");
+                esValido = false;
+            }
+
+            return esValido;
+        }
+        private void AplicarRestriccionesPorRol()
+        {
+            if (usuarioActual.Rol == "Usuario")
+            {
+                cboEstado.Enabled = false;
+                cboTecnico.Enabled = false;
+                DeshabilitarBoton(btnEliminar);
+            }
+            else if (usuarioActual.Rol == "Técnico")
+            {
+                cboTecnico.Enabled = false;
+                DeshabilitarBoton(btnEliminar);
+            }
+        }
+
+        private void DeshabilitarBoton(Button boton)
+        {
+            boton.Enabled = false;
+            boton.BackColor = Color.FromArgb(180, 180, 180);
+            boton.ForeColor = Color.FromArgb(230, 230, 230);
+        }
+
         private void CargarCombos()
         {
             cboArea.DataSource = areaLN.ShowArea();
@@ -60,29 +153,67 @@ namespace Presentacion
         {
             try
             {
-                listaIncidencias = incidenciaLN.ShowIncidencia();
-                grid.DataSource = null;
-                grid.DataSource = listaIncidencias;
+                listaIncidenciasCompleta = incidenciaLN.ShowIncidencia();
 
-                foreach (string columna in new[] { "IdIncidencia", "IdArea", "IdPrioridad", "IdEstado", "IdTecnicoAsignado", "Descripcion", "Observaciones" })
+                if (usuarioActual.Rol == "Usuario")
                 {
-                    if (grid.Columns[columna] != null) grid.Columns[columna].Visible = false;
+                    string nombreCompleto = $"{usuarioActual.Nombre} {usuarioActual.Apellido}";
+                    listaIncidenciasCompleta = listaIncidenciasCompleta
+                        .Where(i => i.Empleado == nombreCompleto)
+                        .ToList();
                 }
 
-                if (grid.Columns["NumeroTicket"] != null) grid.Columns["NumeroTicket"].HeaderText = "Ticket";
-                if (grid.Columns["NombreArea"] != null) grid.Columns["NombreArea"].HeaderText = "Área";
-                if (grid.Columns["TipoIncidencia"] != null) grid.Columns["TipoIncidencia"].HeaderText = "Tipo";
-                if (grid.Columns["NombrePrioridad"] != null) grid.Columns["NombrePrioridad"].HeaderText = "Prioridad";
-                if (grid.Columns["NombreEstado"] != null) grid.Columns["NombreEstado"].HeaderText = "Estado";
-                if (grid.Columns["TecnicoAsignado"] != null) grid.Columns["TecnicoAsignado"].HeaderText = "Técnico";
-                if (grid.Columns["FechaSolucion"] != null) grid.Columns["FechaSolucion"].HeaderText = "Fecha Solución";
-
-                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                AplicarFiltro();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void AplicarFiltro()
+        {
+            try
+            {
+                listaIncidencias = IncidenciaReportes.Filtrar(listaIncidenciasCompleta, filtroActual);
+
+                if (!string.IsNullOrWhiteSpace(ticketBusquedaActual))
+                {
+                    listaIncidencias = listaIncidencias
+                        .Where(i => i.NumeroTicket != null &&
+                                    i.NumeroTicket.IndexOf(ticketBusquedaActual, StringComparison.OrdinalIgnoreCase) >= 0)
+                        .ToList();
+                }
+
+                grid.DataSource = null;
+                grid.DataSource = listaIncidencias;
+                AplicarFormatoColumnas();
+                lblSinDatos.Text = listaIncidencias.Count == 0 ? "No hay incidencias registradas." : "";
+                lblSinDatos.Visible = listaIncidencias.Count == 0;
+                lblSinDatos.BringToFront();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void AplicarFormatoColumnas()
+        {
+            foreach (string columna in new[] { "IdIncidencia", "IdArea", "IdPrioridad", "IdEstado", "IdTecnicoAsignado", "Descripcion", "Observaciones" })
+            {
+                if (grid.Columns[columna] != null) grid.Columns[columna].Visible = false;
+            }
+
+            if (grid.Columns["NumeroTicket"] != null) grid.Columns["NumeroTicket"].HeaderText = "Ticket";
+            if (grid.Columns["NombreArea"] != null) grid.Columns["NombreArea"].HeaderText = "Área";
+            if (grid.Columns["TipoIncidencia"] != null) grid.Columns["TipoIncidencia"].HeaderText = "Tipo";
+            if (grid.Columns["NombrePrioridad"] != null) grid.Columns["NombrePrioridad"].HeaderText = "Prioridad";
+            if (grid.Columns["NombreEstado"] != null) grid.Columns["NombreEstado"].HeaderText = "Estado";
+            if (grid.Columns["TecnicoAsignado"] != null) grid.Columns["TecnicoAsignado"].HeaderText = "Técnico";
+            if (grid.Columns["FechaSolucion"] != null) grid.Columns["FechaSolucion"].HeaderText = "Fecha Solución";
+
+            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void grid_SelectionChanged(object sender, EventArgs e)
@@ -114,6 +245,9 @@ namespace Presentacion
 
         private void LimpiarFormulario()
         {
+            grid.CurrentCell = null;
+            grid.ClearSelection();
+
             incidenciaSeleccionada = null;
             txtEmpleado.Clear();
             txtTipo.Clear();
@@ -123,17 +257,19 @@ namespace Presentacion
             if (cboPrioridad.Items.Count > 0) cboPrioridad.SelectedIndex = 0;
             if (cboEstado.Items.Count > 0) cboEstado.SelectedIndex = 0;
             if (cboTecnico.Items.Count > 0) cboTecnico.SelectedIndex = 0;
-            grid.ClearSelection();
             txtEmpleado.Focus();
         }
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
+            if (!ValidarCampos()) return;
+
             try
             {
                 int? idTecnico = (int)cboTecnico.SelectedValue == 0 ? (int?)null : (int)cboTecnico.SelectedValue;
+                bool esNueva = incidenciaSeleccionada == null;
 
-                if (incidenciaSeleccionada == null)
+                if (esNueva)
                 {
                     Incidencia nueva = new Incidencia(
                         0, null, DateTime.Now, txtEmpleado.Text, (int)cboArea.SelectedValue,
@@ -141,9 +277,20 @@ namespace Presentacion
                         (int)cboEstado.SelectedValue, idTecnico, null, txtObservaciones.Text
                     );
                     incidenciaLN.InsertIncidencia(nueva);
+
+                    auditoriaLN.Registrar(
+                        usuarioActual.IdUsuario,
+                        $"{usuarioActual.Nombre} {usuarioActual.Apellido}",
+                        "Crear",
+                        "Incidencia",
+                        null,
+                        $"Empleado: {txtEmpleado.Text} | Tipo: {txtTipo.Text}"
+                    );
                 }
                 else
                 {
+                    string estadoAnterior = incidenciaSeleccionada.NombreEstado;
+
                     incidenciaSeleccionada.Empleado = txtEmpleado.Text;
                     incidenciaSeleccionada.IdArea = (int)cboArea.SelectedValue;
                     incidenciaSeleccionada.TipoIncidencia = txtTipo.Text;
@@ -154,6 +301,16 @@ namespace Presentacion
                     incidenciaSeleccionada.Observaciones = txtObservaciones.Text;
 
                     incidenciaLN.UpdateIncidencia(incidenciaSeleccionada);
+
+                    string nuevoEstado = cboEstado.Text;
+                    auditoriaLN.Registrar(
+                        usuarioActual.IdUsuario,
+                        $"{usuarioActual.Nombre} {usuarioActual.Apellido}",
+                        "Modificar",
+                        "Incidencia",
+                        incidenciaSeleccionada.IdIncidencia,
+                        $"Ticket: {incidenciaSeleccionada.NumeroTicket} | Estado: {estadoAnterior} → {nuevoEstado}"
+                    );
                 }
 
                 CargarGrid();
@@ -182,7 +339,20 @@ namespace Presentacion
 
             try
             {
+                string ticketEliminado = incidenciaSeleccionada.NumeroTicket;
+                int idEliminado = incidenciaSeleccionada.IdIncidencia;
+
                 incidenciaLN.DeleteIncidencia(incidenciaSeleccionada);
+
+                auditoriaLN.Registrar(
+                    usuarioActual.IdUsuario,
+                    $"{usuarioActual.Nombre} {usuarioActual.Apellido}",
+                    "Eliminar",
+                    "Incidencia",
+                    idEliminado,
+                    $"Ticket eliminado: {ticketEliminado}"
+                );
+
                 CargarGrid();
                 LimpiarFormulario();
             }
@@ -231,6 +401,50 @@ namespace Presentacion
                 }
             }
         }
-    
+
+        private void FrmIncidencias_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void grid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+        
+
+        private void btnFiltros_Click(object sender, EventArgs e)
+        {
+            using (FrmFiltroIncidencias dlg = new FrmFiltroIncidencias(estadoLN.ShowEstado(), filtroActual))
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    filtroActual = dlg.Filtro;
+                    AplicarFiltro();
+                }
+         
+            }}
+
+        private void FrmIncidencias_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            bool enCampoMultilinea = this.ActiveControl is TextBox tb && tb.Multiline;
+
+            if (e.KeyCode == Keys.Enter && !enCampoMultilinea)
+            {
+                btnGuardar.PerformClick();
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.Delete && !(this.ActiveControl is TextBox))
+            {
+                btnEliminar.PerformClick();
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.F5)
+            {
+                CargarGrid();
+                e.Handled = true;
+            }
+        }
     }
 }

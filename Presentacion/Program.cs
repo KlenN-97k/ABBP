@@ -17,6 +17,12 @@ namespace Presentacion
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            using (FrmSplash splash = new FrmSplash())
+            {
+                splash.ShowDialog();
+            }
+
             Application.Run(new FrmLogin());
         }
     }

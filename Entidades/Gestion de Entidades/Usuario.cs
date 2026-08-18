@@ -17,10 +17,10 @@ namespace Entidades.Gestion_de_Entidades
         private string rol;
         private bool estado;
         private long? telegramChatId;
-
+        private byte[] fotoPerfil;
         public Usuario() { }
 
-        public Usuario(int idUsuario, string nombre, string apellido, string correo, string usuarioLogin, string password, string rol, bool estado, long? telegramChatId = null)
+        public Usuario(int idUsuario, string nombre, string apellido, string correo, string usuarioLogin, string password, string rol, bool estado, long? telegramChatId = null, byte[] fotoPerfil = null)
         {
             this.IdUsuario = idUsuario;
             this.Nombre = nombre;
@@ -31,6 +31,7 @@ namespace Entidades.Gestion_de_Entidades
             this.Rol = rol;
             this.Estado = estado;
             this.TelegramChatId = telegramChatId;
+            this.FotoPerfil = fotoPerfil;
         }
 
         public int IdUsuario { get => idUsuario; set => idUsuario = value; }
@@ -42,6 +43,8 @@ namespace Entidades.Gestion_de_Entidades
         public string Rol { get => rol; set => rol = value; }
         public bool Estado { get => estado; set => estado = value; }
         public long? TelegramChatId { get => telegramChatId; set => telegramChatId = value; }
+
+        public byte[] FotoPerfil { get => fotoPerfil; set => fotoPerfil = value; }
     }
 
 }

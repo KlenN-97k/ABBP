@@ -1,25 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DBIncidencias" Class="BDIncidenciasDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=CAJAMARCADA;Initial Catalog=DBIncidencias;Integrated Security=True;Trust Server Certificate=True" SettingsObjectName="Datos.Properties.Settings" SettingsPropertyName="DBIncidenciasConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.Areas" Member="Areas">
-    <Type Name="Areas">
-      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="NombreArea" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
-      <Association Name="Areas_Incidencias" Member="Incidencias" ThisKey="IdArea" OtherKey="IdArea" Type="Incidencias" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=Dereck;Initial Catalog=DBIncidencias;Integrated Security=True;Encrypt=True;Trust Server Certificate=True" SettingsObjectName="Datos.Properties.Settings" SettingsPropertyName="DBIncidenciasConnectionString1" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Usuarios" Member="Usuarios">
+    <Type Name="Usuarios">
+      <Column Name="IdUsuario" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Apellido" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Correo" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Usuario" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Rol" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Estado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TelegramChatId" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="IntentosFallidos" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BloqueadoHasta" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FotoPerfil" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" UpdateCheck="Never" />
+      <Association Name="Usuarios_Incidencias" Member="Incidencias" ThisKey="IdUsuario" OtherKey="IdTecnicoAsignado" Type="Incidencias" />
+      <Association Name="Usuarios_Auditoria" Member="Auditoria" ThisKey="IdUsuario" OtherKey="IdUsuario" Type="Auditoria" />
     </Type>
   </Table>
-  <Table Name="dbo.Estados" Member="Estados">
-    <Type Name="Estados">
-      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+  <Table Name="dbo.Prioridades" Member="Prioridades">
+    <Type Name="Prioridades">
+      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Association Name="Estados_Incidencias" Member="Incidencias" ThisKey="IdEstado" OtherKey="IdEstado" Type="Incidencias" />
-    </Type>
-  </Table>
-  <Table Name="dbo.Guias" Member="Guias">
-    <Type Name="Guias">
-      <Column Name="IdGuia" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Titulo" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="Problema" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="Solucion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Association Name="Prioridades_Incidencias" Member="Incidencias" ThisKey="IdPrioridad" OtherKey="IdPrioridad" Type="Incidencias" />
     </Type>
   </Table>
   <Table Name="dbo.Incidencias" Member="Incidencias">
@@ -36,31 +39,45 @@
       <Column Name="IdTecnicoAsignado" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="FechaSolucion" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="Observaciones" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Association Name="Areas_Incidencias" Member="Areas" ThisKey="IdArea" OtherKey="IdArea" Type="Areas" IsForeignKey="true" />
-      <Association Name="Estados_Incidencias" Member="Estados" ThisKey="IdEstado" OtherKey="IdEstado" Type="Estados" IsForeignKey="true" />
       <Association Name="Prioridades_Incidencias" Member="Prioridades" ThisKey="IdPrioridad" OtherKey="IdPrioridad" Type="Prioridades" IsForeignKey="true" />
       <Association Name="Usuarios_Incidencias" Member="Usuarios" ThisKey="IdTecnicoAsignado" OtherKey="IdUsuario" Type="Usuarios" IsForeignKey="true" />
+      <Association Name="Estados_Incidencias" Member="Estados" ThisKey="IdEstado" OtherKey="IdEstado" Type="Estados" IsForeignKey="true" />
+      <Association Name="Areas_Incidencias" Member="Areas" ThisKey="IdArea" OtherKey="IdArea" Type="Areas" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.Prioridades" Member="Prioridades">
-    <Type Name="Prioridades">
-      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+  <Table Name="dbo.Guias" Member="Guias">
+    <Type Name="Guias">
+      <Column Name="IdGuia" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Titulo" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Problema" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Solucion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Estados" Member="Estados">
+    <Type Name="Estados">
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Association Name="Prioridades_Incidencias" Member="Incidencias" ThisKey="IdPrioridad" OtherKey="IdPrioridad" Type="Incidencias" />
+      <Association Name="Estados_Incidencias" Member="Incidencias" ThisKey="IdEstado" OtherKey="IdEstado" Type="Incidencias" />
     </Type>
   </Table>
-  <Table Name="dbo.Usuarios" Member="Usuarios">
-    <Type Name="Usuarios">
-      <Column Name="IdUsuario" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Nombre" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Apellido" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Correo" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="Usuario" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Password" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="Rol" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Estado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Column Name="TelegramChatId" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
-      <Association Name="Usuarios_Incidencias" Member="Incidencias" ThisKey="IdUsuario" OtherKey="IdTecnicoAsignado" Type="Incidencias" />
+  <Table Name="dbo.Auditoria" Member="Auditoria">
+    <Type Name="Auditoria">
+      <Column Name="IdAuditoria" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdUsuario" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="NombreUsuario" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Accion" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Entidad" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="EntidadId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Detalle" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Association Name="Usuarios_Auditoria" Member="Usuarios" ThisKey="IdUsuario" OtherKey="IdUsuario" Type="Usuarios" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Areas" Member="Areas">
+    <Type Name="Areas">
+      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="NombreArea" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Association Name="Areas_Incidencias" Member="Incidencias" ThisKey="IdArea" OtherKey="IdArea" Type="Incidencias" />
     </Type>
   </Table>
   <Function Name="dbo.sp_Areas_Eliminar" Method="sp_Areas_Eliminar">
@@ -81,6 +98,27 @@
     <Parameter Name="IdArea" Parameter="idArea" Type="System.Int32" DbType="Int" />
     <Parameter Name="NombreArea" Parameter="nombreArea" Type="System.String" DbType="VarChar(100)" />
     <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Auditoria_Insertar" Method="sp_Auditoria_Insertar">
+    <Parameter Name="IdUsuario" Parameter="idUsuario" Type="System.Int32" DbType="Int" />
+    <Parameter Name="NombreUsuario" Parameter="nombreUsuario" Type="System.String" DbType="VarChar(150)" />
+    <Parameter Name="Accion" Parameter="accion" Type="System.String" DbType="VarChar(50)" />
+    <Parameter Name="Entidad" Parameter="entidad" Type="System.String" DbType="VarChar(50)" />
+    <Parameter Name="EntidadId" Parameter="entidadId" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Detalle" Parameter="detalle" Type="System.String" DbType="VarChar(MAX)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Auditoria_Listar" Method="sp_Auditoria_Listar">
+    <ElementType Name="sp_Auditoria_ListarResult">
+      <Column Name="IdAuditoria" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdUsuario" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="NombreUsuario" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Accion" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Entidad" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="EntidadId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Detalle" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+    </ElementType>
   </Function>
   <Function Name="dbo.sp_Estados_Eliminar" Method="sp_Estados_Eliminar">
     <Parameter Name="IdEstado" Parameter="idEstado" Type="System.Int32" DbType="Int" />
@@ -218,6 +256,9 @@
       <Column Name="Rol" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Estado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="TelegramChatId" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="IntentosFallidos" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BloqueadoHasta" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FotoPerfil" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" />
     </ElementType>
   </Function>
   <Function Name="dbo.sp_Usuarios_Login" Method="sp_Usuarios_Login">
@@ -232,6 +273,9 @@
       <Column Name="Rol" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Estado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="TelegramChatId" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="IntentosFallidos" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BloqueadoHasta" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FotoPerfil" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" />
     </ElementType>
   </Function>
   <Function Name="dbo.sp_Usuarios_Modificar" Method="sp_Usuarios_Modificar">
@@ -244,6 +288,15 @@
     <Parameter Name="Rol" Parameter="rol" Type="System.String" DbType="VarChar(50)" />
     <Parameter Name="Estado" Parameter="estado" Type="System.Boolean" DbType="Bit" />
     <Parameter Name="TelegramChatId" Parameter="telegramChatId" Type="System.Int64" DbType="BigInt" />
+    <Parameter Name="FotoPerfil" Parameter="fotoPerfil" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Usuarios_RegistrarIntentoFallido" Method="sp_Usuarios_RegistrarIntentoFallido">
+    <Parameter Name="IdUsuario" Parameter="idUsuario" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Usuarios_ResetearIntentos" Method="sp_Usuarios_ResetearIntentos">
+    <Parameter Name="IdUsuario" Parameter="idUsuario" Type="System.Int32" DbType="Int" />
     <Return Type="System.Int32" />
   </Function>
 </Database>

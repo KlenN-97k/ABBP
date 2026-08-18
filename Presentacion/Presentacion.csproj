@@ -32,11 +32,16 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon1.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
       <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,17 +53,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CorreoService.cs" />
+    <Compile Include="FrmAcercaDe.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmAcercaDe.Designer.cs">
+      <DependentUpon>FrmAcercaDe.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmAreas.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmAreas.Designer.cs">
       <DependentUpon>FrmAreas.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmAuditoria.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmAuditoria.Designer.cs">
+      <DependentUpon>FrmAuditoria.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmDashboard.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmDashboard.Designer.cs">
       <DependentUpon>FrmDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmFiltroIncidencias.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmFiltroIncidencias.Designer.cs">
+      <DependentUpon>FrmFiltroIncidencias.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmGuias .cs">
       <SubType>Form</SubType>
@@ -78,17 +102,29 @@
     <Compile Include="FrmLogin.Designer.cs">
       <DependentUpon>FrmLogin.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmManual.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmManual.Designer.cs">
+      <DependentUpon>FrmManual.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmPerfil.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmPerfil.Designer.cs">
+      <DependentUpon>FrmPerfil.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmPrincipal .cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmPrincipal .Designer.cs">
       <DependentUpon>FrmPrincipal .cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmPruebaReportes.cs">
+    <Compile Include="FrmSplash.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmPruebaReportes.Designer.cs">
-      <DependentUpon>FrmPruebaReportes.cs</DependentUpon>
+    <Compile Include="FrmSplash.Designer.cs">
+      <DependentUpon>FrmSplash.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmUsuarios.cs">
       <SubType>Form</SubType>
@@ -99,17 +135,41 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RendererMenu .cs" />
+    <EmbeddedResource Include="FrmAcercaDe.resx">
+      <DependentUpon>FrmAcercaDe.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmAreas.resx">
+      <DependentUpon>FrmAreas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmAuditoria.resx">
+      <DependentUpon>FrmAuditoria.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmDashboard.resx">
+      <DependentUpon>FrmDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmFiltroIncidencias.resx">
+      <DependentUpon>FrmFiltroIncidencias.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmGuias .resx">
+      <DependentUpon>FrmGuias .cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmIncidencias .resx">
       <DependentUpon>FrmIncidencias .cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmLogin.resx">
       <DependentUpon>FrmLogin.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FrmManual.resx">
+      <DependentUpon>FrmManual.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmPerfil.resx">
+      <DependentUpon>FrmPerfil.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmPrincipal .resx">
       <DependentUpon>FrmPrincipal .cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmPruebaReportes.resx">
-      <DependentUpon>FrmPruebaReportes.cs</DependentUpon>
+    <EmbeddedResource Include="FrmSplash.resx">
+      <DependentUpon>FrmSplash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmUsuarios.resx">
       <DependentUpon>FrmUsuarios.cs</DependentUpon>
@@ -153,6 +213,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="icon1.ico" />
     <Content Include="imagenes\16 colors.png" />
     <Content Include="imagenes\256 colors.png" />
     <Content Include="imagenes\3d bar chart.png" />
@@ -703,6 +764,7 @@
     <Content Include="imagenes\Zoom in.png" />
     <Content Include="imagenes\Zoom out.png" />
     <Content Include="imagenes\Zoom.png" />
+    <None Include="Resources\captura de pantalla2.png" />
     <None Include="Resources\fondo4.png" />
     <None Include="Resources\fondo3.png" />
     <None Include="Resources\fondo2.png" />

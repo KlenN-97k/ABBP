@@ -22,6 +22,7 @@ namespace Presentacion
             _usuarioLN = new UsuarioLN();
             this.btnIngresar.Location = new System.Drawing.Point(100, 200);
             txtPassword.UseSystemPasswordChar = !passwordVisible;
+            toolTip1.SetToolTip(btnIngresar, "Iniciar sesión en el sistema");
 
         }
 

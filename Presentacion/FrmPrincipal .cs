@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 
 namespace Presentacion
 {
@@ -19,7 +21,17 @@ namespace Presentacion
         public FrmPrincipal(Usuario usuario)
         {
             InitializeComponent();
+
+            toolTip1.SetToolTip(btnIncidencias, "Gestionar incidencias reportadas");
+            toolTip1.SetToolTip(btnUsuarios, "Administrar usuarios del sistema");
+            toolTip1.SetToolTip(btnAreas, "Administrar áreas de la organización");
+            toolTip1.SetToolTip(btnDashboard, "Ver métricas y gráficos del sistema");
+            toolTip1.SetToolTip(btnReportes, "Exportar reportes en PDF o Excel");
+            toolTip1.SetToolTip(btnGuias, "Consultar guías de ayuda");
+            toolTip1.SetToolTip(btnAuditoria, "Ver bitácora de auditoría del sistema");
+            toolTip1.SetToolTip(btnCerrarSesion, "Cerrar la sesión actual");
             _usuarioActual = usuario;
+            ActualizarFotoSidebar();
             this.IsMdiContainer = true;
             this.WindowState = FormWindowState.Maximized;
         }
@@ -27,19 +39,22 @@ namespace Presentacion
         private void FrmPrincipal_Load(object sender, EventArgs e)
         {
             lblUsuarioSidebar.Text = $"{_usuarioActual.Nombre} {_usuarioActual.Apellido}\n({_usuarioActual.Rol})";
+           
+
 
             if (_usuarioActual.Rol == "Usuario")
             {
-                btnUsuarios.Visible = false;
-                btnAreas.Visible = false;
-                btnReportes.Visible = false;
+                DeshabilitarBoton(btnUsuarios);
+                DeshabilitarBoton(btnAreas);
+                DeshabilitarBoton(btnReportes);
+                DeshabilitarBoton(btnAuditoria);
             }
             else if (_usuarioActual.Rol == "Técnico")
             {
-                btnUsuarios.Visible = false;
-                btnAreas.Visible = false;
+                DeshabilitarBoton(btnUsuarios);
+                DeshabilitarBoton(btnAreas);
+                DeshabilitarBoton(btnAuditoria);
             }
-
             foreach (Control control in this.Controls)
             {
                 if (control is MdiClient mdiClient)
@@ -51,6 +66,12 @@ namespace Presentacion
                 }
             }
 
+        }
+        private void DeshabilitarBoton(Button boton)
+        {
+            boton.Enabled = false;
+            boton.BackColor = Color.FromArgb(50, 65, 85);   // azul marino más apagado
+            boton.ForeColor = Color.FromArgb(140, 150, 160); // texto gris tenue
         }
         private void AbrirHijo(Form formularioNuevo)
         {
@@ -65,30 +86,30 @@ namespace Presentacion
         }
         private void btnIncidencias_Click(object sender, EventArgs e)
         {
-            AbrirHijo(new FrmIncidencias());
+            AbrirHijo(new FrmIncidencias(_usuarioActual));
 
         }
 
         private void btnUsuarios_Click(object sender, EventArgs e)
         {
-            AbrirHijo(new FrmUsuarios());
+            AbrirHijo(new FrmUsuarios(_usuarioActual));
 
         }
 
         private void btnAreas_Click(object sender, EventArgs e)
         {
-            AbrirHijo(new FrmAreas());
+            AbrirHijo(new FrmAreas(_usuarioActual));
 
         }
 
         private void btnReportes_Click(object sender, EventArgs e)
         {
-            AbrirHijo(new FrmDashboard());
+            AbrirHijo(new FrmManual(_usuarioActual));
         }
 
         private void btnDashboard_Click(object sender, EventArgs e)
         {
-
+            AbrirHijo(new FrmDashboard());
         }
 
         private void btnGuias_Click(object sender, EventArgs e)
@@ -122,6 +143,65 @@ namespace Presentacion
 
         private void panelSidebar_Paint(object sender, PaintEventArgs e)
         {
+
+        }
+
+        private void btnAuditoria_Click(object sender, EventArgs e)
+        {
+            AbrirHijo(new FrmAuditoria());
+
+        }
+
+        private void FrmPrincipal_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                DialogResult confirmacion = MessageBox.Show(
+                    "¿Seguro que deseas salir del sistema?",
+                    "Confirmar salida",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (confirmacion != DialogResult.Yes)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void toolTip1_Popup(object sender, PopupEventArgs e)
+        {
+
+        }
+
+        private void btnAcercaDe_Click(object sender, EventArgs e)
+        {
+            using (FrmAcercaDe dlg = new FrmAcercaDe())
+            {
+                dlg.ShowDialog();
+            }
+        }
+        private void ActualizarFotoSidebar()
+        {
+            if (_usuarioActual.FotoPerfil != null && _usuarioActual.FotoPerfil.Length > 0)
+            {
+                using (var ms = new MemoryStream(_usuarioActual.FotoPerfil))
+                using (Image original = Image.FromStream(ms))
+                {
+                    btnMiPerfil.Image = new Bitmap(original, new Size(55, 55)); // ajusta al tamaño real de tu botón
+                }
+            }
+            else
+            {
+                btnMiPerfil.Image = null;
+            }
+        }
+
+        private void btnMiPerfil_Click(object sender, EventArgs e)
+        {
+            FrmPerfil frm = new FrmPerfil(_usuarioActual);
+            frm.FotoActualizada += (s, args) => ActualizarFotoSidebar();
+            AbrirHijo(frm);
 
         }
     }

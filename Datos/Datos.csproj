@@ -48,6 +48,7 @@
       <DependentUpon>BDIncidencias.dbml</DependentUpon>
     </Compile>
     <Compile Include="DatosExcepciones.cs" />
+    <Compile Include="Gestion de Datos\AuditoriaCD.cs" />
     <Compile Include="SqlErrorTraductor.cs" />
     <Compile Include="Gestion de Datos\AreaCD.cs" />
     <Compile Include="Gestion de Datos\EstadoCD.cs" />
