@@ -17,7 +17,7 @@ namespace Entidades.Gestion_de_Entidades
         private string descripcion;
         private int idPrioridad;
         private int idEstado;
-        private int? idTecnicoAsignado; // Adaptado a INT NULL según el nuevo script
+        private int? idTecnicoAsignado; 
         private DateTime? fechaSolucion;
         private string observaciones;
 

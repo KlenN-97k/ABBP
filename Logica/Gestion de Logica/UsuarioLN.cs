@@ -256,6 +256,15 @@ namespace Logica.Gestion_de_Logica
                 throw new LogicaExcepciones("Usuario o contraseña incorrectos.", null);
             }
 
+            // NUEVO: Buscar si otra cuenta ya tiene este ChatId y desvincularla
+            List<Usuario> todosLosUsuarios = ShowUsuario();
+            foreach (var u in todosLosUsuarios.Where(x => x.TelegramChatId == chatId))
+            {
+                u.TelegramChatId = null;
+                UpdateUsuario(u); // Guardamos la cuenta vieja sin el Telegram vinculado
+            }
+
+            // Vincular al nuevo usuario
             usuario.TelegramChatId = chatId;
             return UpdateUsuario(usuario);
         }

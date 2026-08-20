@@ -278,9 +278,44 @@ namespace Presentacion
 
                 Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensaje);
             }
-            catch
+            catch (Exception ex)
             {
+                MessageBox.Show($"Error detectado al enviar Telegram:\n\n{ex.ToString()}", "Error Oculto", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 // Best effort: si falla el envío, no debe romper el guardado de la incidencia.
+            }
+        }
+
+        private void NotificarNuevaIncidenciaATecnicos(Incidencia incidenciaNueva)
+        {
+            try
+            {
+                // Buscamos a todos los técnicos activos que ya hayan vinculado su Telegram
+                var tecnicos = usuarioLN.ShowUsuario()
+                    .Where(u => u.Rol == "Técnico" && u.Estado && u.TelegramChatId.HasValue)
+                    .ToList();
+
+                if (tecnicos.Count == 0) return; // Nadie a quien notificar
+
+                string mensaje = $"🚨 *NUEVA INCIDENCIA REPORTADA* 🚨\n\n" +
+                                 $"*Ticket:* {incidenciaNueva.NumeroTicket}\n" +
+                                 $"*Empleado:* {incidenciaNueva.Empleado}\n" +
+                                 $"*Área:* {cboArea.Text}\n" +
+                                 $"*Tipo:* {incidenciaNueva.TipoIncidencia}\n" +
+                                 $"*Prioridad:* {cboPrioridad.Text}\n\n" +
+                                 $"*Descripción:*\n{incidenciaNueva.Descripcion}\n\n" +
+                                 $"_Por favor, ingresa al sistema de escritorio para asignarte este ticket._";
+
+                // Le enviamos la alerta a cada técnico
+                foreach (var tecnico in tecnicos)
+                {
+                    Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensaje);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error detectado al enviar Telegram:\n\n{ex.ToString()}", "Error Oculto", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Best effort: Si algo falla con Telegram, no debe interrumpir el guardado en WinForms
+
             }
         }
 
@@ -310,6 +345,17 @@ namespace Presentacion
                         null,
                         $"Empleado: {txtEmpleado.Text} | Tipo: {txtTipo.Text}"
                     );
+
+                    // NUEVO: Buscar la incidencia recién creada para tener su número de ticket real
+                    Incidencia incidenciaCreada = incidenciaLN.ShowIncidencia()
+                        .Where(i => i.Empleado == txtEmpleado.Text && i.Descripcion == txtDescripcion.Text)
+                        .OrderByDescending(i => i.IdIncidencia)
+                        .FirstOrDefault();
+
+                    if (incidenciaCreada != null)
+                    {
+                        NotificarNuevaIncidenciaATecnicos(incidenciaCreada);
+                    }
                 }
                 else
                 {

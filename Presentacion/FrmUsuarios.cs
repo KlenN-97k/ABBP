@@ -28,6 +28,7 @@ namespace Presentacion
         public FrmUsuarios(Usuario usuarioActual)
         {
             InitializeComponent();
+            this.usuarioActual = usuarioActual;
             grid.SelectionChanged += grid_SelectionChanged;
             txtBuscar.TextChanged += txtBuscar_TextChanged;
             grid.ColumnHeaderMouseClick += grid_ColumnHeaderMouseClick;
