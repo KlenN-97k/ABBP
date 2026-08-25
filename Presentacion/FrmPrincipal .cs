@@ -120,20 +120,16 @@ namespace Presentacion
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
             DialogResult confirmacion = MessageBox.Show(
-                "¿Seguro que deseas cerrar sesión?",
-                "Confirmar",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+         "¿Seguro que deseas cerrar sesión?",
+         "Confirmar",
+         MessageBoxButtons.YesNo,
+         MessageBoxIcon.Question);
 
             if (confirmacion == DialogResult.Yes)
             {
-                this.Hide();
-                FrmLogin login = new FrmLogin();
-                login.FormClosed += (s, e2) => this.Close();
-                login.Show();
+                this.Close(); // Cierra el FrmPrincipal y devuelve el control al FrmLogin
             }
-
-            }
+        }
 
         private void FrmPrincipal_Resize(object sender, EventArgs e)
         {

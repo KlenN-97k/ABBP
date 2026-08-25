@@ -40,15 +40,16 @@ namespace Presentacion
 
             try
             {
-                // Obtenemos todos los usuarios y filtramos por credenciales
                 Usuario usuarioValido = _usuarioLN.Login(user, pass);
 
                 if (usuarioValido != null)
                 {
-                    // Abrimos el formulario principal pasándole los datos del usuario logueado
                     FrmPrincipal frmPrincipal = new FrmPrincipal(usuarioValido);
-                    frmPrincipal.Show();
-                    this.Hide(); // Ocultamos el Login
+                    this.Hide();
+                    frmPrincipal.ShowDialog(); 
+                    txtPassword.Clear();
+                    txtPassword.Focus();
+                    this.Show();
                 }
                 else
                 {
@@ -57,7 +58,7 @@ namespace Presentacion
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Error de Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error); ex.ToString();
+                MessageBox.Show(ex.ToString(), "Error de Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
         }

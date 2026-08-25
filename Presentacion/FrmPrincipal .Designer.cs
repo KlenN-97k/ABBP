@@ -33,6 +33,7 @@
             this.panelSidebar = new System.Windows.Forms.Panel();
             this.btnAuditoria = new System.Windows.Forms.Button();
             this.panelFooterUsuario = new System.Windows.Forms.Panel();
+            this.btnMiPerfil = new System.Windows.Forms.Button();
             this.btnAcercaDe = new System.Windows.Forms.Button();
             this.lblUsuarioSidebar = new System.Windows.Forms.Label();
             this.btnCerrarSesion = new System.Windows.Forms.Button();
@@ -42,9 +43,8 @@
             this.btnAreas = new System.Windows.Forms.Button();
             this.btnUsuarios = new System.Windows.Forms.Button();
             this.btnIncidencias = new System.Windows.Forms.Button();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnMiPerfil = new System.Windows.Forms.Button();
             this.picLogo = new System.Windows.Forms.PictureBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panelSidebar.SuspendLayout();
             this.panelFooterUsuario.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
@@ -96,10 +96,22 @@
             this.panelFooterUsuario.Controls.Add(this.lblUsuarioSidebar);
             this.panelFooterUsuario.Controls.Add(this.btnCerrarSesion);
             this.panelFooterUsuario.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelFooterUsuario.Location = new System.Drawing.Point(0, 896);
+            this.panelFooterUsuario.Location = new System.Drawing.Point(0, 722);
             this.panelFooterUsuario.Name = "panelFooterUsuario";
             this.panelFooterUsuario.Size = new System.Drawing.Size(352, 159);
             this.panelFooterUsuario.TabIndex = 10;
+            // 
+            // btnMiPerfil
+            // 
+            this.btnMiPerfil.FlatAppearance.BorderSize = 0;
+            this.btnMiPerfil.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMiPerfil.Image = global::Presentacion.Properties.Resources.usuario;
+            this.btnMiPerfil.Location = new System.Drawing.Point(23, 13);
+            this.btnMiPerfil.Name = "btnMiPerfil";
+            this.btnMiPerfil.Size = new System.Drawing.Size(98, 72);
+            this.btnMiPerfil.TabIndex = 11;
+            this.btnMiPerfil.UseVisualStyleBackColor = true;
+            this.btnMiPerfil.Click += new System.EventHandler(this.btnMiPerfil_Click);
             // 
             // btnAcercaDe
             // 
@@ -253,22 +265,6 @@
             this.btnIncidencias.UseVisualStyleBackColor = false;
             this.btnIncidencias.Click += new System.EventHandler(this.btnIncidencias_Click);
             // 
-            // toolTip1
-            // 
-            this.toolTip1.Popup += new System.Windows.Forms.PopupEventHandler(this.toolTip1_Popup);
-            // 
-            // btnMiPerfil
-            // 
-            this.btnMiPerfil.FlatAppearance.BorderSize = 0;
-            this.btnMiPerfil.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMiPerfil.Image = global::Presentacion.Properties.Resources.usuario;
-            this.btnMiPerfil.Location = new System.Drawing.Point(23, 13);
-            this.btnMiPerfil.Name = "btnMiPerfil";
-            this.btnMiPerfil.Size = new System.Drawing.Size(98, 72);
-            this.btnMiPerfil.TabIndex = 11;
-            this.btnMiPerfil.UseVisualStyleBackColor = true;
-            this.btnMiPerfil.Click += new System.EventHandler(this.btnMiPerfil_Click);
-            // 
             // picLogo
             // 
             this.picLogo.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -282,6 +278,10 @@
             this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.picLogo.TabIndex = 0;
             this.picLogo.TabStop = false;
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.Popup += new System.Windows.Forms.PopupEventHandler(this.toolTip1_Popup);
             // 
             // FrmPrincipal
             // 

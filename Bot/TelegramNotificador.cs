@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Threading.Tasks;
 using Telegram.Bot;
+using Telegram.Bot.Types.ReplyMarkups; // Requisito clave en la capa Bot
 
 namespace Bot
 {
@@ -13,22 +14,34 @@ namespace Bot
             return new TelegramBotClient(token);
         });
 
-        public static async Task EnviarMensajeAsync(long chatId, string mensaje)
+        // Modificado para aceptar el ID de la incidencia como un int opcional
+        public static async Task EnviarMensajeAsync(long chatId, string mensaje, int? idIncidenciaParaAceptar = null)
         {
             try
             {
-                await cliente.Value.SendMessage(chatId, mensaje).ConfigureAwait(false);
+                InlineKeyboardMarkup teclado = null;
+
+                // Si nos mandan un ID, armamos el botón flotante
+                if (idIncidenciaParaAceptar.HasValue)
+                {
+                    teclado = new InlineKeyboardMarkup(new[]
+                    {
+                        new[] { InlineKeyboardButton.WithCallbackData("🙋‍♂️ Aceptar Ticket", $"aceptar_{idIncidenciaParaAceptar.Value}") }
+                    });
+                }
+
+                // Sintaxis correcta para v22+
+                await cliente.Value.SendMessage(chatId, mensaje, replyMarkup: teclado).ConfigureAwait(false);
             }
             catch
             {
-                // Notificación "best effort": si falla (usuario bloqueó el bot, sin
-                // internet, etc.) no debe romper el flujo de guardar la incidencia.
+                // Notificación "best effort" - ignora fallos de red o bloqueos
             }
         }
 
-        public static void EnviarMensaje(long chatId, string mensaje)
+        public static void EnviarMensaje(long chatId, string mensaje, int? idIncidenciaParaAceptar = null)
         {
-            EnviarMensajeAsync(chatId, mensaje).GetAwaiter().GetResult();
+            EnviarMensajeAsync(chatId, mensaje, idIncidenciaParaAceptar).GetAwaiter().GetResult();
         }
     }
 }

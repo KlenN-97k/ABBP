@@ -308,7 +308,7 @@ namespace Presentacion
                 // Le enviamos la alerta a cada técnico
                 foreach (var tecnico in tecnicos)
                 {
-                    Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensaje);
+                    Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensaje, incidenciaNueva.IdIncidencia);
                 }
             }
             catch (Exception ex)

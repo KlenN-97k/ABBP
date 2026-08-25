@@ -130,7 +130,76 @@ namespace Bot
             long chatId = callbackQuery.Message.Chat.Id;
             string datosBoton = callbackQuery.Data;
 
-            // Apaga el icono de "carga" en el botón presionado
+            // --- 1. PROCESAR BOTÓN DE ACEPTAR TICKET ---
+            if (datosBoton.StartsWith("aceptar_"))
+            {
+                int idIncidencia = int.Parse(datosBoton.Split('_')[1]);
+
+                string resultado = new Logica.Gestion_de_Logica.IncidenciaLN().AceptarIncidenciaPorTelegram(idIncidencia, chatId);
+
+                if (resultado == "SUCCESS")
+                {
+                    // El técnico ganó el ticket. Le mostramos los botones de resolución (Sintaxis v22+)
+                    var botonesEstado = new InlineKeyboardMarkup(new[]
+                    {
+                new[] { InlineKeyboardButton.WithCallbackData("✅ Marcar Resuelto", $"estado_{idIncidencia}_Resuelto") },
+                new[] { InlineKeyboardButton.WithCallbackData("🔒 Cerrar Ticket", $"estado_{idIncidencia}_Cerrado") }
+            });
+
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id, "¡Ticket asignado a ti correctamente!", showAlert: false);
+
+                    await botClient.EditMessageText(
+                        chatId: chatId,
+                        messageId: callbackQuery.Message.MessageId,
+                        text: callbackQuery.Message.Text + "\n\n👉 *¡Aceptaste este ticket y está En Proceso!*",
+                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
+                        replyMarkup: botonesEstado
+                    );
+                }
+                else
+                {
+                    // Otro técnico se adelantó. Alerta emergente y borramos el botón.
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id, resultado, showAlert: true);
+
+                    await botClient.EditMessageText(
+                        chatId: chatId,
+                        messageId: callbackQuery.Message.MessageId,
+                        text: callbackQuery.Message.Text + "\n\n*(Ticket tomado por otro técnico)*"
+                    );
+                }
+                return; // Salimos para no seguir evaluando
+            }
+
+            // --- 2. PROCESAR BOTONES DE CAMBIO DE ESTADO ---
+            if (datosBoton.StartsWith("estado_"))
+            {
+                string[] partes = datosBoton.Split('_');
+                int idIncidencia = int.Parse(partes[1]);
+                string nuevoEstado = partes[2]; // "Resuelto" o "Cerrado"
+
+                string resultado = new Logica.Gestion_de_Logica.IncidenciaLN().CambiarEstadoPorTelegram(idIncidencia, chatId, nuevoEstado);
+
+                if (resultado.StartsWith("SUCCESS"))
+                {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id, $"Ticket {nuevoEstado} exitosamente.", showAlert: false);
+
+                    // Quitamos los botones y dejamos el mensaje final
+                    await botClient.EditMessageText(
+                        chatId: chatId,
+                        messageId: callbackQuery.Message.MessageId,
+                        text: callbackQuery.Message.Text + $"\n\n🏁 *Ticket {nuevoEstado} por ti.*",
+                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
+                    );
+                }
+                else
+                {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id, resultado, showAlert: true);
+                }
+                return; // Salimos para no seguir evaluando
+            }
+
+            // --- 3. CÓDIGO EXISTENTE DE CREACIÓN DE TICKETS ---
+            // Apaga el icono de "carga" en cualquier otro botón presionado
             await botClient.AnswerCallbackQuery(callbackQuery.Id);
 
             if (datosBoton == "cancelar")
@@ -146,49 +215,44 @@ namespace Bot
 
                 try
                 {
-                    // --- PASO 1: Procesar botón de ÁREA ---
+                    // Procesar botón de ÁREA
                     if (estado.Paso == 1 && datosBoton.StartsWith("area_"))
                     {
                         estado.IdArea = int.Parse(datosBoton.Split('_')[1]);
-                        estado.Paso = 2; // Avanzamos a pedir el tipo
-
-                        // Ocultamos los botones y actualizamos el mensaje
+                        estado.Paso = 2;
                         await botClient.EditMessageText(chatId, callbackQuery.Message.MessageId, "✅ Área seleccionada.");
 
-                        // Crear botones fijos para el Tipo de Incidencia
                         var botonesTipo = new List<InlineKeyboardButton[]>
-                        {
-                            new[] { InlineKeyboardButton.WithCallbackData("💻 Hardware", "tipo_Hardware") },
-                            new[] { InlineKeyboardButton.WithCallbackData("📀 Software", "tipo_Software") },
-                            new[] { InlineKeyboardButton.WithCallbackData("🌐 Red", "tipo_Red") },
-                            new[] { InlineKeyboardButton.WithCallbackData("➕ Otro", "tipo_Otro") },
-                            new[] { InlineKeyboardButton.WithCallbackData("❌ Cancelar", "cancelar") }
-                        };
+                {
+                    new[] { InlineKeyboardButton.WithCallbackData("💻 Hardware", "tipo_Hardware") },
+                    new[] { InlineKeyboardButton.WithCallbackData("📀 Software", "tipo_Software") },
+                    new[] { InlineKeyboardButton.WithCallbackData("🌐 Red", "tipo_Red") },
+                    new[] { InlineKeyboardButton.WithCallbackData("➕ Otro", "tipo_Otro") },
+                    new[] { InlineKeyboardButton.WithCallbackData("❌ Cancelar", "cancelar") }
+                };
 
                         await botClient.SendMessage(
                             chatId: chatId,
                             text: "¿Cuál es el tipo de incidencia? *(Toca un botón)*:",
-                            parseMode: ParseMode.Markdown,
+                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
                             replyMarkup: new InlineKeyboardMarkup(botonesTipo)
                         );
                     }
-                    // --- PASO 2: Procesar botón de TIPO ---
+                    // Procesar botón de TIPO
                     else if (estado.Paso == 2 && datosBoton.StartsWith("tipo_"))
                     {
-                        estado.TipoIncidencia = datosBoton.Substring(5); // Quita "tipo_"
-                        estado.Paso = 3; // Avanzamos a pedir la descripción (texto libre)
+                        estado.TipoIncidencia = datosBoton.Substring(5);
+                        estado.Paso = 3;
 
                         await botClient.EditMessageText(chatId, callbackQuery.Message.MessageId, $"✅ Tipo seleccionado: {estado.TipoIncidencia}");
                         await botClient.SendMessage(chatId, "Describe el problema (mínimo 10 caracteres):");
                     }
-                    // --- PASO 4: Procesar botón de PRIORIDAD ---
+                    // Procesar botón de PRIORIDAD
                     else if (estado.Paso == 4 && datosBoton.StartsWith("pri_"))
                     {
                         estado.IdPrioridad = int.Parse(datosBoton.Split('_')[1]);
-
                         await botClient.EditMessageText(chatId, callbackQuery.Message.MessageId, "✅ Prioridad seleccionada.");
 
-                        // Todo listo, guardamos en base de datos
                         await FinalizarReportar(chatId, estado);
                         conversaciones.Remove(chatId);
                     }
@@ -336,8 +400,8 @@ namespace Bot
                 {
                     try
                     {
-                        // Usamos TelegramNotificador para enviar el mensaje silenciosamente a cada uno
-                        TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensajeTecnicos);
+                        // Agregamos ultimaInsertada.IdIncidencia al final
+                        Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensajeTecnicos, ultimaInsertada.IdIncidencia);
                     }
                     catch { /* Ignorar si falla un técnico específico */ }
                 }
