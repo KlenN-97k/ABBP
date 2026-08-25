@@ -2,7 +2,8 @@
 using System.Configuration;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using Telegram.Bot.Types.ReplyMarkups; // Requisito clave en la capa Bot
+using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Bot.Types.Enums; // Necesario para el formato Markdown
 
 namespace Bot
 {
@@ -14,14 +15,13 @@ namespace Bot
             return new TelegramBotClient(token);
         });
 
-        // Modificado para aceptar el ID de la incidencia como un int opcional
-        public static async Task EnviarMensajeAsync(long chatId, string mensaje, int? idIncidenciaParaAceptar = null)
+        // Ahora devuelve int? (El MessageId)
+        public static async Task<int?> EnviarMensajeAsync(long chatId, string mensaje, int? idIncidenciaParaAceptar = null)
         {
             try
             {
                 InlineKeyboardMarkup teclado = null;
 
-                // Si nos mandan un ID, armamos el botón flotante
                 if (idIncidenciaParaAceptar.HasValue)
                 {
                     teclado = new InlineKeyboardMarkup(new[]
@@ -30,18 +30,25 @@ namespace Bot
                     });
                 }
 
-                // Sintaxis correcta para v22+
-                await cliente.Value.SendMessage(chatId, mensaje, replyMarkup: teclado).ConfigureAwait(false);
+                // Aquí encendemos el ParseMode.Markdown para que formatee los asteriscos
+                var msg = await cliente.Value.SendMessage(
+                    chatId: chatId,
+                    text: mensaje,
+                    parseMode: ParseMode.Markdown,
+                    replyMarkup: teclado
+                ).ConfigureAwait(false);
+
+                return msg.MessageId; // Devolvemos el ID del mensaje
             }
             catch
             {
-                // Notificación "best effort" - ignora fallos de red o bloqueos
+                return null;
             }
         }
 
-        public static void EnviarMensaje(long chatId, string mensaje, int? idIncidenciaParaAceptar = null)
+        public static int? EnviarMensaje(long chatId, string mensaje, int? idIncidenciaParaAceptar = null)
         {
-            EnviarMensajeAsync(chatId, mensaje, idIncidenciaParaAceptar).GetAwaiter().GetResult();
+            return EnviarMensajeAsync(chatId, mensaje, idIncidenciaParaAceptar).GetAwaiter().GetResult();
         }
     }
 }

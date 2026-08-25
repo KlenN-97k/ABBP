@@ -134,37 +134,67 @@ namespace Bot
             if (datosBoton.StartsWith("aceptar_"))
             {
                 int idIncidencia = int.Parse(datosBoton.Split('_')[1]);
-
-                string resultado = new Logica.Gestion_de_Logica.IncidenciaLN().AceptarIncidenciaPorTelegram(idIncidencia, chatId);
+                var logica = new Logica.Gestion_de_Logica.IncidenciaLN();
+                string resultado = logica.AceptarIncidenciaPorTelegram(idIncidencia, chatId);
 
                 if (resultado == "SUCCESS")
                 {
-                    // El técnico ganó el ticket. Le mostramos los botones de resolución (Sintaxis v22+)
-                    var botonesEstado = new InlineKeyboardMarkup(new[]
-                    {
-                new[] { InlineKeyboardButton.WithCallbackData("✅ Marcar Resuelto", $"estado_{idIncidencia}_Resuelto") },
-                new[] { InlineKeyboardButton.WithCallbackData("🔒 Cerrar Ticket", $"estado_{idIncidencia}_Cerrado") }
-            });
-
                     await botClient.AnswerCallbackQuery(callbackQuery.Id, "¡Ticket asignado a ti correctamente!", showAlert: false);
 
-                    await botClient.EditMessageText(
-                        chatId: chatId,
-                        messageId: callbackQuery.Message.MessageId,
-                        text: callbackQuery.Message.Text + "\n\n👉 *¡Aceptaste este ticket y está En Proceso!*",
-                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-                        replyMarkup: botonesEstado
-                    );
+                    // 1. Reconstruimos el texto original consultando la BD
+                    // (Así no perdemos los asteriscos y formato al editar el mensaje de los demás)
+                    var inc = logica.BuscarPorTicket(logica.ShowIncidencia().FirstOrDefault(i => i.IdIncidencia == idIncidencia)?.NumeroTicket);
+                    string textoBase = $"🚨 *NUEVA INCIDENCIA REPORTADA* 🚨\n\n*Ticket:* {inc.NumeroTicket}\n*Empleado:* {inc.Empleado}\n*Área:* {inc.NombreArea}\n*Tipo:* {inc.TipoIncidencia}\n*Prioridad:* {inc.NombrePrioridad}\n\n*Descripción:*\n{inc.Descripcion}";
+
+                    // 2. Traemos de SQL Server TODOS los chats que recibieron esta alerta
+                    var mensajesEnviados = logica.ObtenerMensajesTelegram(idIncidencia);
+
+                    var botonesEstado = new InlineKeyboardMarkup(new[] {
+                        new[] { InlineKeyboardButton.WithCallbackData("✅ Marcar Resuelto", $"estado_{idIncidencia}_Resuelto") },
+                        new[] { InlineKeyboardButton.WithCallbackData("🔒 Cerrar Ticket", $"estado_{idIncidencia}_Cerrado") }
+                    });
+
+                    // 3. ¡EL BARRIDO MÁGICO! Editamos el chat de todos los técnicos al mismo tiempo
+                    foreach (var m in mensajesEnviados)
+                    {
+                        try
+                        {
+                            if (m.ChatId == chatId)
+                            {
+                                // Para el ganador: Le mostramos que lo aceptó y le damos los botones de estado
+                                await botClient.EditMessageText(
+                                    chatId: m.ChatId,
+                                    messageId: m.MessageId,
+                                    text: textoBase + "\n\n👉 *¡Aceptaste este ticket y está En Proceso!*",
+                                    parseMode: ParseMode.Markdown,
+                                    replyMarkup: botonesEstado
+                                );
+                            }
+                            else
+                            {
+                                // Para los demás: Borramos el botón (replyMarkup: null) y les avisamos que ya lo tomaron
+                                await botClient.EditMessageText(
+                                    chatId: m.ChatId,
+                                    messageId: m.MessageId,
+                                    text: textoBase + $"\n\n🔒 *(Este ticket fue tomado por otro técnico)*",
+                                    parseMode: ParseMode.Markdown,
+                                    replyMarkup: null
+                                );
+                            }
+                        }
+                        catch { /* Ignoramos si alguien borró el chat o bloqueó al bot */ }
+                    }
                 }
                 else
                 {
-                    // Otro técnico se adelantó. Alerta emergente y borramos el botón.
+                    // Si el técnico le dio clic pero alguien se le adelantó una fracción de segundo:
                     await botClient.AnswerCallbackQuery(callbackQuery.Id, resultado, showAlert: true);
 
+                    // Le quitamos el botón obsoleto
                     await botClient.EditMessageText(
                         chatId: chatId,
                         messageId: callbackQuery.Message.MessageId,
-                        text: callbackQuery.Message.Text + "\n\n*(Ticket tomado por otro técnico)*"
+                        text: callbackQuery.Message.Text + "\n\n🔒 *(Ticket tomado por otro técnico)*"
                     );
                 }
                 return; // Salimos para no seguir evaluando
@@ -400,10 +430,14 @@ namespace Bot
                 {
                     try
                     {
-                        // Agregamos ultimaInsertada.IdIncidencia al final
-                        Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensajeTecnicos, ultimaInsertada.IdIncidencia);
+                        int? messageId = Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensajeTecnicos, ultimaInsertada.IdIncidencia);
+
+                        if (messageId.HasValue)
+                        {
+                            new Logica.Gestion_de_Logica.IncidenciaLN().RegistrarMensajeTelegram(ultimaInsertada.IdIncidencia, tecnico.TelegramChatId.Value, messageId.Value);
+                        }
                     }
-                    catch { /* Ignorar si falla un técnico específico */ }
+                    catch { }
                 }
             }
         }

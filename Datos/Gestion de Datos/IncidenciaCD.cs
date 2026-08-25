@@ -158,5 +158,32 @@ namespace Datos.Gestion_de_Datos
             }
         }
 
+        public static void RegistrarMensajeTelegram(int idIncidencia, long chatId, int messageId)
+        {
+            BDIncidenciasDataContext DB = null;
+            try
+            {
+                using (DB = new BDIncidenciasDataContext())
+                {
+                    DB.ExecuteCommand("INSERT INTO TelegramMensajes (IdIncidencia, ChatId, MessageId) VALUES ({0}, {1}, {2})", idIncidencia, chatId, messageId);
+                }
+            }
+            catch { /* Ignorar errores de bitácora */ }
+        }
+
+        public class MensajeTelegramDTO { public long ChatId { get; set; } public int MessageId { get; set; } }
+
+        public static List<MensajeTelegramDTO> ObtenerMensajesTelegram(int idIncidencia)
+        {
+            BDIncidenciasDataContext DB = null;
+            try
+            {
+                using (DB = new BDIncidenciasDataContext())
+                {
+                    return DB.ExecuteQuery<MensajeTelegramDTO>("SELECT ChatId, MessageId FROM TelegramMensajes WHERE IdIncidencia = {0}", idIncidencia).ToList();
+                }
+            }
+            catch { return new List<MensajeTelegramDTO>(); }
+        }
     }
 }

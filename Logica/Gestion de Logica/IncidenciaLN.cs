@@ -216,5 +216,29 @@ namespace Logica.Gestion_de_Logica
                 throw new LogicaExcepciones("Error al cambiar el estado de la incidencia por Telegram", ex);
             }
         }
+
+        // 1. Creamos una clase propia en la capa Lógica que el Bot sí puede ver
+        public class MensajeBot
+        {
+            public long ChatId { get; set; }
+            public int MessageId { get; set; }
+        }
+
+        public void RegistrarMensajeTelegram(int idIncidencia, long chatId, int messageId)
+        {
+            IncidenciaCD.RegistrarMensajeTelegram(idIncidencia, chatId, messageId);
+        }
+
+        // 2. Cambiamos el tipo de retorno a MensajeBot y transformamos la lista
+        public List<MensajeBot> ObtenerMensajesTelegram(int idIncidencia)
+        {
+            var listaDatos = IncidenciaCD.ObtenerMensajesTelegram(idIncidencia);
+
+            return listaDatos.Select(m => new MensajeBot
+            {
+                ChatId = m.ChatId,
+                MessageId = m.MessageId
+            }).ToList();
+        }
     }
 }
