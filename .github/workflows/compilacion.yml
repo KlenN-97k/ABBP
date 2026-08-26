@@ -1,0 +1,40 @@
+name: Compilar Sistema de Incidencias
+
+# Se ejecuta automáticamente cada vez que subes código a la rama principal
+on:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    # Usamos un servidor de Windows porque tu proyecto es .NET Framework 4.7.2
+    runs-on: windows-latest 
+
+    steps:
+    - name: 📥 Descargar código fuente
+      uses: actions/checkout@v3
+
+    - name: 🛠️ Configurar MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: 📦 Configurar NuGet
+      uses: NuGet/setup-nuget@v1.1
+
+    - name: 🔄 Restaurar paquetes NuGet (TopShelf, Serilog, BCrypt, etc.)
+      run: nuget restore ABBP.slnx
+
+    - name: 🚀 Compilar en modo Release
+      # Compila todo optimizado para producción
+      run: msbuild ABBP.slnx /p:Configuration=Release 
+
+    - name: 💾 Guardar Artefacto - Bot (Servicio)
+      uses: actions/upload-artifact@v3
+      with:
+        name: Bot-Produccion
+        path: Bot\bin\Release\
+
+    - name: 💾 Guardar Artefacto - WinForms (Cliente)
+      uses: actions/upload-artifact@v3
+      with:
+        name: Escritorio-Produccion
+        path: Presentacion\bin\Release\
