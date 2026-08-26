@@ -12,6 +12,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using Topshelf;
 
 namespace Bot
 {
@@ -20,22 +21,48 @@ namespace Bot
         static TelegramBotClient botClient;
         private static readonly Dictionary<long, EstadoReportar> conversaciones = new Dictionary<long, EstadoReportar>();
 
-        static async Task Main(string[] args)
+        // 1. Sacamos el CancellationTokenSource afuera para poder apagarlo desde TopShelf
+        static CancellationTokenSource cts;
+
+        static void Main(string[] args)
         {
-            string token = ConfigurationManager.AppSettings["TelegramBotToken"];
-
-            using (var cts = new CancellationTokenSource())
+            // 2. Configuración mágica de TopShelf
+            var rc = HostFactory.Run(x =>
             {
-                botClient = new TelegramBotClient(token, cancellationToken: cts.Token);
-                var me = await botClient.GetMe();
+                x.Service<BotMotor>(s =>
+                {
+                    s.ConstructUsing(name => new BotMotor());
+                    s.WhenStarted(tc => tc.Start());
+                    s.WhenStopped(tc => tc.Stop());
+                });
 
-                // Configuramos el bot para atrapar TODO (Mensajes y clics de botones)
+                // Se ejecutará con permisos del sistema local
+                x.RunAsLocalSystem();
+
+                // Detalles que aparecerán en services.msc de Windows Server
+                x.SetDescription("Servicio en segundo plano del Bot de Telegram para el Sistema de Incidencias");
+                x.SetDisplayName("Incidencias Telegram Bot");
+                x.SetServiceName("IncidenciasTelegramBot");
+            });
+
+            var exitCode = (int)Convert.ChangeType(rc, rc.GetTypeCode());
+            Environment.ExitCode = exitCode;
+        }
+
+        // 3. Clase controladora que TopShelf usa para arrancar y detener el Bot
+        public class BotMotor
+        {
+            public void Start()
+            {
+                string token = ConfigurationManager.AppSettings["TelegramBotToken"];
+                cts = new CancellationTokenSource();
+                botClient = new TelegramBotClient(token, cancellationToken: cts.Token);
+
                 var receiverOptions = new ReceiverOptions
                 {
                     AllowedUpdates = Array.Empty<UpdateType>()
                 };
 
-                // Iniciamos la recepción continua (Polling)
                 botClient.StartReceiving(
                     updateHandler: HandleUpdateAsync,
                     errorHandler: HandleErrorAsync,
@@ -43,11 +70,13 @@ namespace Bot
                     cancellationToken: cts.Token
                 );
 
-                Console.WriteLine($"Bot iniciado: @{me.Username}");
-                Console.WriteLine("Presiona ENTER para detener...");
-                Console.ReadLine();
+                Console.WriteLine($"[{DateTime.Now}] Bot iniciado correctamente...");
+            }
 
-                cts.Cancel();
+            public void Stop()
+            {
+                cts?.Cancel();
+                Console.WriteLine($"[{DateTime.Now}] Bot detenido.");
             }
         }
 
