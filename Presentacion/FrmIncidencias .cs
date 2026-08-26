@@ -260,7 +260,7 @@ namespace Presentacion
             txtEmpleado.Focus();
         }
 
-        private void EnviarNotificacionSiCorresponde(Incidencia incidencia, string nombreEstadoNuevo)
+        private async Task EnviarNotificacionSiCorresponde(Incidencia incidencia, string nombreEstadoNuevo)
         {
             if (nombreEstadoNuevo != "Resuelto" && nombreEstadoNuevo != "Cerrado") return;
             if (!incidencia.IdTecnicoAsignado.HasValue) return;
@@ -285,16 +285,15 @@ namespace Presentacion
             }
         }
 
-        private void NotificarNuevaIncidenciaATecnicos(Incidencia incidenciaNueva)
+        private async Task NotificarNuevaIncidenciaATecnicosAsync(Incidencia incidenciaNueva)
         {
             try
             {
-                // Buscamos a todos los técnicos activos que ya hayan vinculado su Telegram
                 var tecnicos = usuarioLN.ShowUsuario()
                     .Where(u => u.Rol == "Técnico" && u.Estado && u.TelegramChatId.HasValue)
                     .ToList();
 
-                if (tecnicos.Count == 0) return; // Nadie a quien notificar
+                if (tecnicos.Count == 0) return;
 
                 string mensaje = $"🚨 *NUEVA INCIDENCIA REPORTADA* 🚨\n\n" +
                                  $"*Ticket:* {incidenciaNueva.NumeroTicket}\n" +
@@ -305,10 +304,11 @@ namespace Presentacion
                                  $"*Descripción:*\n{incidenciaNueva.Descripcion}\n\n" +
                                  $"_Por favor, ingresa al sistema de escritorio para asignarte este ticket._";
 
-                // Le enviamos la alerta a cada técnico
+                // Envolvemos el envío en un Task paralelo para no congelar la pantalla
                 foreach (var tecnico in tecnicos)
                 {
-                    int? messageId = Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensaje, incidenciaNueva.IdIncidencia);
+                    // Usamos el método Async que ya tenías preparado en el notificador
+                    int? messageId = await Bot.TelegramNotificador.EnviarMensajeAsync(tecnico.TelegramChatId.Value, mensaje, incidenciaNueva.IdIncidencia);
 
                     if (messageId.HasValue)
                     {
@@ -318,13 +318,12 @@ namespace Presentacion
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error detectado al enviar Telegram:\n\n{ex.ToString()}", "Error Oculto", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Best effort: Si algo falla con Telegram, no debe interrumpir el guardado en WinForms
-
+                // Mostramos el error oculto en consola de depuración en lugar de un MessageBox que interrumpa
+                Console.WriteLine($"Error detectado al enviar Telegram: {ex.Message}");
             }
         }
 
-        private void btnGuardar_Click(object sender, EventArgs e)
+        private async void btnGuardar_Click(object sender, EventArgs e)
         {
             if (!ValidarCampos()) return;
 
@@ -353,13 +352,14 @@ namespace Presentacion
 
                     // NUEVO: Buscar la incidencia recién creada para tener su número de ticket real
                     Incidencia incidenciaCreada = incidenciaLN.ShowIncidencia()
-                        .Where(i => i.Empleado == txtEmpleado.Text && i.Descripcion == txtDescripcion.Text)
-                        .OrderByDescending(i => i.IdIncidencia)
-                        .FirstOrDefault();
+                         .Where(i => i.Empleado == txtEmpleado.Text && i.Descripcion == txtDescripcion.Text)
+                         .OrderByDescending(i => i.IdIncidencia)
+                         .FirstOrDefault();
 
                     if (incidenciaCreada != null)
                     {
-                        NotificarNuevaIncidenciaATecnicos(incidenciaCreada);
+                        // AQUÍ ESTÁ LA MAGIA ASÍNCRONA
+                        await NotificarNuevaIncidenciaATecnicosAsync(incidenciaCreada);
                     }
                 }
                 else
@@ -386,7 +386,7 @@ namespace Presentacion
                         incidenciaSeleccionada.IdIncidencia,
                         $"Ticket: {incidenciaSeleccionada.NumeroTicket} | Estado: {estadoAnterior} → {nuevoEstado}"
                     );
-                    EnviarNotificacionSiCorresponde(incidenciaSeleccionada, nuevoEstado);
+                    await EnviarNotificacionSiCorresponde(incidenciaSeleccionada, nuevoEstado);
                 }
 
                 CargarGrid();

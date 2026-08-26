@@ -342,19 +342,19 @@ namespace Datos.Base_de_Datos
 			return ((int)(result.ReturnValue));
 		}
 		
-		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_ActualizarEstadoTelegram")]
-		public int sp_Incidencias_ActualizarEstadoTelegram([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdIncidencia", DbType="Int")] System.Nullable<int> idIncidencia, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdTecnico", DbType="Int")] System.Nullable<int> idTecnico, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdNuevoEstado", DbType="Int")] System.Nullable<int> idNuevoEstado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Resultado", DbType="Int")] ref System.Nullable<int> resultado)
-		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idIncidencia, idTecnico, idNuevoEstado, resultado);
-			resultado = ((System.Nullable<int>)(result.GetParameterValue(3)));
-			return ((int)(result.ReturnValue));
-		}
-		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_AsignarTecnicoTelegram")]
 		public int sp_Incidencias_AsignarTecnicoTelegram([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdIncidencia", DbType="Int")] System.Nullable<int> idIncidencia, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdTecnico", DbType="Int")] System.Nullable<int> idTecnico, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdEstadoEnProceso", DbType="Int")] System.Nullable<int> idEstadoEnProceso, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Resultado", DbType="Int")] ref System.Nullable<int> resultado)
 		{
 			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idIncidencia, idTecnico, idEstadoEnProceso, resultado);
 			resultado = ((System.Nullable<int>)(result.GetParameterValue(3)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_ActualizarEstadoTelegram")]
+		public int sp_Incidencias_ActualizarEstadoTelegram([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdIncidencia", DbType="Int")] System.Nullable<int> idIncidencia, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdTecnico", DbType="Int")] System.Nullable<int> idTecnico, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdNuevoEstado", DbType="Int")] System.Nullable<int> idNuevoEstado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Observaciones", DbType="VarChar(MAX)")] string observaciones, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Resultado", DbType="Int")] ref System.Nullable<int> resultado)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idIncidencia, idTecnico, idNuevoEstado, observaciones, resultado);
+			resultado = ((System.Nullable<int>)(result.GetParameterValue(4)));
 			return ((int)(result.ReturnValue));
 		}
 	}

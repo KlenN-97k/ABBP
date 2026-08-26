@@ -1,6 +1,7 @@
 ﻿using Entidades.Gestion_de_Entidades;
 using Logica;
 using Logica.Gestion_de_Logica;
+using Serilog; // NUEVO: Librería de Logs
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -20,36 +21,56 @@ namespace Bot
     {
         static TelegramBotClient botClient;
         private static readonly Dictionary<long, EstadoReportar> conversaciones = new Dictionary<long, EstadoReportar>();
-
-        // 1. Sacamos el CancellationTokenSource afuera para poder apagarlo desde TopShelf
+        private static readonly Dictionary<long, EstadoTecnico> conversacionesTecnicos = new Dictionary<long, EstadoTecnico>();
         static CancellationTokenSource cts;
 
         static void Main(string[] args)
         {
-            // 2. Configuración mágica de TopShelf
-            var rc = HostFactory.Run(x =>
+            // 1. Configuración del Sistema de Logs
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Console() // Muestra los logs en la consola local
+                .WriteTo.File("logs\\bot_.txt",
+                    rollingInterval: RollingInterval.Day, // Un archivo nuevo cada día
+                    retainedFileCountLimit: 30) // Guarda máximo 30 días para no llenar el disco
+                .CreateLogger();
+
+            try
             {
-                x.Service<BotMotor>(s =>
+                Log.Information("Iniciando el ejecutable del Bot...");
+
+                var rc = HostFactory.Run(x =>
                 {
-                    s.ConstructUsing(name => new BotMotor());
-                    s.WhenStarted(tc => tc.Start());
-                    s.WhenStopped(tc => tc.Stop());
+                    // Le decimos a TopShelf que envíe sus reportes a nuestro archivo de Serilog
+                    x.UseSerilog();
+
+                    x.Service<BotMotor>(s =>
+                    {
+                        s.ConstructUsing(name => new BotMotor());
+                        s.WhenStarted(tc => tc.Start());
+                        s.WhenStopped(tc => tc.Stop());
+                    });
+
+                    x.RunAsLocalSystem();
+                    x.SetDescription("Servicio en segundo plano del Bot de Telegram para el Sistema de Incidencias");
+                    x.SetDisplayName("Incidencias Telegram Bot");
+                    x.SetServiceName("IncidenciasTelegramBot");
                 });
 
-                // Se ejecutará con permisos del sistema local
-                x.RunAsLocalSystem();
-
-                // Detalles que aparecerán en services.msc de Windows Server
-                x.SetDescription("Servicio en segundo plano del Bot de Telegram para el Sistema de Incidencias");
-                x.SetDisplayName("Incidencias Telegram Bot");
-                x.SetServiceName("IncidenciasTelegramBot");
-            });
-
-            var exitCode = (int)Convert.ChangeType(rc, rc.GetTypeCode());
-            Environment.ExitCode = exitCode;
+                var exitCode = (int)Convert.ChangeType(rc, rc.GetTypeCode());
+                Environment.ExitCode = exitCode;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "El servicio del Bot colapsó catastróficamente.");
+            }
+            finally
+            {
+                // Asegura que todos los textos se guarden en el archivo antes de cerrar
+                Log.CloseAndFlush();
+            }
         }
 
-        // 3. Clase controladora que TopShelf usa para arrancar y detener el Bot
         public class BotMotor
         {
             public void Start()
@@ -70,13 +91,13 @@ namespace Bot
                     cancellationToken: cts.Token
                 );
 
-                Console.WriteLine($"[{DateTime.Now}] Bot iniciado correctamente...");
+                Log.Information("Bot de Telegram conectado y escuchando mensajes correctamente.");
             }
 
             public void Stop()
             {
                 cts?.Cancel();
-                Console.WriteLine($"[{DateTime.Now}] Bot detenido.");
+                Log.Information("El Bot fue detenido de forma segura.");
             }
         }
 
@@ -87,12 +108,10 @@ namespace Bot
         {
             try
             {
-                // 1. Si el usuario ESCRIBE un texto
                 if (update.Type == UpdateType.Message && update.Message?.Text != null)
                 {
                     await OnMessage(update.Message, update.Type);
                 }
-                // 2. Si el usuario TOCA un botón Inline
                 else if (update.Type == UpdateType.CallbackQuery && update.CallbackQuery != null)
                 {
                     await OnCallbackQuery(update.CallbackQuery);
@@ -100,13 +119,14 @@ namespace Bot
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error procesando actualización: {ex.Message}");
+                // Guardamos el error real en el archivo de texto
+                Log.Error(ex, "Error crítico procesando una actualización de Telegram.");
             }
         }
 
         static Task HandleErrorAsync(ITelegramBotClient cliente, Exception exception, CancellationToken ct)
         {
-            Console.WriteLine($"Error de API de Telegram: {exception.Message}");
+            Log.Error(exception, "Error de comunicación con la API de Telegram.");
             return Task.CompletedTask;
         }
 
@@ -118,9 +138,8 @@ namespace Bot
             long chatId = msg.Chat.Id;
             string texto = msg.Text.Trim();
 
-            Console.WriteLine($"[{chatId}] Escribió: {texto}");
+            Log.Information("El chat [{ChatId}] envió el comando/mensaje: {Texto}", chatId, texto);
 
-            // Si hay un reporte en curso, el texto se procesa para la conversación
             if (conversaciones.ContainsKey(chatId))
             {
                 if (texto.ToLower() == "/cancelar")
@@ -131,6 +150,14 @@ namespace Bot
                 }
 
                 await ContinuarReportar(chatId, texto);
+                return;
+            }
+
+            if (conversacionesTecnicos.ContainsKey(chatId))
+            {
+                var estadoTec = conversacionesTecnicos[chatId];
+                await FinalizarEstadoTicket(chatId, estadoTec.IdIncidencia, estadoTec.NuevoEstado, texto);
+                conversacionesTecnicos.Remove(chatId);
                 return;
             }
 
@@ -159,6 +186,8 @@ namespace Bot
             long chatId = callbackQuery.Message.Chat.Id;
             string datosBoton = callbackQuery.Data;
 
+            Log.Information("El chat [{ChatId}] presionó el botón interactivo: {DatosBoton}", chatId, datosBoton);
+
             // --- 1. PROCESAR BOTÓN DE ACEPTAR TICKET ---
             if (datosBoton.StartsWith("aceptar_"))
             {
@@ -170,12 +199,9 @@ namespace Bot
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id, "¡Ticket asignado a ti correctamente!", showAlert: false);
 
-                    // 1. Reconstruimos el texto original consultando la BD
-                    // (Así no perdemos los asteriscos y formato al editar el mensaje de los demás)
                     var inc = logica.BuscarPorTicket(logica.ShowIncidencia().FirstOrDefault(i => i.IdIncidencia == idIncidencia)?.NumeroTicket);
                     string textoBase = $"🚨 *NUEVA INCIDENCIA REPORTADA* 🚨\n\n*Ticket:* {inc.NumeroTicket}\n*Empleado:* {inc.Empleado}\n*Área:* {inc.NombreArea}\n*Tipo:* {inc.TipoIncidencia}\n*Prioridad:* {inc.NombrePrioridad}\n\n*Descripción:*\n{inc.Descripcion}";
 
-                    // 2. Traemos de SQL Server TODOS los chats que recibieron esta alerta
                     var mensajesEnviados = logica.ObtenerMensajesTelegram(idIncidencia);
 
                     var botonesEstado = new InlineKeyboardMarkup(new[] {
@@ -183,50 +209,31 @@ namespace Bot
                         new[] { InlineKeyboardButton.WithCallbackData("🔒 Cerrar Ticket", $"estado_{idIncidencia}_Cerrado") }
                     });
 
-                    // 3. ¡EL BARRIDO MÁGICO! Editamos el chat de todos los técnicos al mismo tiempo
                     foreach (var m in mensajesEnviados)
                     {
                         try
                         {
                             if (m.ChatId == chatId)
                             {
-                                // Para el ganador: Le mostramos que lo aceptó y le damos los botones de estado
-                                await botClient.EditMessageText(
-                                    chatId: m.ChatId,
-                                    messageId: m.MessageId,
-                                    text: textoBase + "\n\n👉 *¡Aceptaste este ticket y está En Proceso!*",
-                                    parseMode: ParseMode.Markdown,
-                                    replyMarkup: botonesEstado
-                                );
+                                await botClient.EditMessageText(chatId: m.ChatId, messageId: m.MessageId, text: textoBase + "\n\n👉 *¡Aceptaste este ticket y está En Proceso!*", parseMode: ParseMode.Markdown, replyMarkup: botonesEstado);
                             }
                             else
                             {
-                                // Para los demás: Borramos el botón (replyMarkup: null) y les avisamos que ya lo tomaron
-                                await botClient.EditMessageText(
-                                    chatId: m.ChatId,
-                                    messageId: m.MessageId,
-                                    text: textoBase + $"\n\n🔒 *(Este ticket fue tomado por otro técnico)*",
-                                    parseMode: ParseMode.Markdown,
-                                    replyMarkup: null
-                                );
+                                await botClient.EditMessageText(chatId: m.ChatId, messageId: m.MessageId, text: textoBase + $"\n\n🔒 *(Este ticket fue tomado por otro técnico)*", parseMode: ParseMode.Markdown, replyMarkup: null);
                             }
                         }
-                        catch { /* Ignoramos si alguien borró el chat o bloqueó al bot */ }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Error borrando el botón al técnico con ChatId {ChatId}", m.ChatId);
+                        }
                     }
                 }
                 else
                 {
-                    // Si el técnico le dio clic pero alguien se le adelantó una fracción de segundo:
                     await botClient.AnswerCallbackQuery(callbackQuery.Id, resultado, showAlert: true);
-
-                    // Le quitamos el botón obsoleto
-                    await botClient.EditMessageText(
-                        chatId: chatId,
-                        messageId: callbackQuery.Message.MessageId,
-                        text: callbackQuery.Message.Text + "\n\n🔒 *(Ticket tomado por otro técnico)*"
-                    );
+                    await botClient.EditMessageText(chatId: chatId, messageId: callbackQuery.Message.MessageId, text: callbackQuery.Message.Text + "\n\n🔒 *(Ticket tomado por otro técnico)*");
                 }
-                return; // Salimos para no seguir evaluando
+                return;
             }
 
             // --- 2. PROCESAR BOTONES DE CAMBIO DE ESTADO ---
@@ -236,29 +243,37 @@ namespace Bot
                 int idIncidencia = int.Parse(partes[1]);
                 string nuevoEstado = partes[2]; // "Resuelto" o "Cerrado"
 
-                string resultado = new Logica.Gestion_de_Logica.IncidenciaLN().CambiarEstadoPorTelegram(idIncidencia, chatId, nuevoEstado);
+                // 1. Guardamos el estado temporalmente
+                conversacionesTecnicos[chatId] = new EstadoTecnico { IdIncidencia = idIncidencia, NuevoEstado = nuevoEstado };
 
-                if (resultado.StartsWith("SUCCESS"))
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id, $"Ticket {nuevoEstado} exitosamente.", showAlert: false);
+                // 2. Le damos un botón por si no quiere escribir nada
+                var botonOmitir = new InlineKeyboardMarkup(new[] {
+        InlineKeyboardButton.WithCallbackData("⏭️ Omitir observación", "omitir_obs")
+    });
 
-                    // Quitamos los botones y dejamos el mensaje final
-                    await botClient.EditMessageText(
-                        chatId: chatId,
-                        messageId: callbackQuery.Message.MessageId,
-                        text: callbackQuery.Message.Text + $"\n\n🏁 *Ticket {nuevoEstado} por ti.*",
-                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
-                    );
-                }
-                else
+                // 3. Le pedimos que escriba
+                await botClient.SendMessage(chatId, $"Has elegido marcar el ticket como *{nuevoEstado}*.\n\nPor favor, escribe una observación sobre el trabajo realizado:", parseMode: ParseMode.Markdown, replyMarkup: botonOmitir);
+
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                return;
+            }
+
+            // NUEVO: Manejar el botón de "Omitir"
+            if (datosBoton == "omitir_obs")
+            {
+                if (conversacionesTecnicos.ContainsKey(chatId))
                 {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id, resultado, showAlert: true);
+                    var estadoTec = conversacionesTecnicos[chatId];
+                    await FinalizarEstadoTicket(chatId, estadoTec.IdIncidencia, estadoTec.NuevoEstado, "Sin observaciones detalladas.");
+                    conversacionesTecnicos.Remove(chatId);
                 }
-                return; // Salimos para no seguir evaluando
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                // Borramos el mensaje de "escribe una observación"
+                await botClient.DeleteMessage(chatId, callbackQuery.Message.MessageId);
+                return;
             }
 
             // --- 3. CÓDIGO EXISTENTE DE CREACIÓN DE TICKETS ---
-            // Apaga el icono de "carga" en cualquier otro botón presionado
             await botClient.AnswerCallbackQuery(callbackQuery.Id);
 
             if (datosBoton == "cancelar")
@@ -274,7 +289,6 @@ namespace Bot
 
                 try
                 {
-                    // Procesar botón de ÁREA
                     if (estado.Paso == 1 && datosBoton.StartsWith("area_"))
                     {
                         estado.IdArea = int.Parse(datosBoton.Split('_')[1]);
@@ -282,22 +296,16 @@ namespace Bot
                         await botClient.EditMessageText(chatId, callbackQuery.Message.MessageId, "✅ Área seleccionada.");
 
                         var botonesTipo = new List<InlineKeyboardButton[]>
-                {
-                    new[] { InlineKeyboardButton.WithCallbackData("💻 Hardware", "tipo_Hardware") },
-                    new[] { InlineKeyboardButton.WithCallbackData("📀 Software", "tipo_Software") },
-                    new[] { InlineKeyboardButton.WithCallbackData("🌐 Red", "tipo_Red") },
-                    new[] { InlineKeyboardButton.WithCallbackData("➕ Otro", "tipo_Otro") },
-                    new[] { InlineKeyboardButton.WithCallbackData("❌ Cancelar", "cancelar") }
-                };
+                        {
+                            new[] { InlineKeyboardButton.WithCallbackData("💻 Hardware", "tipo_Hardware") },
+                            new[] { InlineKeyboardButton.WithCallbackData("📀 Software", "tipo_Software") },
+                            new[] { InlineKeyboardButton.WithCallbackData("🌐 Red", "tipo_Red") },
+                            new[] { InlineKeyboardButton.WithCallbackData("➕ Otro", "tipo_Otro") },
+                            new[] { InlineKeyboardButton.WithCallbackData("❌ Cancelar", "cancelar") }
+                        };
 
-                        await botClient.SendMessage(
-                            chatId: chatId,
-                            text: "¿Cuál es el tipo de incidencia? *(Toca un botón)*:",
-                            parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown,
-                            replyMarkup: new InlineKeyboardMarkup(botonesTipo)
-                        );
+                        await botClient.SendMessage(chatId: chatId, text: "¿Cuál es el tipo de incidencia? *(Toca un botón)*:", parseMode: ParseMode.Markdown, replyMarkup: new InlineKeyboardMarkup(botonesTipo));
                     }
-                    // Procesar botón de TIPO
                     else if (estado.Paso == 2 && datosBoton.StartsWith("tipo_"))
                     {
                         estado.TipoIncidencia = datosBoton.Substring(5);
@@ -306,7 +314,6 @@ namespace Bot
                         await botClient.EditMessageText(chatId, callbackQuery.Message.MessageId, $"✅ Tipo seleccionado: {estado.TipoIncidencia}");
                         await botClient.SendMessage(chatId, "Describe el problema (mínimo 10 caracteres):");
                     }
-                    // Procesar botón de PRIORIDAD
                     else if (estado.Paso == 4 && datosBoton.StartsWith("pri_"))
                     {
                         estado.IdPrioridad = int.Parse(datosBoton.Split('_')[1]);
@@ -318,6 +325,7 @@ namespace Bot
                 }
                 catch (Exception ex)
                 {
+                    Log.Error(ex, "Error durante el flujo interactivo de reporte.");
                     conversaciones.Remove(chatId);
                     await botClient.SendMessage(chatId, $"Ocurrió un error, el reporte se canceló: {ex.Message}");
                 }
@@ -350,15 +358,11 @@ namespace Bot
 
                 conversaciones[chatId] = new EstadoReportar { Paso = 1 };
 
-                await botClient.SendMessage(
-                    chatId: chatId,
-                    text: "📝 *Vamos a reportar una incidencia.*\n\n¿En qué área ocurrió? *(Toca un botón)*:",
-                    parseMode: ParseMode.Markdown,
-                    replyMarkup: new InlineKeyboardMarkup(botones)
-                );
+                await botClient.SendMessage(chatId: chatId, text: "📝 *Vamos a reportar una incidencia.*\n\n¿En qué área ocurrió? *(Toca un botón)*:", parseMode: ParseMode.Markdown, replyMarkup: new InlineKeyboardMarkup(botones));
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Error en IniciarReportar");
                 await botClient.SendMessage(chatId, $"Error al iniciar el reporte: {ex.Message}");
             }
         }
@@ -371,7 +375,7 @@ namespace Bot
             {
                 switch (estado.Paso)
                 {
-                    case 3: // Esperando descripción (Texto libre)
+                    case 3:
                         if (texto.Trim().Length < 10)
                         {
                             await botClient.SendMessage(chatId, "La descripción debe tener al menos 10 caracteres. Intenta de nuevo.");
@@ -379,7 +383,7 @@ namespace Bot
                         }
 
                         estado.Descripcion = texto;
-                        estado.Paso = 4; // Pasamos a preguntar la prioridad
+                        estado.Paso = 4;
 
                         var prioridades = new PrioridadLN().ShowPrioridad();
                         var botonesPri = new List<InlineKeyboardButton[]>();
@@ -390,12 +394,7 @@ namespace Bot
                         }
                         botonesPri.Add(new[] { InlineKeyboardButton.WithCallbackData("❌ Cancelar", "cancelar") });
 
-                        await botClient.SendMessage(
-                            chatId: chatId,
-                            text: "¿Qué prioridad tiene? *(Toca un botón)*:",
-                            parseMode: ParseMode.Markdown,
-                            replyMarkup: new InlineKeyboardMarkup(botonesPri)
-                        );
+                        await botClient.SendMessage(chatId: chatId, text: "¿Qué prioridad tiene? *(Toca un botón)*:", parseMode: ParseMode.Markdown, replyMarkup: new InlineKeyboardMarkup(botonesPri));
                         break;
 
                     default:
@@ -405,6 +404,7 @@ namespace Bot
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Error en ContinuarReportar");
                 conversaciones.Remove(chatId);
                 await botClient.SendMessage(chatId, $"Ocurrió un error, el reporte se canceló: {ex.Message}");
             }
@@ -422,14 +422,12 @@ namespace Bot
                 estado.TipoIncidencia,
                 estado.Descripcion,
                 estado.IdPrioridad.Value,
-                0, // El estado real (Pendiente) lo asigna InsertIncidencia
+                0,
                 null, null, null
             );
 
-            // 1. Insertamos la incidencia
             new IncidenciaLN().InsertIncidencia(nueva);
 
-            // 2. Buscamos la última incidencia insertada por este usuario para obtener el ticket
             Incidencia ultimaInsertada = new IncidenciaLN().ShowIncidencia()
                 .Where(i => i.Empleado == nombreEmpleado)
                 .OrderByDescending(i => i.IdIncidencia)
@@ -437,10 +435,8 @@ namespace Bot
 
             string numeroTicket = ultimaInsertada != null ? ultimaInsertada.NumeroTicket : "tu solicitud";
 
-            // 3. Enviamos el mensaje personalizado
             await botClient.SendMessage(chatId, $"✅ {numeroTicket} reportada correctamente. Un técnico la atenderá pronto.");
 
-            // 4. NUEVO: Notificamos a todos los técnicos
             if (ultimaInsertada != null)
             {
                 var tecnicos = new UsuarioLN().ShowUsuario()
@@ -466,8 +462,35 @@ namespace Bot
                             new Logica.Gestion_de_Logica.IncidenciaLN().RegistrarMensajeTelegram(ultimaInsertada.IdIncidencia, tecnico.TelegramChatId.Value, messageId.Value);
                         }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Error enviando notificación al técnico {Tecnico}", tecnico.Nombre);
+                    }
                 }
+            }
+        }
+
+        static async Task FinalizarEstadoTicket(long chatId, int idIncidencia, string nuevoEstado, string observacion)
+        {
+            try
+            {
+                // ATENCIÓN AQUÍ: Tu método CambiarEstadoPorTelegram ahora deberá recibir la 'observacion'
+                string resultado = new Logica.Gestion_de_Logica.IncidenciaLN().CambiarEstadoPorTelegram(idIncidencia, chatId, nuevoEstado, observacion);
+
+                if (resultado.StartsWith("SUCCESS"))
+                {
+                    await botClient.SendMessage(chatId, $"🏁 *Ticket {nuevoEstado} exitosamente.*\n\n*Observación guardada:*\n_{observacion}_", parseMode: ParseMode.Markdown);
+                    Log.Information("Técnico [{ChatId}] cambió ticket {Id} a {Estado} con obs: {Obs}", chatId, idIncidencia, nuevoEstado, observacion);
+                }
+                else
+                {
+                    await botClient.SendMessage(chatId, $"❌ No se pudo actualizar el ticket: {resultado}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error al guardar observación del técnico");
+                await botClient.SendMessage(chatId, "Ocurrió un error al intentar guardar el ticket.");
             }
         }
 
@@ -491,14 +514,16 @@ namespace Bot
                 if (ok)
                 {
                     await botClient.SendMessage(msg.Chat, "Cuenta vinculada correctamente. Ya puedes usar /reportar y /estado.");
+                    Log.Information("Usuario {Usuario} vinculó su cuenta de Telegram con éxito.", usuario);
                 }
             }
             catch (LogicaExcepciones ex)
             {
                 await botClient.SendMessage(msg.Chat, $"No se pudo vincular: {ex.Message}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error(ex, "Error inesperado al intentar registrar cuenta de Telegram.");
                 await botClient.SendMessage(msg.Chat, "Ocurrió un error inesperado. Intenta más tarde.");
             }
         }
@@ -517,7 +542,6 @@ namespace Bot
 
                 Incidencia incidencia = null;
 
-                // Si solo escribe "/estado" (partes.Length == 1)
                 if (partes.Length == 1)
                 {
                     string nombreEmpleado = $"{usuario.Nombre} {usuario.Apellido}";
@@ -533,7 +557,6 @@ namespace Bot
                         return;
                     }
                 }
-                // Si escribe "/estado Solicitud-0001" (partes.Length == 2)
                 else if (partes.Length == 2)
                 {
                     incidencia = new IncidenciaLN().BuscarPorTicket(partes[1]);
@@ -550,7 +573,6 @@ namespace Bot
                     return;
                 }
 
-                // Construir y enviar el mensaje
                 string tecnico = string.IsNullOrWhiteSpace(incidencia.TecnicoAsignado) ? "Sin asignar" : incidencia.TecnicoAsignado;
                 string fechaSolucion = incidencia.FechaSolucion.HasValue ? incidencia.FechaSolucion.Value.ToString("dd/MM/yyyy HH:mm") : "N/A";
 
@@ -568,12 +590,13 @@ namespace Bot
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Error al manejar el comando /estado");
                 await botClient.SendMessage(chatId, $"Ocurrió un error al consultar el ticket: {ex.Message}");
             }
         }
 
         // ==========================================
-        // CLASE AUXILIAR
+        // CLASES AUXILIARES
         // ==========================================
         class EstadoReportar
         {
@@ -582,6 +605,12 @@ namespace Bot
             public string TipoIncidencia { get; set; }
             public string Descripcion { get; set; }
             public int? IdPrioridad { get; set; }
+        }
+
+        class EstadoTecnico
+        {
+            public int IdIncidencia { get; set; }
+            public string NuevoEstado { get; set; }
         }
     }
 }

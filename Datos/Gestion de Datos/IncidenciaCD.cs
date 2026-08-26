@@ -140,7 +140,7 @@ namespace Datos.Gestion_de_Datos
             }
         }
 
-        public static bool ActualizarEstadoTelegram(int idIncidencia, int idTecnico, int idNuevoEstado)
+        public static bool ActualizarEstadoTelegram(int idIncidencia, int idTecnico, int idNuevoEstado, string observacion)
         {
             BDIncidenciasDataContext DB = null;
             try
@@ -148,7 +148,7 @@ namespace Datos.Gestion_de_Datos
                 using (DB = new BDIncidenciasDataContext())
                 {
                     int? resultado = 0;
-                    DB.sp_Incidencias_ActualizarEstadoTelegram(idIncidencia, idTecnico, idNuevoEstado, ref resultado);
+                    DB.sp_Incidencias_ActualizarEstadoTelegram(idIncidencia, idTecnico, idNuevoEstado, observacion, ref resultado);
                     return resultado.HasValue && resultado.Value == 1;
                 }
             }

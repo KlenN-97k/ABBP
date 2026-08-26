@@ -299,17 +299,18 @@
     <Parameter Name="IdUsuario" Parameter="idUsuario" Type="System.Int32" DbType="Int" />
     <Return Type="System.Int32" />
   </Function>
-  <Function Name="dbo.sp_Incidencias_ActualizarEstadoTelegram" Method="sp_Incidencias_ActualizarEstadoTelegram">
-    <Parameter Name="IdIncidencia" Parameter="idIncidencia" Type="System.Int32" DbType="Int" />
-    <Parameter Name="IdTecnico" Parameter="idTecnico" Type="System.Int32" DbType="Int" />
-    <Parameter Name="IdNuevoEstado" Parameter="idNuevoEstado" Type="System.Int32" DbType="Int" />
-    <Parameter Name="Resultado" Parameter="resultado" Type="System.Int32" DbType="Int" Direction="InOut" />
-    <Return Type="System.Int32" />
-  </Function>
   <Function Name="dbo.sp_Incidencias_AsignarTecnicoTelegram" Method="sp_Incidencias_AsignarTecnicoTelegram">
     <Parameter Name="IdIncidencia" Parameter="idIncidencia" Type="System.Int32" DbType="Int" />
     <Parameter Name="IdTecnico" Parameter="idTecnico" Type="System.Int32" DbType="Int" />
     <Parameter Name="IdEstadoEnProceso" Parameter="idEstadoEnProceso" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Resultado" Parameter="resultado" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Incidencias_ActualizarEstadoTelegram" Method="sp_Incidencias_ActualizarEstadoTelegram">
+    <Parameter Name="IdIncidencia" Parameter="idIncidencia" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdTecnico" Parameter="idTecnico" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdNuevoEstado" Parameter="idNuevoEstado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Observaciones" Parameter="observaciones" Type="System.String" DbType="VarChar(MAX)" />
     <Parameter Name="Resultado" Parameter="resultado" Type="System.Int32" DbType="Int" Direction="InOut" />
     <Return Type="System.Int32" />
   </Function>

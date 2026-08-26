@@ -198,7 +198,7 @@ namespace Logica.Gestion_de_Logica
             }
         }
 
-        public string CambiarEstadoPorTelegram(int idIncidencia, long chatIdTelegram, string nuevoEstadoNombre)
+        public string CambiarEstadoPorTelegram(int idIncidencia, long chatIdTelegram, string nuevoEstadoNombre, string observacion)
         {
             try
             {
@@ -206,7 +206,7 @@ namespace Logica.Gestion_de_Logica
                 if (tecnico == null) return "❌ Usuario no encontrado o no vinculado.";
 
                 int nuevoIdEstado = ObtenerIdEstadoPorNombre(nuevoEstadoNombre);
-                bool actualizado = IncidenciaCD.ActualizarEstadoTelegram(idIncidencia, tecnico.IdUsuario, nuevoIdEstado);
+                bool actualizado = IncidenciaCD.ActualizarEstadoTelegram(idIncidencia, tecnico.IdUsuario, nuevoIdEstado, observacion);
 
                 if (actualizado) return $"SUCCESS_{nuevoEstadoNombre}";
                 else return "⛔ No tienes permiso para modificar esta incidencia (no está asignada a ti o no existe).";
