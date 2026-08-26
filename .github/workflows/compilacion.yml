@@ -1,13 +1,13 @@
 name: Compilar Sistema de Incidencias
 
-# Se ejecuta automáticamente cada vez que subes código a la rama principal
+# Se ejecuta automáticamente cada vez que se sube codigo a la rama principal
 on:
   push:
     branches: [ "main", "master" ]
 
 jobs:
   build:
-    # Usamos un servidor de Windows porque tu proyecto es .NET Framework 4.7.2
+    # Usamos un servidor de Windows porque el proyecto es .NET Framework 4.7.2
     runs-on: windows-latest 
 
     steps:
@@ -28,13 +28,13 @@ jobs:
       run: msbuild ABBP.slnx /p:Configuration=Release 
 
     - name: 💾 Guardar Artefacto - Bot (Servicio)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Bot-Produccion
         path: Bot\bin\Release\
 
     - name: 💾 Guardar Artefacto - WinForms (Cliente)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Escritorio-Produccion
         path: Presentacion\bin\Release\
