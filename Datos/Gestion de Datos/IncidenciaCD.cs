@@ -30,14 +30,14 @@ namespace Datos.Gestion_de_Datos
             }
         }
 
-        public static void InsertarIncidencia(Entidades.Gestion_de_Entidades.Incidencia oc)
+        public static int InsertarIncidencia(Entidades.Gestion_de_Entidades.Incidencia oc)
         {
             BDIncidenciasDataContext DB = null;
             try
             {
                 using (DB = new BDIncidenciasDataContext())
                 {
-                    DB.sp_Incidencias_Insertar(
+                    return DB.sp_Incidencias_Insertar(
                         oc.Empleado,
                         oc.IdArea,
                         oc.TipoIncidencia,
@@ -47,7 +47,6 @@ namespace Datos.Gestion_de_Datos
                         oc.IdTecnicoAsignado,
                         oc.Observaciones
                     );
-                    DB.SubmitChanges();
                 }
             }
             catch (SqlException sqlEx)

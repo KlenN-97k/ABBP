@@ -4,6 +4,7 @@ using Logica.Gestion_de_Logica;
 using Serilog; // NUEVO: Librería de Logs
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Configuration;
 using System.Linq;
 using System.Threading;
@@ -20,8 +21,8 @@ namespace Bot
     class Program
     {
         static TelegramBotClient botClient;
-        private static readonly Dictionary<long, EstadoReportar> conversaciones = new Dictionary<long, EstadoReportar>();
-        private static readonly Dictionary<long, EstadoTecnico> conversacionesTecnicos = new Dictionary<long, EstadoTecnico>();
+        private static readonly ConcurrentDictionary<long, EstadoReportar> conversaciones = new ConcurrentDictionary<long, EstadoReportar>();
+        private static readonly ConcurrentDictionary<long, EstadoTecnico> conversacionesTecnicos = new ConcurrentDictionary<long, EstadoTecnico>();
         static CancellationTokenSource cts;
 
         static void Main(string[] args)
@@ -140,11 +141,11 @@ namespace Bot
 
             Log.Information("El chat [{ChatId}] envió el comando/mensaje: {Texto}", chatId, texto);
 
-            if (conversaciones.ContainsKey(chatId))
+            if (conversaciones.TryGetValue(chatId, out _))
             {
                 if (texto.ToLower() == "/cancelar")
                 {
-                    conversaciones.Remove(chatId);
+                    conversaciones.TryRemove(chatId, out _);
                     await botClient.SendMessage(chatId, "❌ Reporte cancelado.");
                     return;
                 }
@@ -153,11 +154,10 @@ namespace Bot
                 return;
             }
 
-            if (conversacionesTecnicos.ContainsKey(chatId))
+            if (conversacionesTecnicos.TryGetValue(chatId, out var estadoTec))
             {
-                var estadoTec = conversacionesTecnicos[chatId];
                 await FinalizarEstadoTicket(chatId, estadoTec.IdIncidencia, estadoTec.NuevoEstado, texto);
-                conversacionesTecnicos.Remove(chatId);
+                conversacionesTecnicos.TryRemove(chatId, out _);
                 return;
             }
 
@@ -261,11 +261,10 @@ namespace Bot
             // NUEVO: Manejar el botón de "Omitir"
             if (datosBoton == "omitir_obs")
             {
-                if (conversacionesTecnicos.ContainsKey(chatId))
+                if (conversacionesTecnicos.TryGetValue(chatId, out var estadoTecOmitir))
                 {
-                    var estadoTec = conversacionesTecnicos[chatId];
-                    await FinalizarEstadoTicket(chatId, estadoTec.IdIncidencia, estadoTec.NuevoEstado, "Sin observaciones detalladas.");
-                    conversacionesTecnicos.Remove(chatId);
+                    await FinalizarEstadoTicket(chatId, estadoTecOmitir.IdIncidencia, estadoTecOmitir.NuevoEstado, "Sin observaciones detalladas.");
+                    conversacionesTecnicos.TryRemove(chatId, out _);
                 }
                 await botClient.AnswerCallbackQuery(callbackQuery.Id);
                 // Borramos el mensaje de "escribe una observación"
@@ -278,15 +277,13 @@ namespace Bot
 
             if (datosBoton == "cancelar")
             {
-                if (conversaciones.ContainsKey(chatId)) conversaciones.Remove(chatId);
+                conversaciones.TryRemove(chatId, out _);
                 await botClient.EditMessageText(chatId, callbackQuery.Message.MessageId, "❌ Reporte cancelado.");
                 return;
             }
 
-            if (conversaciones.ContainsKey(chatId))
+            if (conversaciones.TryGetValue(chatId, out var estado))
             {
-                EstadoReportar estado = conversaciones[chatId];
-
                 try
                 {
                     if (estado.Paso == 1 && datosBoton.StartsWith("area_"))
@@ -320,13 +317,13 @@ namespace Bot
                         await botClient.EditMessageText(chatId, callbackQuery.Message.MessageId, "✅ Prioridad seleccionada.");
 
                         await FinalizarReportar(chatId, estado);
-                        conversaciones.Remove(chatId);
+                        conversaciones.TryRemove(chatId, out _);
                     }
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Error durante el flujo interactivo de reporte.");
-                    conversaciones.Remove(chatId);
+                    conversaciones.TryRemove(chatId, out _);
                     await botClient.SendMessage(chatId, $"Ocurrió un error, el reporte se canceló: {ex.Message}");
                 }
             }
@@ -369,7 +366,11 @@ namespace Bot
 
         static async Task ContinuarReportar(long chatId, string texto)
         {
-            EstadoReportar estado = conversaciones[chatId];
+            if (!conversaciones.TryGetValue(chatId, out var estado))
+            {
+                await botClient.SendMessage(chatId, "No hay un reporte en curso. Escribe /reportar para iniciar uno.");
+                return;
+            }
 
             try
             {
@@ -405,7 +406,7 @@ namespace Bot
             catch (Exception ex)
             {
                 Log.Error(ex, "Error en ContinuarReportar");
-                conversaciones.Remove(chatId);
+                conversaciones.TryRemove(chatId, out _);
                 await botClient.SendMessage(chatId, $"Ocurrió un error, el reporte se canceló: {ex.Message}");
             }
         }
@@ -426,12 +427,10 @@ namespace Bot
                 null, null, null
             );
 
-            new IncidenciaLN().InsertIncidencia(nueva);
+            new IncidenciaLN().InsertIncidencia(nueva, out int idIncidencia);
 
             Incidencia ultimaInsertada = new IncidenciaLN().ShowIncidencia()
-                .Where(i => i.Empleado == nombreEmpleado)
-                .OrderByDescending(i => i.IdIncidencia)
-                .FirstOrDefault();
+        .FirstOrDefault(i => i.IdIncidencia == idIncidencia);
 
             string numeroTicket = ultimaInsertada != null ? ultimaInsertada.NumeroTicket : "tu solicitud";
 
@@ -455,7 +454,7 @@ namespace Bot
                 {
                     try
                     {
-                        int? messageId = Bot.TelegramNotificador.EnviarMensaje(tecnico.TelegramChatId.Value, mensajeTecnicos, ultimaInsertada.IdIncidencia);
+                        int? messageId = await Bot.TelegramNotificador.EnviarMensajeAsync(tecnico.TelegramChatId.Value, mensajeTecnicos, ultimaInsertada.IdIncidencia);
 
                         if (messageId.HasValue)
                         {
@@ -595,7 +594,7 @@ namespace Bot
             }
         }
 
-        // ==========================================
+        // ==========================================2
         // CLASES AUXILIARES
         // ==========================================
         class EstadoReportar

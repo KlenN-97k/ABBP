@@ -61,12 +61,17 @@ namespace Logica.Gestion_de_Logica
 
         public bool InsertIncidencia(Incidencia oe)
         {
+            return InsertIncidencia(oe, out _);
+        }
+
+        public bool InsertIncidencia(Incidencia oe, out int idGenerado)
+        {
             try
             {
                 ValidarIncidencia(oe);
                 oe.IdEstado = ObtenerIdEstadoPorNombre(ESTADO_PENDIENTE);
-                IncidenciaCD.InsertarIncidencia(oe);
-                return true;
+                idGenerado = IncidenciaCD.InsertarIncidencia(oe);
+                return idGenerado > 0;
             }
             catch (LogicaExcepciones) { throw; }
             catch (Exception ex)

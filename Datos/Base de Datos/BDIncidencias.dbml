@@ -168,17 +168,6 @@
     <Parameter Name="IdIncidencia" Parameter="idIncidencia" Type="System.Int32" DbType="Int" />
     <Return Type="System.Int32" />
   </Function>
-  <Function Name="dbo.sp_Incidencias_Insertar" Method="sp_Incidencias_Insertar">
-    <Parameter Name="Empleado" Parameter="empleado" Type="System.String" DbType="VarChar(150)" />
-    <Parameter Name="IdArea" Parameter="idArea" Type="System.Int32" DbType="Int" />
-    <Parameter Name="TipoIncidencia" Parameter="tipoIncidencia" Type="System.String" DbType="VarChar(100)" />
-    <Parameter Name="Descripcion" Parameter="descripcion" Type="System.String" DbType="VarChar(MAX)" />
-    <Parameter Name="IdPrioridad" Parameter="idPrioridad" Type="System.Int32" DbType="Int" />
-    <Parameter Name="IdEstado" Parameter="idEstado" Type="System.Int32" DbType="Int" />
-    <Parameter Name="IdTecnicoAsignado" Parameter="idTecnicoAsignado" Type="System.Int32" DbType="Int" />
-    <Parameter Name="Observaciones" Parameter="observaciones" Type="System.String" DbType="VarChar(MAX)" />
-    <Return Type="System.Int32" />
-  </Function>
   <Function Name="dbo.sp_Incidencias_Listar" Method="sp_Incidencias_Listar">
     <ElementType Name="sp_Incidencias_ListarResult">
       <Column Name="IdIncidencia" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
@@ -312,6 +301,17 @@
     <Parameter Name="IdNuevoEstado" Parameter="idNuevoEstado" Type="System.Int32" DbType="Int" />
     <Parameter Name="Observaciones" Parameter="observaciones" Type="System.String" DbType="VarChar(MAX)" />
     <Parameter Name="Resultado" Parameter="resultado" Type="System.Int32" DbType="Int" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Incidencias_Insertar" Method="sp_Incidencias_Insertar">
+    <Parameter Name="Empleado" Parameter="empleado" Type="System.String" DbType="VarChar(150)" />
+    <Parameter Name="IdArea" Parameter="idArea" Type="System.Int32" DbType="Int" />
+    <Parameter Name="TipoIncidencia" Parameter="tipoIncidencia" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="Descripcion" Parameter="descripcion" Type="System.String" DbType="VarChar(MAX)" />
+    <Parameter Name="IdPrioridad" Parameter="idPrioridad" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdEstado" Parameter="idEstado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdTecnicoAsignado" Parameter="idTecnicoAsignado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Observaciones" Parameter="observaciones" Type="System.String" DbType="VarChar(MAX)" />
     <Return Type="System.Int32" />
   </Function>
 </Database>

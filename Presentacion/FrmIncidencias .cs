@@ -339,7 +339,7 @@ namespace Presentacion
                         txtTipo.Text, txtDescripcion.Text, (int)cboPrioridad.SelectedValue,
                         (int)cboEstado.SelectedValue, idTecnico, null, txtObservaciones.Text
                     );
-                    incidenciaLN.InsertIncidencia(nueva);
+                    incidenciaLN.InsertIncidencia(nueva, out int idIncidencia);
 
                     auditoriaLN.Registrar(
                         usuarioActual.IdUsuario,
@@ -352,9 +352,7 @@ namespace Presentacion
 
                     // NUEVO: Buscar la incidencia recién creada para tener su número de ticket real
                     Incidencia incidenciaCreada = incidenciaLN.ShowIncidencia()
-                         .Where(i => i.Empleado == txtEmpleado.Text && i.Descripcion == txtDescripcion.Text)
-                         .OrderByDescending(i => i.IdIncidencia)
-                         .FirstOrDefault();
+                         .FirstOrDefault(i => i.IdIncidencia == idIncidencia);
 
                     if (incidenciaCreada != null)
                     {

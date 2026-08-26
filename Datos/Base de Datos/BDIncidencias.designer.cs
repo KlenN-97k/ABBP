@@ -244,13 +244,6 @@ namespace Datos.Base_de_Datos
 			return ((int)(result.ReturnValue));
 		}
 		
-		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_Insertar")]
-		public int sp_Incidencias_Insertar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="Empleado", DbType="VarChar(150)")] string empleado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdArea", DbType="Int")] System.Nullable<int> idArea, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="TipoIncidencia", DbType="VarChar(100)")] string tipoIncidencia, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Descripcion", DbType="VarChar(MAX)")] string descripcion, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdPrioridad", DbType="Int")] System.Nullable<int> idPrioridad, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdEstado", DbType="Int")] System.Nullable<int> idEstado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdTecnicoAsignado", DbType="Int")] System.Nullable<int> idTecnicoAsignado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Observaciones", DbType="VarChar(MAX)")] string observaciones)
-		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), empleado, idArea, tipoIncidencia, descripcion, idPrioridad, idEstado, idTecnicoAsignado, observaciones);
-			return ((int)(result.ReturnValue));
-		}
-		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_Listar")]
 		public ISingleResult<sp_Incidencias_ListarResult> sp_Incidencias_Listar()
 		{
@@ -355,6 +348,13 @@ namespace Datos.Base_de_Datos
 		{
 			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idIncidencia, idTecnico, idNuevoEstado, observaciones, resultado);
 			resultado = ((System.Nullable<int>)(result.GetParameterValue(4)));
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_Insertar")]
+		public int sp_Incidencias_Insertar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="Empleado", DbType="VarChar(150)")] string empleado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdArea", DbType="Int")] System.Nullable<int> idArea, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="TipoIncidencia", DbType="VarChar(100)")] string tipoIncidencia, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Descripcion", DbType="VarChar(MAX)")] string descripcion, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdPrioridad", DbType="Int")] System.Nullable<int> idPrioridad, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdEstado", DbType="Int")] System.Nullable<int> idEstado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdTecnicoAsignado", DbType="Int")] System.Nullable<int> idTecnicoAsignado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Observaciones", DbType="VarChar(MAX)")] string observaciones)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), empleado, idArea, tipoIncidencia, descripcion, idPrioridad, idEstado, idTecnicoAsignado, observaciones);
 			return ((int)(result.ReturnValue));
 		}
 	}
