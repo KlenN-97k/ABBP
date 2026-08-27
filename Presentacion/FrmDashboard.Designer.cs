@@ -38,6 +38,9 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmDashboard));
             this.panelToolbar = new System.Windows.Forms.Panel();
             this.dtpHasta = new System.Windows.Forms.DateTimePicker();
@@ -57,27 +60,31 @@
             this.panelTiempoPromedio = new System.Windows.Forms.Panel();
             this.lblTiempoPromedioTitulo = new System.Windows.Forms.Label();
             this.lblTiempoPromedioValor = new System.Windows.Forms.Label();
-            this.tabCharts = new System.Windows.Forms.TabControl();
+            this.TabControl = new System.Windows.Forms.TabControl();
             this.tabEstado = new System.Windows.Forms.TabPage();
             this.chartEstado = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabPrioridad = new System.Windows.Forms.TabPage();
             this.chartPrioridad = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabArea = new System.Windows.Forms.TabPage();
             this.chartArea = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.tabTendencia = new System.Windows.Forms.TabPage();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.chartTendencia = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.panelToolbar.SuspendLayout();
             this.flowTarjetas.SuspendLayout();
             this.panelTotal.SuspendLayout();
             this.panelPendientes.SuspendLayout();
             this.panelResueltos.SuspendLayout();
             this.panelTiempoPromedio.SuspendLayout();
-            this.tabCharts.SuspendLayout();
+            this.TabControl.SuspendLayout();
             this.tabEstado.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartEstado)).BeginInit();
             this.tabPrioridad.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartPrioridad)).BeginInit();
             this.tabArea.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartArea)).BeginInit();
+            this.tabTendencia.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartTendencia)).BeginInit();
             this.SuspendLayout();
             // 
             // panelToolbar
@@ -150,7 +157,7 @@
             this.flowTarjetas.Controls.Add(this.panelPendientes);
             this.flowTarjetas.Controls.Add(this.panelResueltos);
             this.flowTarjetas.Controls.Add(this.panelTiempoPromedio);
-            this.flowTarjetas.Controls.Add(this.tabCharts);
+            this.flowTarjetas.Controls.Add(this.TabControl);
             this.flowTarjetas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowTarjetas.Location = new System.Drawing.Point(0, 45);
             this.flowTarjetas.Name = "flowTarjetas";
@@ -305,16 +312,17 @@
             this.lblTiempoPromedioValor.Text = "Valor";
             this.lblTiempoPromedioValor.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // tabCharts
+            // TabControl
             // 
-            this.tabCharts.Controls.Add(this.tabEstado);
-            this.tabCharts.Controls.Add(this.tabPrioridad);
-            this.tabCharts.Controls.Add(this.tabArea);
-            this.tabCharts.Location = new System.Drawing.Point(3, 97);
-            this.tabCharts.Name = "tabCharts";
-            this.tabCharts.SelectedIndex = 0;
-            this.tabCharts.Size = new System.Drawing.Size(846, 381);
-            this.tabCharts.TabIndex = 4;
+            this.TabControl.Controls.Add(this.tabEstado);
+            this.TabControl.Controls.Add(this.tabPrioridad);
+            this.TabControl.Controls.Add(this.tabArea);
+            this.TabControl.Controls.Add(this.tabTendencia);
+            this.TabControl.Location = new System.Drawing.Point(3, 97);
+            this.TabControl.Name = "TabControl";
+            this.TabControl.SelectedIndex = 0;
+            this.TabControl.Size = new System.Drawing.Size(846, 381);
+            this.TabControl.TabIndex = 4;
             // 
             // tabEstado
             // 
@@ -328,7 +336,6 @@
             this.tabEstado.TabIndex = 0;
             this.tabEstado.Text = "Por Estado";
             this.tabEstado.UseVisualStyleBackColor = true;
-            this.tabEstado.UseWaitCursor = true;
             // 
             // chartEstado
             // 
@@ -346,7 +353,6 @@
             this.chartEstado.Size = new System.Drawing.Size(832, 346);
             this.chartEstado.TabIndex = 0;
             this.chartEstado.Text = "chart1";
-            this.chartEstado.UseWaitCursor = true;
             // 
             // tabPrioridad
             // 
@@ -408,6 +414,35 @@
             this.chartArea.TabIndex = 0;
             this.chartArea.Text = "chart1";
             // 
+            // tabTendencia
+            // 
+            this.tabTendencia.Controls.Add(this.chartTendencia);
+            this.tabTendencia.Location = new System.Drawing.Point(4, 25);
+            this.tabTendencia.Name = "tabTendencia";
+            this.tabTendencia.Padding = new System.Windows.Forms.Padding(3);
+            this.tabTendencia.Size = new System.Drawing.Size(838, 352);
+            this.tabTendencia.TabIndex = 3;
+            this.tabTendencia.Text = "Tendencia";
+            this.tabTendencia.UseVisualStyleBackColor = true;
+            // 
+            // chartTendencia
+            // 
+            chartArea4.Name = "ChartArea1";
+            this.chartTendencia.ChartAreas.Add(chartArea4);
+            this.chartTendencia.Cursor = System.Windows.Forms.Cursors.Default;
+            this.chartTendencia.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend4.Name = "Legend1";
+            this.chartTendencia.Legends.Add(legend4);
+            this.chartTendencia.Location = new System.Drawing.Point(3, 3);
+            this.chartTendencia.Name = "chartTendencia";
+            series4.ChartArea = "ChartArea1";
+            series4.Legend = "Legend1";
+            series4.Name = "Series1";
+            this.chartTendencia.Series.Add(series4);
+            this.chartTendencia.Size = new System.Drawing.Size(832, 346);
+            this.chartTendencia.TabIndex = 1;
+            this.chartTendencia.Text = "chart1";
+            // 
             // FrmDashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -431,13 +466,15 @@
             this.panelResueltos.PerformLayout();
             this.panelTiempoPromedio.ResumeLayout(false);
             this.panelTiempoPromedio.PerformLayout();
-            this.tabCharts.ResumeLayout(false);
+            this.TabControl.ResumeLayout(false);
             this.tabEstado.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chartEstado)).EndInit();
             this.tabPrioridad.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chartPrioridad)).EndInit();
             this.tabArea.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chartArea)).EndInit();
+            this.tabTendencia.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chartTendencia)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -462,7 +499,7 @@
         private System.Windows.Forms.ComboBox cboRangoFecha;
         private System.Windows.Forms.DateTimePicker dtpHasta;
         private System.Windows.Forms.DateTimePicker dtpDesde;
-        private System.Windows.Forms.TabControl tabCharts;
+        private System.Windows.Forms.TabControl TabControl;
         private System.Windows.Forms.TabPage tabEstado;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartEstado;
         private System.Windows.Forms.TabPage tabPrioridad;
@@ -470,5 +507,7 @@
         private System.Windows.Forms.TabPage tabArea;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartArea;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TabPage tabTendencia;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartTendencia;
     }
 }

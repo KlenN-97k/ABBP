@@ -22,9 +22,13 @@ namespace Presentacion
         private readonly GuiaLN guiaLN = new GuiaLN();
         private List<Guia> listaGuias;
         private Guia guiaSeleccionada;
-        public FrmGuias()
+        private readonly Usuario usuarioActual;
+
+        public FrmGuias(Usuario usuarioActual)
         {
             InitializeComponent();
+            this.usuarioActual = usuarioActual;
+
             grid.SelectionChanged += grid_SelectionChanged;
             txtBuscar.TextChanged += txtBuscar_TextChanged;
             grid.ColumnHeaderMouseClick += grid_ColumnHeaderMouseClick;
@@ -37,6 +41,13 @@ namespace Presentacion
             toolTip1.SetToolTip(button4, "Exportar el catálogo de guías a PDF");
             toolTip1.SetToolTip(button5, "Exportar el catálogo de guías a Excel");
 
+            if (usuarioActual != null && usuarioActual.Rol == "Usuario")
+            {
+                button1.Enabled = false; // Nuevo
+                button2.Enabled = false; // Guardar
+                button3.Enabled = false; // Eliminar
+            }
+        
         }
 
         private void CargarGrid()

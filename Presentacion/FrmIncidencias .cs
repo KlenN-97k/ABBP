@@ -445,7 +445,8 @@ namespace Presentacion
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string detalle = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                MessageBox.Show(detalle, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

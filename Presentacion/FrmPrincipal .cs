@@ -39,21 +39,22 @@ namespace Presentacion
         private void FrmPrincipal_Load(object sender, EventArgs e)
         {
             lblUsuarioSidebar.Text = $"{_usuarioActual.Nombre} {_usuarioActual.Apellido}\n({_usuarioActual.Rol})";
-           
+
 
 
             if (_usuarioActual.Rol == "Usuario")
             {
                 DeshabilitarBoton(btnUsuarios);
                 DeshabilitarBoton(btnAreas);
-                DeshabilitarBoton(btnReportes);
                 DeshabilitarBoton(btnAuditoria);
+                DeshabilitarBoton(btnDashboard);
             }
             else if (_usuarioActual.Rol == "Técnico")
             {
                 DeshabilitarBoton(btnUsuarios);
                 DeshabilitarBoton(btnAreas);
                 DeshabilitarBoton(btnAuditoria);
+                DeshabilitarBoton(btnDashboard);
             }
             foreach (Control control in this.Controls)
             {
@@ -114,7 +115,7 @@ namespace Presentacion
 
         private void btnGuias_Click(object sender, EventArgs e)
         {
-          AbrirHijo(new FrmGuias());
+            AbrirHijo(new FrmGuias(_usuarioActual));
         }
 
         private void btnCerrarSesion_Click(object sender, EventArgs e)

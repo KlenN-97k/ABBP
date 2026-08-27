@@ -33,18 +33,22 @@
             this.lblTelegramStatus = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.panelSeguridad = new System.Windows.Forms.Panel();
+            this.lblOjoConfirmar = new System.Windows.Forms.Label();
+            this.lblOjoActual = new System.Windows.Forms.Label();
+            this.lblOjoNueva = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.txtPasswordActual = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtPasswordNueva = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtConfirmarPasswordNueva = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.btnQuitarFoto = new System.Windows.Forms.Button();
             this.btnCambiarPassword = new System.Windows.Forms.Button();
             this.picFoto = new System.Windows.Forms.PictureBox();
             this.btnCambiarFoto = new System.Windows.Forms.Button();
             this.btnGuardarPerfil = new System.Windows.Forms.Button();
-            this.txtConfirmarPasswordNueva = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.txtPasswordNueva = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.txtPasswordActual = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
             this.txtNombre = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtCorreo = new System.Windows.Forms.TextBox();
@@ -55,13 +59,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panelInfoPersonal = new System.Windows.Forms.Panel();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.txtRol = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.lblOjoNueva = new System.Windows.Forms.Label();
-            this.lblOjoActual = new System.Windows.Forms.Label();
-            this.lblOjoConfirmar = new System.Windows.Forms.Label();
+            this.txtRol = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.panelSeguridad.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picFoto)).BeginInit();
@@ -101,6 +101,122 @@
             this.panelSeguridad.Name = "panelSeguridad";
             this.panelSeguridad.Size = new System.Drawing.Size(596, 212);
             this.panelSeguridad.TabIndex = 75;
+            // 
+            // lblOjoConfirmar
+            // 
+            this.lblOjoConfirmar.AutoSize = true;
+            this.lblOjoConfirmar.BackColor = System.Drawing.Color.Transparent;
+            this.lblOjoConfirmar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblOjoConfirmar.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOjoConfirmar.ForeColor = System.Drawing.Color.White;
+            this.lblOjoConfirmar.Location = new System.Drawing.Point(480, 169);
+            this.lblOjoConfirmar.Name = "lblOjoConfirmar";
+            this.lblOjoConfirmar.Size = new System.Drawing.Size(40, 28);
+            this.lblOjoConfirmar.TabIndex = 85;
+            this.lblOjoConfirmar.Text = "👁";
+            // 
+            // lblOjoActual
+            // 
+            this.lblOjoActual.AutoSize = true;
+            this.lblOjoActual.BackColor = System.Drawing.Color.Transparent;
+            this.lblOjoActual.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblOjoActual.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOjoActual.ForeColor = System.Drawing.Color.White;
+            this.lblOjoActual.Location = new System.Drawing.Point(480, 69);
+            this.lblOjoActual.Name = "lblOjoActual";
+            this.lblOjoActual.Size = new System.Drawing.Size(40, 28);
+            this.lblOjoActual.TabIndex = 84;
+            this.lblOjoActual.Text = "👁";
+            // 
+            // lblOjoNueva
+            // 
+            this.lblOjoNueva.AutoSize = true;
+            this.lblOjoNueva.BackColor = System.Drawing.Color.Transparent;
+            this.lblOjoNueva.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblOjoNueva.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOjoNueva.ForeColor = System.Drawing.Color.White;
+            this.lblOjoNueva.Location = new System.Drawing.Point(480, 114);
+            this.lblOjoNueva.Name = "lblOjoNueva";
+            this.lblOjoNueva.Size = new System.Drawing.Size(40, 28);
+            this.lblOjoNueva.TabIndex = 83;
+            this.lblOjoNueva.Text = "👁";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Segoe UI Black", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.ForeColor = System.Drawing.Color.White;
+            this.label11.Location = new System.Drawing.Point(22, 25);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(417, 41);
+            this.label11.TabIndex = 80;
+            this.label11.Text = "🔒 Seguridad y Contraseña";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.ForeColor = System.Drawing.Color.White;
+            this.label10.Location = new System.Drawing.Point(24, 66);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(219, 28);
+            this.label10.TabIndex = 66;
+            this.label10.Text = "🔒 Contraseña Actual";
+            // 
+            // txtPasswordActual
+            // 
+            this.txtPasswordActual.BackColor = System.Drawing.SystemColors.Window;
+            this.txtPasswordActual.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPasswordActual.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(50)))), ((int)(((byte)(80)))));
+            this.txtPasswordActual.Location = new System.Drawing.Point(306, 66);
+            this.txtPasswordActual.Name = "txtPasswordActual";
+            this.txtPasswordActual.Size = new System.Drawing.Size(155, 34);
+            this.txtPasswordActual.TabIndex = 67;
+            this.txtPasswordActual.UseSystemPasswordChar = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.Color.White;
+            this.label9.Location = new System.Drawing.Point(24, 120);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(219, 28);
+            this.label9.TabIndex = 68;
+            this.label9.Text = "🔑 Nueva Contraseña";
+            // 
+            // txtPasswordNueva
+            // 
+            this.txtPasswordNueva.BackColor = System.Drawing.SystemColors.Window;
+            this.txtPasswordNueva.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPasswordNueva.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(50)))), ((int)(((byte)(80)))));
+            this.txtPasswordNueva.Location = new System.Drawing.Point(306, 114);
+            this.txtPasswordNueva.Name = "txtPasswordNueva";
+            this.txtPasswordNueva.Size = new System.Drawing.Size(155, 34);
+            this.txtPasswordNueva.TabIndex = 69;
+            this.txtPasswordNueva.UseSystemPasswordChar = true;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.ForeColor = System.Drawing.Color.White;
+            this.label8.Location = new System.Drawing.Point(24, 169);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(320, 28);
+            this.label8.TabIndex = 70;
+            this.label8.Text = "🔑 Confirmar Nueva Contraseña";
+            // 
+            // txtConfirmarPasswordNueva
+            // 
+            this.txtConfirmarPasswordNueva.BackColor = System.Drawing.SystemColors.Window;
+            this.txtConfirmarPasswordNueva.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtConfirmarPasswordNueva.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(50)))), ((int)(((byte)(80)))));
+            this.txtConfirmarPasswordNueva.Location = new System.Drawing.Point(306, 169);
+            this.txtConfirmarPasswordNueva.Name = "txtConfirmarPasswordNueva";
+            this.txtConfirmarPasswordNueva.Size = new System.Drawing.Size(155, 34);
+            this.txtConfirmarPasswordNueva.TabIndex = 71;
+            this.txtConfirmarPasswordNueva.UseSystemPasswordChar = true;
             // 
             // label6
             // 
@@ -192,72 +308,7 @@
             this.btnGuardarPerfil.TabIndex = 72;
             this.btnGuardarPerfil.Text = "💾 Guardar Cambios";
             this.btnGuardarPerfil.UseVisualStyleBackColor = false;
-            // 
-            // txtConfirmarPasswordNueva
-            // 
-            this.txtConfirmarPasswordNueva.BackColor = System.Drawing.SystemColors.Window;
-            this.txtConfirmarPasswordNueva.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtConfirmarPasswordNueva.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(50)))), ((int)(((byte)(80)))));
-            this.txtConfirmarPasswordNueva.Location = new System.Drawing.Point(306, 169);
-            this.txtConfirmarPasswordNueva.Name = "txtConfirmarPasswordNueva";
-            this.txtConfirmarPasswordNueva.Size = new System.Drawing.Size(155, 34);
-            this.txtConfirmarPasswordNueva.TabIndex = 71;
-            this.txtConfirmarPasswordNueva.UseSystemPasswordChar = true;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.ForeColor = System.Drawing.Color.White;
-            this.label8.Location = new System.Drawing.Point(24, 169);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(320, 28);
-            this.label8.TabIndex = 70;
-            this.label8.Text = "🔑 Confirmar Nueva Contraseña";
-            // 
-            // txtPasswordNueva
-            // 
-            this.txtPasswordNueva.BackColor = System.Drawing.SystemColors.Window;
-            this.txtPasswordNueva.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPasswordNueva.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(50)))), ((int)(((byte)(80)))));
-            this.txtPasswordNueva.Location = new System.Drawing.Point(306, 114);
-            this.txtPasswordNueva.Name = "txtPasswordNueva";
-            this.txtPasswordNueva.Size = new System.Drawing.Size(155, 34);
-            this.txtPasswordNueva.TabIndex = 69;
-            this.txtPasswordNueva.UseSystemPasswordChar = true;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.ForeColor = System.Drawing.Color.White;
-            this.label9.Location = new System.Drawing.Point(24, 120);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(219, 28);
-            this.label9.TabIndex = 68;
-            this.label9.Text = "🔑 Nueva Contraseña";
-            // 
-            // txtPasswordActual
-            // 
-            this.txtPasswordActual.BackColor = System.Drawing.SystemColors.Window;
-            this.txtPasswordActual.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPasswordActual.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(50)))), ((int)(((byte)(80)))));
-            this.txtPasswordActual.Location = new System.Drawing.Point(306, 66);
-            this.txtPasswordActual.Name = "txtPasswordActual";
-            this.txtPasswordActual.Size = new System.Drawing.Size(155, 34);
-            this.txtPasswordActual.TabIndex = 67;
-            this.txtPasswordActual.UseSystemPasswordChar = true;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.ForeColor = System.Drawing.Color.White;
-            this.label10.Location = new System.Drawing.Point(24, 66);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(219, 28);
-            this.label10.TabIndex = 66;
-            this.label10.Text = "🔒 Contraseña Actual";
+            this.btnGuardarPerfil.Click += new System.EventHandler(this.btnGuardarPerfil_Click);
             // 
             // txtNombre
             // 
@@ -375,40 +426,6 @@
             this.panelInfoPersonal.Size = new System.Drawing.Size(596, 225);
             this.panelInfoPersonal.TabIndex = 77;
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Segoe UI Black", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(14, 24);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(386, 41);
-            this.label7.TabIndex = 78;
-            this.label7.Text = "ℹ️ Información Personal";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("Segoe UI Black", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.ForeColor = System.Drawing.Color.White;
-            this.label11.Location = new System.Drawing.Point(22, 25);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(417, 41);
-            this.label11.TabIndex = 80;
-            this.label11.Text = "🔒 Seguridad y Contraseña";
-            // 
-            // txtRol
-            // 
-            this.txtRol.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.txtRol.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtRol.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtRol.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(50)))), ((int)(((byte)(80)))));
-            this.txtRol.Location = new System.Drawing.Point(124, 181);
-            this.txtRol.Name = "txtRol";
-            this.txtRol.ReadOnly = true;
-            this.txtRol.Size = new System.Drawing.Size(155, 27);
-            this.txtRol.TabIndex = 65;
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -422,44 +439,28 @@
             this.label5.TabIndex = 64;
             this.label5.Text = "🏷️ Rol";
             // 
-            // lblOjoNueva
+            // txtRol
             // 
-            this.lblOjoNueva.AutoSize = true;
-            this.lblOjoNueva.BackColor = System.Drawing.Color.Transparent;
-            this.lblOjoNueva.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblOjoNueva.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOjoNueva.ForeColor = System.Drawing.Color.White;
-            this.lblOjoNueva.Location = new System.Drawing.Point(480, 114);
-            this.lblOjoNueva.Name = "lblOjoNueva";
-            this.lblOjoNueva.Size = new System.Drawing.Size(40, 28);
-            this.lblOjoNueva.TabIndex = 83;
-            this.lblOjoNueva.Text = "👁";
+            this.txtRol.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.txtRol.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtRol.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtRol.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(50)))), ((int)(((byte)(80)))));
+            this.txtRol.Location = new System.Drawing.Point(124, 181);
+            this.txtRol.Name = "txtRol";
+            this.txtRol.ReadOnly = true;
+            this.txtRol.Size = new System.Drawing.Size(155, 27);
+            this.txtRol.TabIndex = 65;
             // 
-            // lblOjoActual
+            // label7
             // 
-            this.lblOjoActual.AutoSize = true;
-            this.lblOjoActual.BackColor = System.Drawing.Color.Transparent;
-            this.lblOjoActual.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblOjoActual.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOjoActual.ForeColor = System.Drawing.Color.White;
-            this.lblOjoActual.Location = new System.Drawing.Point(480, 69);
-            this.lblOjoActual.Name = "lblOjoActual";
-            this.lblOjoActual.Size = new System.Drawing.Size(40, 28);
-            this.lblOjoActual.TabIndex = 84;
-            this.lblOjoActual.Text = "👁";
-            // 
-            // lblOjoConfirmar
-            // 
-            this.lblOjoConfirmar.AutoSize = true;
-            this.lblOjoConfirmar.BackColor = System.Drawing.Color.Transparent;
-            this.lblOjoConfirmar.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblOjoConfirmar.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOjoConfirmar.ForeColor = System.Drawing.Color.White;
-            this.lblOjoConfirmar.Location = new System.Drawing.Point(480, 169);
-            this.lblOjoConfirmar.Name = "lblOjoConfirmar";
-            this.lblOjoConfirmar.Size = new System.Drawing.Size(40, 28);
-            this.lblOjoConfirmar.TabIndex = 85;
-            this.lblOjoConfirmar.Text = "👁";
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Segoe UI Black", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.ForeColor = System.Drawing.Color.White;
+            this.label7.Location = new System.Drawing.Point(14, 24);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(386, 41);
+            this.label7.TabIndex = 78;
+            this.label7.Text = "ℹ️ Información Personal";
             // 
             // FrmPerfil
             // 

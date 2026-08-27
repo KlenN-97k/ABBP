@@ -4,10 +4,35 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 
-namespace Presentacion
+
+namespace Logica.Gestion_de_Logica
 {
     public static class CorreoService
     {
+        public static void EnviarCorreo(string destinatario, string asunto, string cuerpo)
+        {
+            string servidor = ConfigurationManager.AppSettings["SmtpServidor"];
+            int puerto = int.Parse(ConfigurationManager.AppSettings["SmtpPuerto"]);
+            string usuario = ConfigurationManager.AppSettings["SmtpUsuario"];
+            string password = ConfigurationManager.AppSettings["SmtpPassword"];
+            bool usarSsl = bool.Parse(ConfigurationManager.AppSettings["SmtpUsarSsl"] ?? "true");
+
+            using (MailMessage mensaje = new MailMessage())
+            {
+                mensaje.From = new MailAddress(usuario, "Sistema de Incidencias APPB");
+                mensaje.To.Add(destinatario);
+                mensaje.Subject = asunto;
+                mensaje.Body = cuerpo;
+
+                using (SmtpClient cliente = new SmtpClient(servidor, puerto))
+                {
+                    cliente.EnableSsl = usarSsl;
+                    cliente.Credentials = new NetworkCredential(usuario, password);
+                    cliente.Send(mensaje);
+                }
+            }
+        }
+
         public static void EnviarCorreoConAdjunto(string destinatario, string asunto, string cuerpo, byte[] adjunto, string nombreAdjunto)
         {
             string servidor = ConfigurationManager.AppSettings["SmtpServidor"];

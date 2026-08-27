@@ -26,16 +26,23 @@ namespace Reportes
 
         private static void Encabezado(PageDescriptor page, string tituloReporte, int totalRegistros)
         {
-            page.Header().Background(ColorNavy).Padding(25).Column(col =>
+            page.Header().Column(col =>
             {
-                col.Item().Text("Sistema de Gestión de Incidencias APPB")
-                    .FontColor(Colors.White).FontSize(11).Bold();
+                col.Item().Height(6).Background(ColorNavy);
 
-                col.Item().PaddingTop(4).Text(tituloReporte)
-                    .FontColor(Colors.White).FontSize(20).Bold();
+                col.Item().Background(Colors.White).Padding(25).Column(inner =>
+                {
+                    inner.Item().Text("SISTEMA DE GESTIÓN DE INCIDENCIAS APPB")
+                        .FontColor(ColorAcero).FontSize(9).Bold().LetterSpacing(0.05f);
 
-                col.Item().PaddingTop(6).Text($"Generado el {DateTime.Now:dd 'de' MMMM 'de' yyyy, HH:mm}  •  {totalRegistros} registro(s)")
-                    .FontColor(ColorNavyClaro).FontSize(9);
+                    inner.Item().PaddingTop(6).Text(tituloReporte)
+                        .FontColor(ColorNavy).FontSize(24).Bold();
+
+                    inner.Item().PaddingTop(10).Height(2).Background(ColorAcero);
+
+                    inner.Item().PaddingTop(8).Text($"Generado el {DateTime.Now:dd 'de' MMMM 'de' yyyy, HH:mm}  •  {totalRegistros} registro(s)")
+                        .FontColor(Colors.Grey.Medium).FontSize(9).Italic();
+                });
             });
         }
 
@@ -56,6 +63,20 @@ namespace Reportes
             });
         }
 
+        // ---------- Helpers para el detalle individual (formato tipo "acta") ----------
+
+        private static void SeccionBanda(ColumnDescriptor col, string titulo)
+        {
+            col.Item().Background(ColorAcero).Padding(6)
+                .Text(titulo.ToUpper()).FontColor(Colors.White).Bold().FontSize(10);
+        }
+
+        private static void SeccionCaja(ColumnDescriptor col, string contenido, float alturaMinima = 30)
+        {
+            col.Item().MinHeight(alturaMinima).Border(1).BorderColor(Colors.Grey.Lighten2)
+                .Padding(8).Text(string.IsNullOrWhiteSpace(contenido) ? "-" : contenido);
+        }
+
         // ---------- Incidencias ----------
 
         public static byte[] GenerarPdfListado(List<Incidencia> incidencias, string tituloReporte = "Reporte de Incidencias")
@@ -68,58 +89,100 @@ namespace Reportes
                     {
                         page.Size(PageSizes.A4.Landscape());
                         page.Margin(0);
-                        page.DefaultTextStyle(x => x.FontFamily("Segoe UI").FontSize(9));
+                        page.DefaultTextStyle(x => x.FontFamily("Segoe UI").FontSize(8));
 
                         Encabezado(page, tituloReporte, incidencias.Count);
 
-                        page.Content().Padding(20).Table(table =>
-                        {
-                            table.ColumnsDefinition(columns =>
-                            {
-                                columns.ConstantColumn(75);
-                                columns.ConstantColumn(60);
-                                columns.RelativeColumn(2);
-                                columns.RelativeColumn(1.6f);
-                                columns.RelativeColumn(1.6f);
-                                columns.RelativeColumn(1);
-                                columns.RelativeColumn(1.2f);
-                                columns.RelativeColumn(2);
-                            });
+                        var metricas = CalcularMetricas(incidencias);
 
-                            table.Header(header =>
+                        page.Content().Padding(20).Column(col =>
+                        {
+                            col.Item().PaddingBottom(15).Row(row =>
                             {
-                                void CeldaEncabezado(string texto)
+                                row.Spacing(10);
+
+                                void TarjetaKpi(string etiqueta, string valor, Color colorValor)
                                 {
-                                    header.Cell().Element(c => c.Background(ColorAcero).Padding(5))
-                                        .Text(texto).FontColor(Colors.White).Bold();
+                                    row.RelativeItem().Border(1).BorderColor(Colors.Grey.Lighten2).Padding(10).Column(c =>
+                                    {
+                                        c.Item().Text(etiqueta.ToUpper()).FontSize(7).FontColor(Colors.Grey.Medium).Bold();
+                                        c.Item().PaddingTop(3).Text(valor).FontSize(18).Bold().FontColor(colorValor);
+                                    });
                                 }
 
-                                CeldaEncabezado("Ticket");
-                                CeldaEncabezado("Fecha");
-                                CeldaEncabezado("Empleado");
-                                CeldaEncabezado("Área");
-                                CeldaEncabezado("Tipo");
-                                CeldaEncabezado("Prioridad");
-                                CeldaEncabezado("Estado");
-                                CeldaEncabezado("Técnico");
+                                TarjetaKpi("Total", metricas.Total.ToString(), ColorNavy);
+
+                                foreach (var kv in metricas.PorEstado.OrderByDescending(k => k.Value))
+                                    TarjetaKpi(kv.Key, kv.Value.ToString(), ColorAcero);
+
+                                foreach (var kv in metricas.PorPrioridad.OrderByDescending(k => k.Value))
+                                    TarjetaKpi(kv.Key, kv.Value.ToString(), ColorAcero);
+
+                                if (metricas.TiempoPromedioResolucionHoras.HasValue)
+                                    TarjetaKpi("Tiempo prom. resolución", $"{metricas.TiempoPromedioResolucionHoras.Value:0.#} h", ColorAcero);
                             });
 
-                            int fila = 0;
-                            foreach (Incidencia inc in incidencias)
+                            col.Item().Border(1).BorderColor(Colors.Grey.Lighten2).Table(table =>
                             {
-                                Color fondo = fila % 2 == 0 ? Colors.White : ColorFilaPar;
+                                table.ColumnsDefinition(columns =>
+                                {
+                                    columns.ConstantColumn(65);   // Ticket
+                                    columns.ConstantColumn(50);   // Fecha apertura
+                                    columns.RelativeColumn(1.6f); // Empleado
+                                    columns.RelativeColumn(1.3f); // Área
+                                    columns.RelativeColumn(1.1f); // Tipo
+                                    columns.RelativeColumn(2.4f); // Descripción
+                                    columns.RelativeColumn(1);    // Prioridad
+                                    columns.RelativeColumn(1.1f); // Estado
+                                    columns.RelativeColumn(1.4f); // Técnico
+                                    columns.ConstantColumn(50);   // Fecha cierre
+                                });
 
-                                table.Cell().Background(fondo).Padding(4).Text(inc.NumeroTicket);
-                                table.Cell().Background(fondo).Padding(4).Text(inc.Fecha.ToString("dd/MM/yyyy"));
-                                table.Cell().Background(fondo).Padding(4).Text(inc.Empleado);
-                                table.Cell().Background(fondo).Padding(4).Text(inc.NombreArea ?? "-");
-                                table.Cell().Background(fondo).Padding(4).Text(inc.TipoIncidencia);
-                                table.Cell().Background(fondo).Padding(4).Text(inc.NombrePrioridad ?? "-");
-                                table.Cell().Background(fondo).Padding(4).Text(inc.NombreEstado ?? "-");
-                                table.Cell().Background(fondo).Padding(4).Text(inc.TecnicoAsignado ?? "Sin asignar");
+                                table.Header(header =>
+                                {
+                                    void CeldaEncabezado(string texto)
+                                    {
+                                        header.Cell().Element(c => c.Background(ColorAcero).Padding(6))
+                                            .Text(texto).FontColor(Colors.White).Bold().FontSize(8);
+                                    }
 
-                                fila++;
-                            }
+                                    CeldaEncabezado("Ticket");
+                                    CeldaEncabezado("Apertura");
+                                    CeldaEncabezado("Empleado");
+                                    CeldaEncabezado("Área");
+                                    CeldaEncabezado("Tipo");
+                                    CeldaEncabezado("Descripción");
+                                    CeldaEncabezado("Prioridad");
+                                    CeldaEncabezado("Estado");
+                                    CeldaEncabezado("Técnico");
+                                    CeldaEncabezado("Cierre");
+                                });
+
+                                int fila = 0;
+                                foreach (Incidencia inc in incidencias)
+                                {
+                                    Color fondo = fila % 2 == 0 ? Colors.White : ColorFilaPar;
+
+                                    void Celda(string texto)
+                                    {
+                                        table.Cell().Background(fondo).BorderBottom(1).BorderColor(Colors.Grey.Lighten3)
+                                            .Padding(5).Text(texto ?? "-");
+                                    }
+
+                                    Celda(inc.NumeroTicket);
+                                    Celda(inc.Fecha.ToString("dd/MM/yy"));
+                                    Celda(inc.Empleado);
+                                    Celda(inc.NombreArea ?? "-");
+                                    Celda(inc.TipoIncidencia);
+                                    Celda(inc.Descripcion);
+                                    Celda(inc.NombrePrioridad ?? "-");
+                                    Celda(inc.NombreEstado ?? "-");
+                                    Celda(inc.TecnicoAsignado ?? "Sin asignar");
+                                    Celda(inc.FechaSolucion.HasValue ? inc.FechaSolucion.Value.ToString("dd/MM/yy") : "-");
+
+                                    fila++;
+                                }
+                            });
                         });
 
                         PieDePagina(page);
@@ -131,6 +194,125 @@ namespace Reportes
             catch (Exception ex)
             {
                 throw new ReportesExcepciones("Error al generar el PDF de incidencias", ex);
+            }
+        }
+
+        /// <summary>
+        /// Genera el PDF de detalle de una sola incidencia (formato tipo "acta"),
+        /// con el logo real de la empresa si se proporciona.
+        /// </summary>
+        /// <param name="incidencia">Incidencia a imprimir.</param>
+        /// <param name="logo">
+        /// Bytes de la imagen del logo (PNG/JPG). Pasar null para usar un placeholder.
+        /// Ejemplo desde Presentacion:
+        /// using (var ms = new MemoryStream())
+        /// {
+        ///     Properties.Resources.Logo4.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+        ///     logoBytes = ms.ToArray();
+        /// }
+        /// </param>
+        public static byte[] GenerarPdfDetalleIncidencia(Incidencia incidencia, byte[] logo = null)
+        {
+            if (incidencia == null)
+                throw new ReportesExcepciones("Debe proporcionar una incidencia.", null);
+
+            try
+            {
+                var documento = Document.Create(container =>
+                {
+                    container.Page(page =>
+                    {
+                        page.Size(PageSizes.A4);
+                        page.Margin(0);
+                        page.DefaultTextStyle(x => x.FontFamily("Segoe UI").FontSize(10));
+
+                        page.Header().Background(ColorNavy).Padding(25).Row(row =>
+                        {
+                            if (logo != null)
+                                row.ConstantItem(60).Height(60).Image(logo);
+                            else
+                                row.ConstantItem(60).Height(60).Background(ColorAcero)
+                                    .AlignCenter().AlignMiddle().Text("LOGO").FontColor(Colors.White).FontSize(8);
+
+                            row.RelativeItem().PaddingLeft(15).Column(col =>
+                            {
+                                col.Item().Text("Sistema de Gestión de Incidencias APPB")
+                                    .FontColor(Colors.White).FontSize(11).Bold();
+                                col.Item().PaddingTop(4).Text("Reporte de Incidencia")
+                                    .FontColor(Colors.White).FontSize(20).Bold();
+                                col.Item().PaddingTop(6)
+                                    .Text($"Generado el {DateTime.Now:dd 'de' MMMM 'de' yyyy, HH:mm}")
+                                    .FontColor(ColorNavyClaro).FontSize(9);
+                            });
+                        });
+
+                        page.Content().Padding(20).Column(col =>
+                        {
+                            col.Spacing(12);
+
+                            col.Item().BorderBottom(2).BorderColor(ColorAcero);
+
+                            SeccionBanda(col, "Tipo de incidencia");
+                            SeccionCaja(col, incidencia.TipoIncidencia);
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Column(c => { SeccionBanda(c, "Número de ticket"); SeccionCaja(c, incidencia.NumeroTicket); });
+                                row.ConstantItem(10);
+                                row.RelativeItem().Column(c => { SeccionBanda(c, "Fecha de la incidencia"); SeccionCaja(c, incidencia.Fecha.ToString("dd/MM/yyyy HH:mm")); });
+                            });
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Column(c => { SeccionBanda(c, "Área"); SeccionCaja(c, incidencia.NombreArea); });
+                                row.ConstantItem(10);
+                                row.RelativeItem().Column(c => { SeccionBanda(c, "Empleado que reporta"); SeccionCaja(c, incidencia.Empleado); });
+                            });
+
+                            SeccionBanda(col, "Descripción del problema");
+                            SeccionCaja(col, incidencia.Descripcion, 60);
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Column(c => { SeccionBanda(c, "Prioridad"); SeccionCaja(c, incidencia.NombrePrioridad); });
+                                row.ConstantItem(10);
+                                row.RelativeItem().Column(c => { SeccionBanda(c, "Estado"); SeccionCaja(c, incidencia.NombreEstado); });
+                            });
+
+                            SeccionBanda(col, "Observaciones");
+                            SeccionCaja(col, incidencia.Observaciones, 60);
+
+                            col.Item().PaddingTop(10).BorderTop(1).BorderColor(Colors.Grey.Lighten2)
+                                .PaddingTop(10).Row(row =>
+                                {
+                                    row.RelativeItem().Column(c =>
+                                    {
+                                        c.Item().Text("REPORTADO POR").Bold().FontSize(9).FontColor(ColorNavy);
+                                        c.Item().PaddingTop(4).Text(incidencia.Empleado);
+                                    });
+                                    row.RelativeItem().Column(c =>
+                                    {
+                                        c.Item().Text("TÉCNICO ASIGNADO").Bold().FontSize(9).FontColor(ColorNavy);
+                                        c.Item().PaddingTop(4).Text(incidencia.TecnicoAsignado ?? "Sin asignar");
+                                    });
+                                    row.RelativeItem().AlignRight().Column(c =>
+                                    {
+                                        c.Item().Text("FECHA DE SOLUCIÓN").Bold().FontSize(9).FontColor(ColorNavy);
+                                        c.Item().PaddingTop(4).Text(incidencia.FechaSolucion.HasValue
+                                            ? incidencia.FechaSolucion.Value.ToString("dd/MM/yyyy HH:mm") : "-");
+                                    });
+                                });
+                        });
+
+                        PieDePagina(page);
+                    });
+                });
+
+                return documento.GeneratePdf();
+            }
+            catch (Exception ex)
+            {
+                throw new ReportesExcepciones("Error al generar el PDF de detalle de incidencia", ex);
             }
         }
 

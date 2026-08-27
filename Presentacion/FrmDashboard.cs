@@ -24,6 +24,7 @@ namespace Presentacion
             ConfigurarChart(chartEstado, "Incidencias por Estado", "Estado");
             ConfigurarChart(chartPrioridad, "Incidencias por Prioridad", "Prioridad");
             ConfigurarChart(chartArea, "Incidencias por Área", "Área");
+            ConfigurarChart(chartTendencia, "Tendencia de Incidencias por Mes", "Mes");
             cboRangoFecha.Items.Clear();
             cboRangoFecha.Items.AddRange(new object[]
             {
@@ -152,11 +153,46 @@ namespace Presentacion
                 LlenarChart(chartEstado, metricas.PorEstado, ColorPorEstado);
                 LlenarChart(chartPrioridad, metricas.PorPrioridad, ColorPorPrioridad);
                 LlenarChart(chartArea, metricas.PorArea, null); // sin color semántico, todas Azul Acero
+                CargarTendenciaMensual();   // <-- agregar esta línea
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        private void CargarTendenciaMensual()
+        {
+            var todasLasIncidencias = new IncidenciaLN().ShowIncidencia();
+
+            DateTime inicio = DateTime.Today.AddMonths(-11);
+            inicio = new DateTime(inicio.Year, inicio.Month, 1);
+
+            var porMes = todasLasIncidencias
+                .Where(i => i.Fecha >= inicio)
+                .GroupBy(i => new { i.Fecha.Year, i.Fecha.Month })
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            chartTendencia.Series.Clear();
+            Series serie = new Series
+            {
+                ChartType = SeriesChartType.Line,
+                BorderWidth = 3,
+                Color = Color.FromArgb(43, 107, 154),
+                MarkerStyle = MarkerStyle.Circle,
+                MarkerSize = 7,
+                IsValueShownAsLabel = true,
+                Font = new Font("Segoe UI", 8, FontStyle.Bold),
+                LabelForeColor = Color.FromArgb(21, 50, 80)
+            };
+
+            for (int i = 0; i < 12; i++)
+            {
+                DateTime mes = inicio.AddMonths(i);
+                porMes.TryGetValue(new { mes.Year, mes.Month }, out int cantidad);
+                serie.Points.AddXY(mes.ToString("MMM yy"), cantidad);
+            }
+
+            chartTendencia.Series.Add(serie);
         }
 
         private void LlenarChart(Chart chart, Dictionary<string, int> datos, Func<string, Color> asignarColor)
@@ -177,6 +213,7 @@ namespace Presentacion
                 serie.Points[indice].Color = asignarColor != null
                     ? asignarColor(kvp.Key)
                     : Color.FromArgb(43, 107, 154); // Azul Acero por defecto
+
             }
 
             chart.Series.Add(serie);

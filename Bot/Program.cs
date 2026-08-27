@@ -74,6 +74,8 @@ namespace Bot
 
         public class BotMotor
         {
+            private static System.Threading.Timer timerReporteMensual;
+
             public void Start()
             {
                 string token = ConfigurationManager.AppSettings["TelegramBotToken"];
@@ -93,12 +95,59 @@ namespace Bot
                 );
 
                 Log.Information("Bot de Telegram conectado y escuchando mensajes correctamente.");
+                timerReporteMensual = new System.Threading.Timer(RevisarReporteMensual, null, TimeSpan.Zero, TimeSpan.FromHours(6));
+                botClient = new TelegramBotClient(token, cancellationToken: cts.Token);
+
             }
 
             public void Stop()
             {
+                timerReporteMensual?.Dispose();
                 cts?.Cancel();
                 Log.Information("El Bot fue detenido de forma segura.");
+
+            }
+        }
+        private static void RevisarReporteMensual(object state)
+        {
+            try
+            {
+                if (DateTime.Now.Day != 1) return;
+
+                var reporteMensualLN = new ReporteMensualLN();
+                DateTime mesAnterior = DateTime.Now.AddMonths(-1);
+
+                if (reporteMensualLN.YaFueEnviado(mesAnterior.Year, mesAnterior.Month))
+                    return;
+
+                var incidenciasDelMes = new IncidenciaLN().ShowIncidencia()
+                    .Where(i => i.Fecha.Year == mesAnterior.Year && i.Fecha.Month == mesAnterior.Month)
+                    .ToList();
+
+                byte[] pdf = Reportes.IncidenciaReportes.GenerarPdfListado(
+                    incidenciasDelMes,
+                    $"Reporte Mensual de Incidencias - {mesAnterior:MMMM yyyy}");
+
+                var admins = new UsuarioLN().ShowUsuario()
+                    .Where(u => u.Rol == "Administrador" && u.Estado && !string.IsNullOrWhiteSpace(u.Correo))
+                    .ToList();
+
+                foreach (var admin in admins)
+                {
+                    CorreoService.EnviarCorreoConAdjunto(
+                        admin.Correo,
+                        $"Reporte Mensual de Incidencias - {mesAnterior:MMMM yyyy}",
+                        $"Adjunto el reporte de incidencias correspondiente a {mesAnterior:MMMM yyyy}.",
+                        pdf,
+                        $"Reporte_Incidencias_{mesAnterior:yyyyMM}.pdf");
+                }
+
+                reporteMensualLN.RegistrarEnvio(mesAnterior.Year, mesAnterior.Month);
+                Log.Information("Reporte mensual de {Mes} enviado a {Cantidad} administrador(es).", mesAnterior.ToString("MMMM yyyy"), admins.Count);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error al generar/enviar el reporte mensual automático.");
             }
         }
 

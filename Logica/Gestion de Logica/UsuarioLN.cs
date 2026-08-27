@@ -285,5 +285,21 @@ namespace Logica.Gestion_de_Logica
                 throw new LogicaExcepciones("Error al buscar usuario por chat de Telegram", ex);
             }
         }
+        public Usuario BuscarPorUsuarioOCorreo(string valor)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(valor))
+                    return null;
+
+                return ShowUsuario().FirstOrDefault(u =>
+                    string.Equals(u.UsuarioLogin, valor, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(u.Correo, valor, StringComparison.OrdinalIgnoreCase));
+            }
+            catch (Exception ex)
+            {
+                throw new LogicaExcepciones("Error al buscar el usuario para recuperación de contraseña", ex);
+            }
+        }
     }
 }

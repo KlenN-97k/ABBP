@@ -136,7 +136,7 @@
             this.lblUsuarioSidebar.ForeColor = System.Drawing.Color.White;
             this.lblUsuarioSidebar.Location = new System.Drawing.Point(145, 24);
             this.lblUsuarioSidebar.Name = "lblUsuarioSidebar";
-            this.lblUsuarioSidebar.Size = new System.Drawing.Size(65, 25);
+            this.lblUsuarioSidebar.Size = new System.Drawing.Size(79, 31);
             this.lblUsuarioSidebar.TabIndex = 1;
             this.lblUsuarioSidebar.Text = "label1";
             // 
@@ -285,7 +285,7 @@
             // 
             // FrmPrincipal
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 31F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(35)))), ((int)(((byte)(60)))));
             this.ClientSize = new System.Drawing.Size(1444, 881);

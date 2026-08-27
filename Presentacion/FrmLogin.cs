@@ -1,4 +1,5 @@
 ﻿using Entidades.Gestion_de_Entidades;
+using Logica;
 using Logica.Gestion_de_Logica;
 using System;
 using System.Collections.Generic;
@@ -70,11 +71,47 @@ namespace Presentacion
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            MessageBox.Show(
-    "Contacta al Administrador del sistema para restablecer tu contraseña.",
-    "Recuperar contraseña",
-    MessageBoxButtons.OK,
-    MessageBoxIcon.Information);
+            string valor = Microsoft.VisualBasic.Interaction.InputBox(
+                "Ingresa tu usuario o correo registrado:",
+                "Recuperar contraseña", "");
+
+            if (string.IsNullOrWhiteSpace(valor))
+                return;
+
+            try
+            {
+                var usuarioLN = new UsuarioLN();
+                Usuario usuario = usuarioLN.BuscarPorUsuarioOCorreo(valor.Trim());
+
+                if (usuario == null || string.IsNullOrWhiteSpace(usuario.Correo))
+                {
+                    MessageBox.Show("No se encontró ninguna cuenta con ese usuario o correo.",
+                        "Recuperar contraseña", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string passwordTemporal = usuarioLN.GenerarPasswordTemporal(usuario);
+
+                CorreoService.EnviarCorreo(
+                    usuario.Correo,
+                    "Recuperación de contraseña - Sistema de Incidencias APPB",
+                    $"Hola {usuario.Nombre},\n\nTu nueva contraseña temporal es: {passwordTemporal}\n\n" +
+                    "Por seguridad, te recomendamos cambiarla apenas inicies sesión.\n\n" +
+                    "Si no solicitaste este cambio, contacta al administrador del sistema de inmediato."
+                );
+
+                MessageBox.Show($"Se envió una contraseña temporal a {usuario.Correo}.",
+                    "Recuperar contraseña", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (LogicaExcepciones lex)
+            {
+                MessageBox.Show(lex.Message, "Recuperar contraseña", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ocurrió un error al procesar la solicitud: " + ex.Message,
+                    "Recuperar contraseña", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private bool passwordVisible = false;
 

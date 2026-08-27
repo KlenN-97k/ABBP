@@ -138,6 +138,10 @@
       <Project>{8af9ab50-c1f8-4e48-8c38-f60f46460a9b}</Project>
       <Name>Logica</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Reportes\Reportes.csproj">
+      <Project>{a4f7802d-1f7b-4da0-994d-f17053bf289d}</Project>
+      <Name>Reportes</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Serilog.4.4.0\build\Serilog.targets" Condition="Exists('..\packages\Serilog.4.4.0\build\Serilog.targets')" />
