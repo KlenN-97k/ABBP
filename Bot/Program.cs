@@ -75,6 +75,7 @@ namespace Bot
         public class BotMotor
         {
             private static System.Threading.Timer timerReporteMensual;
+            private static System.Threading.Timer timerSLA;
 
             public void Start()
             {
@@ -96,6 +97,7 @@ namespace Bot
 
                 Log.Information("Bot de Telegram conectado y escuchando mensajes correctamente.");
                 timerReporteMensual = new System.Threading.Timer(RevisarReporteMensual, null, TimeSpan.Zero, TimeSpan.FromHours(6));
+                timerSLA = new System.Threading.Timer(RevisarSLA, null, TimeSpan.FromMinutes(5), TimeSpan.FromHours(1)); 
                 botClient = new TelegramBotClient(token, cancellationToken: cts.Token);
 
             }
@@ -103,9 +105,9 @@ namespace Bot
             public void Stop()
             {
                 timerReporteMensual?.Dispose();
+                timerSLA?.Dispose();
                 cts?.Cancel();
                 Log.Information("El Bot fue detenido de forma segura.");
-
             }
         }
         private static void RevisarReporteMensual(object state)
@@ -148,6 +150,62 @@ namespace Bot
             catch (Exception ex)
             {
                 Log.Error(ex, "Error al generar/enviar el reporte mensual automático.");
+            }
+        }
+        private static void RevisarSLA(object state)
+        {
+            try
+            {
+                var slaLN = new SlaLN();
+                var pendientes = new IncidenciaLN().ShowIncidencia()
+                    .Where(i => i.NombreEstado == "Pendiente")
+                    .ToList();
+
+                var vencidas = slaLN.ObtenerVencidasSinEscalar(pendientes);
+
+                foreach (var inc in vencidas)
+                {
+                    string mensaje = $"⚠️ *SLA VENCIDO* ⚠️\n\n" +
+                                      $"*Ticket:* {inc.NumeroTicket}\n" +
+                                      $"*Prioridad:* {inc.NombrePrioridad}\n" +
+                                      $"*Lleva:* {(DateTime.Now - inc.Fecha).TotalHours:0.#} horas sin resolverse.\n" +
+                                      $"*Área:* {inc.NombreArea}\n\n" +
+                                      $"*Descripción:*\n{inc.Descripcion}";
+
+                    List<Usuario> destinatarios;
+
+                    if (inc.IdTecnicoAsignado.HasValue)
+                    {
+                        var tecnico = new UsuarioLN().ShowUsuario()
+                            .FirstOrDefault(u => u.IdUsuario == inc.IdTecnicoAsignado.Value && u.TelegramChatId.HasValue);
+                        destinatarios = tecnico != null ? new List<Usuario> { tecnico } : new List<Usuario>();
+                    }
+                    else
+                    {
+                        destinatarios = new UsuarioLN().ShowUsuario()
+                            .Where(u => u.Rol == "Técnico" && u.Estado && u.TelegramChatId.HasValue)
+                            .ToList();
+                    }
+
+                    foreach (var destinatario in destinatarios)
+                    {
+                        try
+                        {
+                            TelegramNotificador.EnviarMensaje(destinatario.TelegramChatId.Value, mensaje);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Error notificando SLA vencido a {Usuario}", destinatario.Nombre);
+                        }
+                    }
+
+                    slaLN.MarcarEscalado(inc.IdIncidencia);
+                    Log.Information("SLA vencido notificado para el ticket {Ticket}", inc.NumeroTicket);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error al revisar los SLA vencidos.");
             }
         }
 

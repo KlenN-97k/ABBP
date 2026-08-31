@@ -67,6 +67,7 @@
     <Compile Include="Gestion de Logica\IncidenciaLN.cs" />
     <Compile Include="Gestion de Logica\PrioridadLN.cs" />
     <Compile Include="Gestion de Logica\ReporteMensualLN.cs" />
+    <Compile Include="Gestion de Logica\SlaLN.cs" />
     <Compile Include="Gestion de Logica\UsuarioLN.cs" />
     <Compile Include="LogicaExcepciones.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
