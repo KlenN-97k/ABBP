@@ -63,14 +63,15 @@ namespace Datos.Gestion_de_Datos
             }
         }
 
-        public static void ModificarIncidencia(Entidades.Gestion_de_Entidades.Incidencia oc)
+        public static bool ModificarIncidencia(Entidades.Gestion_de_Entidades.Incidencia oc)
         {
             BDIncidenciasDataContext DB = null;
             try
             {
                 using (DB = new BDIncidenciasDataContext())
                 {
-                    DB.sp_Incidencias_Modificar(
+                    int filasAfectadas = 
+                        DB.sp_Incidencias_Modificar(
                         oc.IdIncidencia,
                         oc.Empleado,
                         oc.IdArea,
@@ -80,9 +81,10 @@ namespace Datos.Gestion_de_Datos
                         oc.IdEstado,
                         oc.IdTecnicoAsignado,
                         oc.FechaSolucion,
-                        oc.Observaciones
+                        oc.Observaciones,
+                        oc.FilaVersion
                     );
-                    DB.SubmitChanges();
+                    return filasAfectadas > 0;
                 }
             }
             catch (SqlException sqlEx)

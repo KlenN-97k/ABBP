@@ -580,13 +580,29 @@ namespace Bot
         {
             try
             {
-                // ATENCIÓN AQUÍ: Tu método CambiarEstadoPorTelegram ahora deberá recibir la 'observacion'
-                string resultado = new Logica.Gestion_de_Logica.IncidenciaLN().CambiarEstadoPorTelegram(idIncidencia, chatId, nuevoEstado, observacion);
+                var logica = new Logica.Gestion_de_Logica.IncidenciaLN();
+                string resultado = logica.CambiarEstadoPorTelegram(idIncidencia, chatId, nuevoEstado, observacion);
 
                 if (resultado.StartsWith("SUCCESS"))
                 {
                     await botClient.SendMessage(chatId, $"🏁 *Ticket {nuevoEstado} exitosamente.*\n\n*Observación guardada:*\n_{observacion}_", parseMode: ParseMode.Markdown);
                     Log.Information("Técnico [{ChatId}] cambió ticket {Id} a {Estado} con obs: {Obs}", chatId, idIncidencia, nuevoEstado, observacion);
+
+                    // Quitar los botones del mensaje original para que no se puedan volver a presionar
+                    var mensajeOriginal = logica.ObtenerMensajesTelegram(idIncidencia)
+                        .FirstOrDefault(m => m.ChatId == chatId);
+
+                    if (mensajeOriginal != null)
+                    {
+                        try
+                        {
+                            await botClient.EditMessageReplyMarkup(chatId, mensajeOriginal.MessageId, replyMarkup: null);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Error al quitar los botones del ticket ya resuelto/cerrado.");
+                        }
+                    }
                 }
                 else
                 {

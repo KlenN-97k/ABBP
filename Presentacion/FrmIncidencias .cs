@@ -289,11 +289,27 @@ namespace Presentacion
         {
             try
             {
-                var tecnicos = usuarioLN.ShowUsuario()
-                    .Where(u => u.Rol == "Técnico" && u.Estado && u.TelegramChatId.HasValue)
-                    .ToList();
+                List<Usuario> destinatarios;
+                bool yaAsignada = incidenciaNueva.IdTecnicoAsignado.HasValue;
 
-                if (tecnicos.Count == 0) return;
+                if (yaAsignada)
+                {
+                    var tecnicoAsignado = usuarioLN.ShowUsuario()
+                        .FirstOrDefault(u => u.IdUsuario == incidenciaNueva.IdTecnicoAsignado.Value && u.TelegramChatId.HasValue);
+                    destinatarios = tecnicoAsignado != null ? new List<Usuario> { tecnicoAsignado } : new List<Usuario>();
+                }
+                else
+                {
+                    destinatarios = usuarioLN.ShowUsuario()
+                        .Where(u => u.Rol == "Técnico" && u.Estado && u.TelegramChatId.HasValue)
+                        .ToList();
+                }
+
+                if (destinatarios.Count == 0) return;
+
+                string instruccion = yaAsignada
+                    ? "_Este ticket ya te fue asignado directamente desde el sistema de escritorio._"
+                    : "_Por favor, ingresa al sistema de escritorio para asignarte este ticket._";
 
                 string mensaje = $"🚨 *NUEVA INCIDENCIA REPORTADA* 🚨\n\n" +
                                  $"*Ticket:* {incidenciaNueva.NumeroTicket}\n" +
@@ -302,13 +318,13 @@ namespace Presentacion
                                  $"*Tipo:* {incidenciaNueva.TipoIncidencia}\n" +
                                  $"*Prioridad:* {cboPrioridad.Text}\n\n" +
                                  $"*Descripción:*\n{incidenciaNueva.Descripcion}\n\n" +
-                                 $"_Por favor, ingresa al sistema de escritorio para asignarte este ticket._";
+                                 instruccion;
 
-                // Envolvemos el envío en un Task paralelo para no congelar la pantalla
-                foreach (var tecnico in tecnicos)
+                foreach (var tecnico in destinatarios)
                 {
-                    // Usamos el método Async que ya tenías preparado en el notificador
-                    int? messageId = await Bot.TelegramNotificador.EnviarMensajeAsync(tecnico.TelegramChatId.Value, mensaje, incidenciaNueva.IdIncidencia);
+                    int? messageId = yaAsignada
+     ? await Bot.TelegramNotificador.EnviarMensajeAsignadoAsync(tecnico.TelegramChatId.Value, mensaje, incidenciaNueva.IdIncidencia)
+     : await Bot.TelegramNotificador.EnviarMensajeAsync(tecnico.TelegramChatId.Value, mensaje, incidenciaNueva.IdIncidencia);
 
                     if (messageId.HasValue)
                     {
@@ -318,7 +334,6 @@ namespace Presentacion
             }
             catch (Exception ex)
             {
-                // Mostramos el error oculto en consola de depuración en lugar de un MessageBox que interrumpa
                 Console.WriteLine($"Error detectado al enviar Telegram: {ex.Message}");
             }
         }
@@ -373,7 +388,18 @@ namespace Presentacion
                     incidenciaSeleccionada.IdTecnicoAsignado = idTecnico;
                     incidenciaSeleccionada.Observaciones = txtObservaciones.Text;
 
-                    incidenciaLN.UpdateIncidencia(incidenciaSeleccionada);
+                    bool actualizado = incidenciaLN.UpdateIncidencia(incidenciaSeleccionada);
+
+                    if (!actualizado)
+                    {
+                        MessageBox.Show(
+                            "Esta incidencia fue modificada por otra persona mientras la tenías abierta.\n\nSe va a recargar la lista con los datos más recientes.",
+                            "Conflicto de edición", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        CargarGrid();
+                        LimpiarFormulario();
+                        return;
+                    }
 
                     string nuevoEstado = cboEstado.Text;
                     auditoriaLN.Registrar(

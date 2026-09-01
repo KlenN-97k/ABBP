@@ -17,7 +17,7 @@ namespace Entidades.Gestion_de_Entidades
         private string descripcion;
         private int idPrioridad;
         private int idEstado;
-        private int? idTecnicoAsignado; 
+        private int? idTecnicoAsignado;
         private DateTime? fechaSolucion;
         private string observaciones;
 
@@ -29,6 +29,11 @@ namespace Entidades.Gestion_de_Entidades
         private string nombrePrioridad;
         private string nombreEstado;
         private string tecnicoAsignado;
+
+        // Control de concurrencia optimista: viene del ROWVERSION de SQL Server.
+        // Solo se llena al listar (ShowIncidencia); se usa en Modificar para detectar
+        // si otra persona cambió la incidencia mientras la teníamos abierta.
+        private byte[] filaVersion;
 
         public Incidencia()
         {
@@ -68,6 +73,8 @@ namespace Entidades.Gestion_de_Entidades
         public string NombrePrioridad { get => nombrePrioridad; set => nombrePrioridad = value; }
         public string NombreEstado { get => nombreEstado; set => nombreEstado = value; }
         public string TecnicoAsignado { get => tecnicoAsignado; set => tecnicoAsignado = value; }
+
+        public byte[] FilaVersion { get => filaVersion; set => filaVersion = value; }
     }
 
 }

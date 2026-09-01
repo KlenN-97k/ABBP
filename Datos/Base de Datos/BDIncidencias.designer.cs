@@ -48,13 +48,16 @@ namespace Datos.Base_de_Datos
     partial void InsertPrioridades(Prioridades instance);
     partial void UpdatePrioridades(Prioridades instance);
     partial void DeletePrioridades(Prioridades instance);
+    partial void InsertReportesMensualesEnviados(ReportesMensualesEnviados instance);
+    partial void UpdateReportesMensualesEnviados(ReportesMensualesEnviados instance);
+    partial void DeleteReportesMensualesEnviados(ReportesMensualesEnviados instance);
     partial void InsertUsuarios(Usuarios instance);
     partial void UpdateUsuarios(Usuarios instance);
     partial void DeleteUsuarios(Usuarios instance);
     #endregion
 		
 		public BDIncidenciasDataContext() : 
-				base(global::Datos.Properties.Settings.Default.DBIncidenciasConnectionString1, mappingSource)
+				base(global::Datos.Properties.Settings.Default.DBIncidenciasConnectionString2, mappingSource)
 		{
 			OnCreated();
 		}
@@ -128,6 +131,14 @@ namespace Datos.Base_de_Datos
 			get
 			{
 				return this.GetTable<Prioridades>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ReportesMensualesEnviados> ReportesMensualesEnviados
+		{
+			get
+			{
+				return this.GetTable<ReportesMensualesEnviados>();
 			}
 		}
 		
@@ -275,20 +286,6 @@ namespace Datos.Base_de_Datos
 			return ((int)(result.ReturnValue));
 		}
 		
-		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_Listar")]
-		public ISingleResult<sp_Incidencias_ListarResult> sp_Incidencias_Listar()
-		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())));
-			return ((ISingleResult<sp_Incidencias_ListarResult>)(result.ReturnValue));
-		}
-		
-		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_Modificar")]
-		public int sp_Incidencias_Modificar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdIncidencia", DbType="Int")] System.Nullable<int> idIncidencia, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Empleado", DbType="VarChar(150)")] string empleado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdArea", DbType="Int")] System.Nullable<int> idArea, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="TipoIncidencia", DbType="VarChar(100)")] string tipoIncidencia, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Descripcion", DbType="VarChar(MAX)")] string descripcion, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdPrioridad", DbType="Int")] System.Nullable<int> idPrioridad, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdEstado", DbType="Int")] System.Nullable<int> idEstado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdTecnicoAsignado", DbType="Int")] System.Nullable<int> idTecnicoAsignado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="FechaSolucion", DbType="DateTime")] System.Nullable<System.DateTime> fechaSolucion, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Observaciones", DbType="VarChar(MAX)")] string observaciones)
-		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idIncidencia, empleado, idArea, tipoIncidencia, descripcion, idPrioridad, idEstado, idTecnicoAsignado, fechaSolucion, observaciones);
-			return ((int)(result.ReturnValue));
-		}
-		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Prioridades_Eliminar")]
 		public int sp_Prioridades_Eliminar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdPrioridad", DbType="Int")] System.Nullable<int> idPrioridad)
 		{
@@ -363,6 +360,20 @@ namespace Datos.Base_de_Datos
 		public int sp_Usuarios_ResetearIntentos([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdUsuario", DbType="Int")] System.Nullable<int> idUsuario)
 		{
 			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idUsuario);
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_Listar")]
+		public ISingleResult<sp_Incidencias_ListarResult> sp_Incidencias_Listar()
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())));
+			return ((ISingleResult<sp_Incidencias_ListarResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Incidencias_Modificar")]
+		public int sp_Incidencias_Modificar([global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdIncidencia", DbType="Int")] System.Nullable<int> idIncidencia, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Empleado", DbType="VarChar(150)")] string empleado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdArea", DbType="Int")] System.Nullable<int> idArea, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="TipoIncidencia", DbType="VarChar(100)")] string tipoIncidencia, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Descripcion", DbType="VarChar(MAX)")] string descripcion, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdPrioridad", DbType="Int")] System.Nullable<int> idPrioridad, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdEstado", DbType="Int")] System.Nullable<int> idEstado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="IdTecnicoAsignado", DbType="Int")] System.Nullable<int> idTecnicoAsignado, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="FechaSolucion", DbType="DateTime")] System.Nullable<System.DateTime> fechaSolucion, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Observaciones", DbType="VarChar(MAX)")] string observaciones, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="FilaVersionOriginal", DbType="Binary(8)")] System.Data.Linq.Binary filaVersionOriginal)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idIncidencia, empleado, idArea, tipoIncidencia, descripcion, idPrioridad, idEstado, idTecnicoAsignado, fechaSolucion, observaciones, filaVersionOriginal);
 			return ((int)(result.ReturnValue));
 		}
 	}
@@ -1030,6 +1041,10 @@ namespace Datos.Base_de_Datos
 		
 		private string _NumeroTicket;
 		
+		private bool _EscaladoSLA;
+		
+		private System.Data.Linq.Binary _FilaVersion;
+		
 		private EntityRef<Areas> _Areas;
 		
 		private EntityRef<Estados> _Estados;
@@ -1066,6 +1081,10 @@ namespace Datos.Base_de_Datos
     partial void OnObservacionesChanged();
     partial void OnNumeroTicketChanging(string value);
     partial void OnNumeroTicketChanged();
+    partial void OnEscaladoSLAChanging(bool value);
+    partial void OnEscaladoSLAChanged();
+    partial void OnFilaVersionChanging(System.Data.Linq.Binary value);
+    partial void OnFilaVersionChanged();
     #endregion
 		
 		public Incidencias()
@@ -1077,7 +1096,7 @@ namespace Datos.Base_de_Datos
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdIncidencia", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdIncidencia", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public int IdIncidencia
 		{
 			get
@@ -1097,7 +1116,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Fecha", DbType="DateTime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Fecha", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime Fecha
 		{
 			get
@@ -1117,7 +1136,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Empleado", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Empleado", DbType="VarChar(150) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string Empleado
 		{
 			get
@@ -1137,7 +1156,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdArea", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdArea", DbType="Int NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public int IdArea
 		{
 			get
@@ -1161,7 +1180,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TipoIncidencia", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TipoIncidencia", DbType="VarChar(100) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string TipoIncidencia
 		{
 			get
@@ -1181,7 +1200,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Descripcion", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Descripcion", DbType="VarChar(MAX) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string Descripcion
 		{
 			get
@@ -1201,7 +1220,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdPrioridad", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdPrioridad", DbType="Int NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public int IdPrioridad
 		{
 			get
@@ -1225,7 +1244,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdEstado", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdEstado", DbType="Int NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public int IdEstado
 		{
 			get
@@ -1249,7 +1268,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdTecnicoAsignado", DbType="Int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdTecnicoAsignado", DbType="Int", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<int> IdTecnicoAsignado
 		{
 			get
@@ -1273,7 +1292,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FechaSolucion", DbType="DateTime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FechaSolucion", DbType="DateTime", UpdateCheck=UpdateCheck.Never)]
 		public System.Nullable<System.DateTime> FechaSolucion
 		{
 			get
@@ -1293,7 +1312,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Observaciones", DbType="VarChar(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Observaciones", DbType="VarChar(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public string Observaciones
 		{
 			get
@@ -1329,6 +1348,46 @@ namespace Datos.Base_de_Datos
 					this._NumeroTicket = value;
 					this.SendPropertyChanged("NumeroTicket");
 					this.OnNumeroTicketChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EscaladoSLA", DbType="Bit NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		public bool EscaladoSLA
+		{
+			get
+			{
+				return this._EscaladoSLA;
+			}
+			set
+			{
+				if ((this._EscaladoSLA != value))
+				{
+					this.OnEscaladoSLAChanging(value);
+					this.SendPropertyChanging();
+					this._EscaladoSLA = value;
+					this.SendPropertyChanged("EscaladoSLA");
+					this.OnEscaladoSLAChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FilaVersion", AutoSync=AutoSync.Always, DbType="rowversion NOT NULL", CanBeNull=false, IsDbGenerated=true, IsVersion=true, UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary FilaVersion
+		{
+			get
+			{
+				return this._FilaVersion;
+			}
+			set
+			{
+				if ((this._FilaVersion != value))
+				{
+					this.OnFilaVersionChanging(value);
+					this.SendPropertyChanging();
+					this._FilaVersion = value;
+					this.SendPropertyChanged("FilaVersion");
+					this.OnFilaVersionChanged();
 				}
 			}
 		}
@@ -1601,6 +1660,140 @@ namespace Datos.Base_de_Datos
 		{
 			this.SendPropertyChanging();
 			entity.Prioridades = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ReportesMensualesEnviados")]
+	public partial class ReportesMensualesEnviados : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _IdReporte;
+		
+		private int _Anio;
+		
+		private int _Mes;
+		
+		private System.DateTime _FechaEnvio;
+		
+    #region Definiciones de métodos de extensibilidad
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdReporteChanging(int value);
+    partial void OnIdReporteChanged();
+    partial void OnAnioChanging(int value);
+    partial void OnAnioChanged();
+    partial void OnMesChanging(int value);
+    partial void OnMesChanged();
+    partial void OnFechaEnvioChanging(System.DateTime value);
+    partial void OnFechaEnvioChanged();
+    #endregion
+		
+		public ReportesMensualesEnviados()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdReporte", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int IdReporte
+		{
+			get
+			{
+				return this._IdReporte;
+			}
+			set
+			{
+				if ((this._IdReporte != value))
+				{
+					this.OnIdReporteChanging(value);
+					this.SendPropertyChanging();
+					this._IdReporte = value;
+					this.SendPropertyChanged("IdReporte");
+					this.OnIdReporteChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Anio", DbType="Int NOT NULL")]
+		public int Anio
+		{
+			get
+			{
+				return this._Anio;
+			}
+			set
+			{
+				if ((this._Anio != value))
+				{
+					this.OnAnioChanging(value);
+					this.SendPropertyChanging();
+					this._Anio = value;
+					this.SendPropertyChanged("Anio");
+					this.OnAnioChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mes", DbType="Int NOT NULL")]
+		public int Mes
+		{
+			get
+			{
+				return this._Mes;
+			}
+			set
+			{
+				if ((this._Mes != value))
+				{
+					this.OnMesChanging(value);
+					this.SendPropertyChanging();
+					this._Mes = value;
+					this.SendPropertyChanged("Mes");
+					this.OnMesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FechaEnvio", DbType="DateTime NOT NULL")]
+		public System.DateTime FechaEnvio
+		{
+			get
+			{
+				return this._FechaEnvio;
+			}
+			set
+			{
+				if ((this._FechaEnvio != value))
+				{
+					this.OnFechaEnvioChanging(value);
+					this.SendPropertyChanging();
+					this._FechaEnvio = value;
+					this.SendPropertyChanged("FechaEnvio");
+					this.OnFechaEnvioChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -2369,302 +2562,6 @@ namespace Datos.Base_de_Datos
 		}
 	}
 	
-	public partial class sp_Incidencias_ListarResult
-	{
-		
-		private int _IdIncidencia;
-		
-		private string _NumeroTicket;
-		
-		private System.DateTime _Fecha;
-		
-		private string _Empleado;
-		
-		private int _IdArea;
-		
-		private string _NombreArea;
-		
-		private string _TipoIncidencia;
-		
-		private string _Descripcion;
-		
-		private int _IdPrioridad;
-		
-		private string _NombrePrioridad;
-		
-		private int _IdEstado;
-		
-		private string _NombreEstado;
-		
-		private System.Nullable<int> _IdTecnicoAsignado;
-		
-		private string _TecnicoAsignado;
-		
-		private System.Nullable<System.DateTime> _FechaSolucion;
-		
-		private string _Observaciones;
-		
-		public sp_Incidencias_ListarResult()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdIncidencia", DbType="Int NOT NULL")]
-		public int IdIncidencia
-		{
-			get
-			{
-				return this._IdIncidencia;
-			}
-			set
-			{
-				if ((this._IdIncidencia != value))
-				{
-					this._IdIncidencia = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NumeroTicket", DbType="VarChar(15)")]
-		public string NumeroTicket
-		{
-			get
-			{
-				return this._NumeroTicket;
-			}
-			set
-			{
-				if ((this._NumeroTicket != value))
-				{
-					this._NumeroTicket = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Fecha", DbType="DateTime NOT NULL")]
-		public System.DateTime Fecha
-		{
-			get
-			{
-				return this._Fecha;
-			}
-			set
-			{
-				if ((this._Fecha != value))
-				{
-					this._Fecha = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Empleado", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
-		public string Empleado
-		{
-			get
-			{
-				return this._Empleado;
-			}
-			set
-			{
-				if ((this._Empleado != value))
-				{
-					this._Empleado = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdArea", DbType="Int NOT NULL")]
-		public int IdArea
-		{
-			get
-			{
-				return this._IdArea;
-			}
-			set
-			{
-				if ((this._IdArea != value))
-				{
-					this._IdArea = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombreArea", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
-		public string NombreArea
-		{
-			get
-			{
-				return this._NombreArea;
-			}
-			set
-			{
-				if ((this._NombreArea != value))
-				{
-					this._NombreArea = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TipoIncidencia", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
-		public string TipoIncidencia
-		{
-			get
-			{
-				return this._TipoIncidencia;
-			}
-			set
-			{
-				if ((this._TipoIncidencia != value))
-				{
-					this._TipoIncidencia = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Descripcion", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string Descripcion
-		{
-			get
-			{
-				return this._Descripcion;
-			}
-			set
-			{
-				if ((this._Descripcion != value))
-				{
-					this._Descripcion = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdPrioridad", DbType="Int NOT NULL")]
-		public int IdPrioridad
-		{
-			get
-			{
-				return this._IdPrioridad;
-			}
-			set
-			{
-				if ((this._IdPrioridad != value))
-				{
-					this._IdPrioridad = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombrePrioridad", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-		public string NombrePrioridad
-		{
-			get
-			{
-				return this._NombrePrioridad;
-			}
-			set
-			{
-				if ((this._NombrePrioridad != value))
-				{
-					this._NombrePrioridad = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdEstado", DbType="Int NOT NULL")]
-		public int IdEstado
-		{
-			get
-			{
-				return this._IdEstado;
-			}
-			set
-			{
-				if ((this._IdEstado != value))
-				{
-					this._IdEstado = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombreEstado", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
-		public string NombreEstado
-		{
-			get
-			{
-				return this._NombreEstado;
-			}
-			set
-			{
-				if ((this._NombreEstado != value))
-				{
-					this._NombreEstado = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdTecnicoAsignado", DbType="Int")]
-		public System.Nullable<int> IdTecnicoAsignado
-		{
-			get
-			{
-				return this._IdTecnicoAsignado;
-			}
-			set
-			{
-				if ((this._IdTecnicoAsignado != value))
-				{
-					this._IdTecnicoAsignado = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TecnicoAsignado", DbType="VarChar(201)")]
-		public string TecnicoAsignado
-		{
-			get
-			{
-				return this._TecnicoAsignado;
-			}
-			set
-			{
-				if ((this._TecnicoAsignado != value))
-				{
-					this._TecnicoAsignado = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FechaSolucion", DbType="DateTime")]
-		public System.Nullable<System.DateTime> FechaSolucion
-		{
-			get
-			{
-				return this._FechaSolucion;
-			}
-			set
-			{
-				if ((this._FechaSolucion != value))
-				{
-					this._FechaSolucion = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Observaciones", DbType="VarChar(MAX)")]
-		public string Observaciones
-		{
-			get
-			{
-				return this._Observaciones;
-			}
-			set
-			{
-				if ((this._Observaciones != value))
-				{
-					this._Observaciones = value;
-				}
-			}
-		}
-	}
-	
 	public partial class sp_Prioridades_ListarResult
 	{
 		
@@ -3152,6 +3049,320 @@ namespace Datos.Base_de_Datos
 				if ((this._FotoPerfil != value))
 				{
 					this._FotoPerfil = value;
+				}
+			}
+		}
+	}
+	
+	public partial class sp_Incidencias_ListarResult
+	{
+		
+		private int _IdIncidencia;
+		
+		private string _NumeroTicket;
+		
+		private System.DateTime _Fecha;
+		
+		private string _Empleado;
+		
+		private int _IdArea;
+		
+		private string _NombreArea;
+		
+		private string _TipoIncidencia;
+		
+		private string _Descripcion;
+		
+		private int _IdPrioridad;
+		
+		private string _NombrePrioridad;
+		
+		private int _IdEstado;
+		
+		private string _NombreEstado;
+		
+		private System.Nullable<int> _IdTecnicoAsignado;
+		
+		private string _TecnicoAsignado;
+		
+		private System.Nullable<System.DateTime> _FechaSolucion;
+		
+		private string _Observaciones;
+		
+		private System.Data.Linq.Binary _FilaVersion;
+		
+		public sp_Incidencias_ListarResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdIncidencia", DbType="Int NOT NULL")]
+		public int IdIncidencia
+		{
+			get
+			{
+				return this._IdIncidencia;
+			}
+			set
+			{
+				if ((this._IdIncidencia != value))
+				{
+					this._IdIncidencia = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NumeroTicket", DbType="VarChar(15)")]
+		public string NumeroTicket
+		{
+			get
+			{
+				return this._NumeroTicket;
+			}
+			set
+			{
+				if ((this._NumeroTicket != value))
+				{
+					this._NumeroTicket = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Fecha", DbType="DateTime NOT NULL")]
+		public System.DateTime Fecha
+		{
+			get
+			{
+				return this._Fecha;
+			}
+			set
+			{
+				if ((this._Fecha != value))
+				{
+					this._Fecha = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Empleado", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
+		public string Empleado
+		{
+			get
+			{
+				return this._Empleado;
+			}
+			set
+			{
+				if ((this._Empleado != value))
+				{
+					this._Empleado = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdArea", DbType="Int NOT NULL")]
+		public int IdArea
+		{
+			get
+			{
+				return this._IdArea;
+			}
+			set
+			{
+				if ((this._IdArea != value))
+				{
+					this._IdArea = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombreArea", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
+		public string NombreArea
+		{
+			get
+			{
+				return this._NombreArea;
+			}
+			set
+			{
+				if ((this._NombreArea != value))
+				{
+					this._NombreArea = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TipoIncidencia", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
+		public string TipoIncidencia
+		{
+			get
+			{
+				return this._TipoIncidencia;
+			}
+			set
+			{
+				if ((this._TipoIncidencia != value))
+				{
+					this._TipoIncidencia = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Descripcion", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string Descripcion
+		{
+			get
+			{
+				return this._Descripcion;
+			}
+			set
+			{
+				if ((this._Descripcion != value))
+				{
+					this._Descripcion = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdPrioridad", DbType="Int NOT NULL")]
+		public int IdPrioridad
+		{
+			get
+			{
+				return this._IdPrioridad;
+			}
+			set
+			{
+				if ((this._IdPrioridad != value))
+				{
+					this._IdPrioridad = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombrePrioridad", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string NombrePrioridad
+		{
+			get
+			{
+				return this._NombrePrioridad;
+			}
+			set
+			{
+				if ((this._NombrePrioridad != value))
+				{
+					this._NombrePrioridad = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdEstado", DbType="Int NOT NULL")]
+		public int IdEstado
+		{
+			get
+			{
+				return this._IdEstado;
+			}
+			set
+			{
+				if ((this._IdEstado != value))
+				{
+					this._IdEstado = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NombreEstado", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string NombreEstado
+		{
+			get
+			{
+				return this._NombreEstado;
+			}
+			set
+			{
+				if ((this._NombreEstado != value))
+				{
+					this._NombreEstado = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdTecnicoAsignado", DbType="Int")]
+		public System.Nullable<int> IdTecnicoAsignado
+		{
+			get
+			{
+				return this._IdTecnicoAsignado;
+			}
+			set
+			{
+				if ((this._IdTecnicoAsignado != value))
+				{
+					this._IdTecnicoAsignado = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TecnicoAsignado", DbType="VarChar(201)")]
+		public string TecnicoAsignado
+		{
+			get
+			{
+				return this._TecnicoAsignado;
+			}
+			set
+			{
+				if ((this._TecnicoAsignado != value))
+				{
+					this._TecnicoAsignado = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FechaSolucion", DbType="DateTime")]
+		public System.Nullable<System.DateTime> FechaSolucion
+		{
+			get
+			{
+				return this._FechaSolucion;
+			}
+			set
+			{
+				if ((this._FechaSolucion != value))
+				{
+					this._FechaSolucion = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Observaciones", DbType="VarChar(MAX)")]
+		public string Observaciones
+		{
+			get
+			{
+				return this._Observaciones;
+			}
+			set
+			{
+				if ((this._Observaciones != value))
+				{
+					this._Observaciones = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FilaVersion", DbType="rowversion NOT NULL", CanBeNull=false)]
+		public System.Data.Linq.Binary FilaVersion
+		{
+			get
+			{
+				return this._FilaVersion;
+			}
+			set
+			{
+				if ((this._FilaVersion != value))
+				{
+					this._FilaVersion = value;
 				}
 			}
 		}

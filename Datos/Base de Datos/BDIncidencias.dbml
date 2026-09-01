@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DBIncidencias" Class="BDIncidenciasDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=Dereck;Initial Catalog=DBIncidencias;Integrated Security=True;Encrypt=True;Trust Server Certificate=True" SettingsObjectName="Datos.Properties.Settings" SettingsPropertyName="DBIncidenciasConnectionString1" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=CAJAMARCADA;Initial Catalog=DBIncidencias;Integrated Security=True;Encrypt=True;Trust Server Certificate=True" SettingsObjectName="Datos.Properties.Settings" SettingsPropertyName="DBIncidenciasConnectionString2" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Areas" Member="Areas">
     <Type Name="Areas">
       <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -48,7 +48,9 @@
       <Column Name="IdTecnicoAsignado" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="FechaSolucion" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="Observaciones" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-      <Column Name="NumeroTicket" Type="System.String" DbType="VarChar(15)" IsDbGenerated="true" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="NumeroTicket" Type="System.String" DbType="VarChar(15)" IsDbGenerated="true" CanBeNull="true" />
+      <Column Name="EscaladoSLA" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FilaVersion" Type="System.Data.Linq.Binary" DbType="rowversion NOT NULL" CanBeNull="false" IsVersion="true" />
       <Association Name="Incidencias_TelegramMensajes" Member="TelegramMensajes" ThisKey="IdIncidencia" OtherKey="IdIncidencia" Type="TelegramMensajes" />
       <Association Name="Areas_Incidencias" Member="Areas" ThisKey="IdArea" OtherKey="IdArea" Type="Areas" IsForeignKey="true" />
       <Association Name="Estados_Incidencias" Member="Estados" ThisKey="IdEstado" OtherKey="IdEstado" Type="Estados" IsForeignKey="true" />
@@ -61,6 +63,14 @@
       <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Association Name="Prioridades_Incidencias" Member="Incidencias" ThisKey="IdPrioridad" OtherKey="IdPrioridad" Type="Incidencias" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ReportesMensualesEnviados" Member="ReportesMensualesEnviados">
+    <Type Name="ReportesMensualesEnviados">
+      <Column Name="IdReporte" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Anio" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Mes" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaEnvio" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
   <Table Name="dbo.TelegramMensajes" Member="TelegramMensajes">
@@ -203,39 +213,6 @@
     <Parameter Name="Observaciones" Parameter="observaciones" Type="System.String" DbType="VarChar(MAX)" />
     <Return Type="System.Int32" />
   </Function>
-  <Function Name="dbo.sp_Incidencias_Listar" Method="sp_Incidencias_Listar">
-    <ElementType Name="sp_Incidencias_ListarResult">
-      <Column Name="IdIncidencia" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="NumeroTicket" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
-      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="Empleado" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="NombreArea" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="TipoIncidencia" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Descripcion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="NombrePrioridad" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="NombreEstado" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="IdTecnicoAsignado" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="TecnicoAsignado" Type="System.String" DbType="VarChar(201)" CanBeNull="true" />
-      <Column Name="FechaSolucion" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="Observaciones" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
-    </ElementType>
-  </Function>
-  <Function Name="dbo.sp_Incidencias_Modificar" Method="sp_Incidencias_Modificar">
-    <Parameter Name="IdIncidencia" Parameter="idIncidencia" Type="System.Int32" DbType="Int" />
-    <Parameter Name="Empleado" Parameter="empleado" Type="System.String" DbType="VarChar(150)" />
-    <Parameter Name="IdArea" Parameter="idArea" Type="System.Int32" DbType="Int" />
-    <Parameter Name="TipoIncidencia" Parameter="tipoIncidencia" Type="System.String" DbType="VarChar(100)" />
-    <Parameter Name="Descripcion" Parameter="descripcion" Type="System.String" DbType="VarChar(MAX)" />
-    <Parameter Name="IdPrioridad" Parameter="idPrioridad" Type="System.Int32" DbType="Int" />
-    <Parameter Name="IdEstado" Parameter="idEstado" Type="System.Int32" DbType="Int" />
-    <Parameter Name="IdTecnicoAsignado" Parameter="idTecnicoAsignado" Type="System.Int32" DbType="Int" />
-    <Parameter Name="FechaSolucion" Parameter="fechaSolucion" Type="System.DateTime" DbType="DateTime" />
-    <Parameter Name="Observaciones" Parameter="observaciones" Type="System.String" DbType="VarChar(MAX)" />
-    <Return Type="System.Int32" />
-  </Function>
   <Function Name="dbo.sp_Prioridades_Eliminar" Method="sp_Prioridades_Eliminar">
     <Parameter Name="IdPrioridad" Parameter="idPrioridad" Type="System.Int32" DbType="Int" />
     <Return Type="System.Int32" />
@@ -321,6 +298,41 @@
   </Function>
   <Function Name="dbo.sp_Usuarios_ResetearIntentos" Method="sp_Usuarios_ResetearIntentos">
     <Parameter Name="IdUsuario" Parameter="idUsuario" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.sp_Incidencias_Listar" Method="sp_Incidencias_Listar">
+    <ElementType Name="sp_Incidencias_ListarResult">
+      <Column Name="IdIncidencia" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NumeroTicket" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Empleado" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NombreArea" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="TipoIncidencia" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="IdPrioridad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NombrePrioridad" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NombreEstado" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdTecnicoAsignado" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TecnicoAsignado" Type="System.String" DbType="VarChar(201)" CanBeNull="true" />
+      <Column Name="FechaSolucion" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Observaciones" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="FilaVersion" Type="System.Data.Linq.Binary" DbType="rowversion NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.sp_Incidencias_Modificar" Method="sp_Incidencias_Modificar">
+    <Parameter Name="IdIncidencia" Parameter="idIncidencia" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Empleado" Parameter="empleado" Type="System.String" DbType="VarChar(150)" />
+    <Parameter Name="IdArea" Parameter="idArea" Type="System.Int32" DbType="Int" />
+    <Parameter Name="TipoIncidencia" Parameter="tipoIncidencia" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="Descripcion" Parameter="descripcion" Type="System.String" DbType="VarChar(MAX)" />
+    <Parameter Name="IdPrioridad" Parameter="idPrioridad" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdEstado" Parameter="idEstado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdTecnicoAsignado" Parameter="idTecnicoAsignado" Type="System.Int32" DbType="Int" />
+    <Parameter Name="FechaSolucion" Parameter="fechaSolucion" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="Observaciones" Parameter="observaciones" Type="System.String" DbType="VarChar(MAX)" />
+    <Parameter Name="FilaVersionOriginal" Parameter="filaVersionOriginal" Type="System.Data.Linq.Binary" DbType="Binary(8)" />
     <Return Type="System.Int32" />
   </Function>
 </Database>

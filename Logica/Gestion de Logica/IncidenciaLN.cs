@@ -101,8 +101,7 @@ namespace Logica.Gestion_de_Logica
                     oe.FechaSolucion = DateTime.Now;
                 }
 
-                IncidenciaCD.ModificarIncidencia(oe);
-                return true;
+                return IncidenciaCD.ModificarIncidencia(oe);
             }
             catch (LogicaExcepciones) { throw; }
             catch (Exception ex)
@@ -194,7 +193,18 @@ namespace Logica.Gestion_de_Logica
                 int idEnProceso = ObtenerIdEstadoPorNombre(ESTADO_EN_PROCESO);
                 bool asignado = IncidenciaCD.AsignarTecnicoTelegram(idIncidencia, tecnico.IdUsuario, idEnProceso);
 
-                if (asignado) return "SUCCESS";
+                if (asignado)
+                {
+                    new AuditoriaLN().Registrar(
+                        tecnico.IdUsuario,
+                        $"{tecnico.Nombre} {tecnico.Apellido}",
+                        "Asignar",
+                        "Incidencia",
+                        idIncidencia,
+                        "Aceptó el ticket desde Telegram"
+                    );
+                    return "SUCCESS";
+                }
                 else return "⚠️ Lo sentimos, esta incidencia ya fue tomada por otro técnico.";
             }
             catch (Exception ex)
@@ -213,7 +223,18 @@ namespace Logica.Gestion_de_Logica
                 int nuevoIdEstado = ObtenerIdEstadoPorNombre(nuevoEstadoNombre);
                 bool actualizado = IncidenciaCD.ActualizarEstadoTelegram(idIncidencia, tecnico.IdUsuario, nuevoIdEstado, observacion);
 
-                if (actualizado) return $"SUCCESS_{nuevoEstadoNombre}";
+                if (actualizado)
+                {
+                    new AuditoriaLN().Registrar(
+                        tecnico.IdUsuario,
+                        $"{tecnico.Nombre} {tecnico.Apellido}",
+                        "Modificar",
+                        "Incidencia",
+                        idIncidencia,
+                        $"Cambió el estado a '{nuevoEstadoNombre}' desde Telegram. Observación: {observacion}"
+                    );
+                    return $"SUCCESS_{nuevoEstadoNombre}";
+                }
                 else return "⛔ No tienes permiso para modificar esta incidencia (no está asignada a ti o no existe).";
             }
             catch (Exception ex)

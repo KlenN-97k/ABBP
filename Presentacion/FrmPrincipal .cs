@@ -118,16 +118,18 @@ namespace Presentacion
             AbrirHijo(new FrmGuias(_usuarioActual));
         }
 
+        private bool cerrandoSesionConfirmada = false;
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
             DialogResult confirmacion = MessageBox.Show(
-         "¿Seguro que deseas cerrar sesión?",
-         "Confirmar",
-         MessageBoxButtons.YesNo,
-         MessageBoxIcon.Question);
+       "¿Seguro que deseas cerrar sesión?",
+       "Confirmar",
+       MessageBoxButtons.YesNo,
+       MessageBoxIcon.Question);
 
             if (confirmacion == DialogResult.Yes)
             {
+                cerrandoSesionConfirmada = true;
                 this.Close(); // Cierra el FrmPrincipal y devuelve el control al FrmLogin
             }
         }
@@ -151,6 +153,8 @@ namespace Presentacion
 
         private void FrmPrincipal_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (cerrandoSesionConfirmada) return; // ya se confirmó desde "Cerrar Sesión", no preguntar otra vez
+
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 DialogResult confirmacion = MessageBox.Show(

@@ -50,5 +50,16 @@ namespace Bot
         {
             return EnviarMensajeAsync(chatId, mensaje, idIncidenciaParaAceptar).GetAwaiter().GetResult();
         }
+
+        public static async Task<int?> EnviarMensajeAsignadoAsync(long chatId, string mensaje, int idIncidencia)
+        {
+            var botonesEstado = new InlineKeyboardMarkup(new[] {
+        new[] { InlineKeyboardButton.WithCallbackData("✅ Marcar Resuelto", $"estado_{idIncidencia}_Resuelto") },
+        new[] { InlineKeyboardButton.WithCallbackData("🔒 Cerrar Ticket", $"estado_{idIncidencia}_Cerrado") }
+    });
+
+            var mensajeEnviado = await cliente.Value.SendMessage(chatId, mensaje, parseMode: ParseMode.Markdown, replyMarkup: botonesEstado).ConfigureAwait(false);
+            return mensajeEnviado.MessageId;
+        }
     }
 }
