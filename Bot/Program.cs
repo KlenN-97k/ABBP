@@ -265,6 +265,16 @@ namespace Bot
             {
                 await FinalizarEstadoTicket(chatId, estadoTec.IdIncidencia, estadoTec.NuevoEstado, texto);
                 conversacionesTecnicos.TryRemove(chatId, out _);
+
+                try
+                {
+                    await botClient.DeleteMessage(chatId, estadoTec.MessageIdPrompt);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error al borrar el mensaje de solicitud de observación.");
+                }
+
                 return;
             }
 
@@ -348,18 +358,15 @@ namespace Bot
             {
                 string[] partes = datosBoton.Split('_');
                 int idIncidencia = int.Parse(partes[1]);
-                string nuevoEstado = partes[2]; // "Resuelto" o "Cerrado"
+                string nuevoEstado = partes[2];
 
-                // 1. Guardamos el estado temporalmente
-                conversacionesTecnicos[chatId] = new EstadoTecnico { IdIncidencia = idIncidencia, NuevoEstado = nuevoEstado };
-
-                // 2. Le damos un botón por si no quiere escribir nada
                 var botonOmitir = new InlineKeyboardMarkup(new[] {
         InlineKeyboardButton.WithCallbackData("⏭️ Omitir observación", "omitir_obs")
     });
 
-                // 3. Le pedimos que escriba
-                await botClient.SendMessage(chatId, $"Has elegido marcar el ticket como *{nuevoEstado}*.\n\nPor favor, escribe una observación sobre el trabajo realizado:", parseMode: ParseMode.Markdown, replyMarkup: botonOmitir);
+                var mensajePrompt = await botClient.SendMessage(chatId, $"Has elegido marcar el ticket como *{nuevoEstado}*.\n\nPor favor, escribe una observación sobre el trabajo realizado:", parseMode: ParseMode.Markdown, replyMarkup: botonOmitir);
+
+                conversacionesTecnicos[chatId] = new EstadoTecnico { IdIncidencia = idIncidencia, NuevoEstado = nuevoEstado, MessageIdPrompt = mensajePrompt.MessageId };
 
                 await botClient.AnswerCallbackQuery(callbackQuery.Id);
                 return;
@@ -733,6 +740,7 @@ namespace Bot
         {
             public int IdIncidencia { get; set; }
             public string NuevoEstado { get; set; }
+            public int MessageIdPrompt { get; set; }
         }
     }
 }
