@@ -14,18 +14,14 @@ namespace Logica.Gestion_de_Logica
     {
         public List<Estado> ShowEstado()
         {
-            List<Estado> lista = new List<Estado>();
             try
             {
-                List<sp_Estados_ListarResult> auxLista = EstadoCD.ListarEstados();
-                foreach (sp_Estados_ListarResult obj in auxLista)
-                    lista.Add(new Estado(obj.IdEstado, obj.Nombre));
+                return EstadoCD.ListarEstados();
             }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al mostrar estados", ex);
             }
-            return lista;
         }
 
         public bool InsertEstado(Estado oe)

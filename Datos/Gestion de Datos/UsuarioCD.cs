@@ -1,171 +1,188 @@
-﻿using Datos.Base_de_Datos;
+﻿using Dapper;
+using Entidades.Gestion_de_Entidades;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Datos.Gestion_de_Datos
 {
     public class UsuarioCD
     {
-        public static List<sp_Usuarios_ListarResult> ListarUsuarios()
+        public static List<Usuario> ListarUsuarios()
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    return DB.sp_Usuarios_Listar().ToList();
+                    string sql = @"
+                        SELECT IdUsuario, Nombre, Apellido, Correo,
+                               Usuario AS UsuarioLogin, Password, Rol, Estado,
+                               TelegramChatId, FotoPerfil
+                        FROM Usuarios
+                        ORDER BY Apellido, Nombre;";
+
+                    return conexion.Query<Usuario>(sql).ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw new DatosExcepciones("Error al ejecutar el procedimiento Listar usuarios", ex);
-            }
-            finally
-            {
-                DB = null;
+                throw new DatosExcepciones("Error al listar usuarios", ex);
             }
         }
 
-        public static sp_Usuarios_LoginResult BuscarPorUsuario(string usuario)
+        // Reemplaza a sp_Usuarios_LoginResult: incluye IntentosFallidos/BloqueadoHasta,
+        // que no viven en la entidad Usuario (solo se usan dentro del proceso de Login).
+        public class LoginResultDTO
         {
-            BDIncidenciasDataContext DB = null;
+            public int IdUsuario { get; set; }
+            public string Nombre { get; set; }
+            public string Apellido { get; set; }
+            public string Correo { get; set; }
+            public string UsuarioLogin { get; set; }
+            public string Password { get; set; }
+            public string Rol { get; set; }
+            public bool Estado { get; set; }
+            public long? TelegramChatId { get; set; }
+            public int IntentosFallidos { get; set; }
+            public DateTime? BloqueadoHasta { get; set; }
+            public byte[] FotoPerfil { get; set; }
+        }
+
+        public static LoginResultDTO BuscarPorUsuario(string usuario)
+        {
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    // sp_Usuarios_Login filtra por Usuario + Estado activo en el servidor.
-                    // No compara Password aquí: eso lo hace UsuarioLN con BCrypt.
-                    return DB.sp_Usuarios_Login(usuario).FirstOrDefault();
+                    string sql = @"
+                        SELECT IdUsuario, Nombre, Apellido, Correo,
+                               Usuario AS UsuarioLogin, Password, Rol, Estado,
+                               TelegramChatId, IntentosFallidos, BloqueadoHasta, FotoPerfil
+                        FROM Usuarios
+                        WHERE Usuario = @usuario AND Estado = 1;";
+
+                    return conexion.QueryFirstOrDefault<LoginResultDTO>(sql, new { usuario });
                 }
             }
             catch (Exception ex)
             {
-                throw new DatosExcepciones("Error al ejecutar el procedimiento Login de usuario", ex);
-            }
-            finally
-            {
-                DB = null;
+                throw new DatosExcepciones("Error al buscar el usuario para login", ex);
             }
         }
 
-        public static void InsertarUsuario(Entidades.Gestion_de_Entidades.Usuario oc)
+        public static void InsertarUsuario(Usuario oc)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    DB.sp_Usuarios_Insertar(oc.Nombre, oc.Apellido, oc.Correo, oc.UsuarioLogin, oc.Password, oc.Rol, oc.Estado);
-                    DB.SubmitChanges();
+                    string sql = @"
+                        INSERT INTO Usuarios (Nombre, Apellido, Correo, Usuario, Password, Rol, Estado)
+                        VALUES (@Nombre, @Apellido, @Correo, @UsuarioLogin, @Password, @Rol, @Estado);";
+
+                    conexion.Execute(sql, oc);
                 }
             }
-            catch (SqlException sqlEx)
+            catch (MySqlException sqlEx)
             {
-                throw new DatosExcepciones(SqlErrorTraductor.Traducir(sqlEx, "Error al insertar en la tabla Usuarios"), sqlEx);
+                throw new DatosExcepciones("Error al insertar en la tabla Usuarios: " + sqlEx.Message, sqlEx);
             }
             catch (Exception ex)
             {
                 throw new DatosExcepciones("Error al insertar en la tabla Usuarios", ex);
             }
-            finally
-            {
-                DB = null;
-            }
         }
 
-        public static void ModificarUsuario(Entidades.Gestion_de_Entidades.Usuario oc)
+        public static void ModificarUsuario(Usuario oc)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    System.Data.Linq.Binary fotoBinary = oc.FotoPerfil != null
-                        ? new System.Data.Linq.Binary(oc.FotoPerfil)
-                        : null;
+                    string sql = @"
+                        UPDATE Usuarios
+                        SET Nombre = @Nombre,
+                            Apellido = @Apellido,
+                            Correo = @Correo,
+                            Usuario = @UsuarioLogin,
+                            Password = @Password,
+                            Rol = @Rol,
+                            Estado = @Estado,
+                            TelegramChatId = @TelegramChatId,
+                            FotoPerfil = @FotoPerfil
+                        WHERE IdUsuario = @IdUsuario;";
 
-                    DB.sp_Usuarios_Modificar(oc.IdUsuario, oc.Nombre, oc.Apellido, oc.Correo, oc.UsuarioLogin, oc.Password, oc.Rol, oc.Estado, oc.TelegramChatId, fotoBinary);
+                    conexion.Execute(sql, oc);
                 }
             }
-            catch (SqlException sqlEx)
+            catch (MySqlException sqlEx)
             {
-                throw new DatosExcepciones(SqlErrorTraductor.Traducir(sqlEx, "Error al modificar en la tabla Usuarios"), sqlEx);
+                throw new DatosExcepciones("Error al modificar en la tabla Usuarios: " + sqlEx.Message, sqlEx);
             }
             catch (Exception ex)
             {
                 throw new DatosExcepciones("Error al modificar en la tabla Usuarios", ex);
             }
-            finally
-            {
-                DB = null;
-            }
         }
 
-        public static void EliminarUsuario(Entidades.Gestion_de_Entidades.Usuario oc)
+        public static void EliminarUsuario(Usuario oc)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    DB.sp_Usuarios_Eliminar(oc.IdUsuario);
-                    DB.SubmitChanges();
+                    conexion.Execute("DELETE FROM Usuarios WHERE IdUsuario = @IdUsuario;", new { oc.IdUsuario });
                 }
             }
-            catch (SqlException sqlEx)
+            catch (MySqlException sqlEx)
             {
-                throw new DatosExcepciones(SqlErrorTraductor.Traducir(sqlEx, "Error al eliminar en la tabla Usuarios"), sqlEx);
+                throw new DatosExcepciones("Error al eliminar en la tabla Usuarios: " + sqlEx.Message, sqlEx);
             }
             catch (Exception ex)
             {
                 throw new DatosExcepciones("Error al eliminar en la tabla Usuarios", ex);
             }
-            finally
-            {
-                DB = null;
-            }
         }
+
         public static void RegistrarIntentoFallido(int idUsuario)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    DB.sp_Usuarios_RegistrarIntentoFallido(idUsuario);
+                    string sql = @"
+                        UPDATE Usuarios
+                        SET IntentosFallidos = IntentosFallidos + 1,
+                            BloqueadoHasta = CASE
+                                WHEN IntentosFallidos + 1 >= 5 THEN DATE_ADD(NOW(), INTERVAL 5 MINUTE)
+                                ELSE BloqueadoHasta
+                            END
+                        WHERE IdUsuario = @idUsuario;";
+
+                    conexion.Execute(sql, new { idUsuario });
                 }
             }
             catch (Exception ex)
             {
                 throw new DatosExcepciones("Error al registrar intento fallido", ex);
             }
-            finally
-            {
-                DB = null;
-            }
         }
 
         public static void ResetearIntentos(int idUsuario)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    DB.sp_Usuarios_ResetearIntentos(idUsuario);
+                    conexion.Execute(
+                        "UPDATE Usuarios SET IntentosFallidos = 0, BloqueadoHasta = NULL WHERE IdUsuario = @idUsuario;",
+                        new { idUsuario });
                 }
             }
             catch (Exception ex)
             {
                 throw new DatosExcepciones("Error al resetear intentos de login", ex);
-            }
-            finally
-            {
-                DB = null;
             }
         }
     }

@@ -21,42 +21,14 @@ namespace Logica.Gestion_de_Logica
 
         public List<Incidencia> ShowIncidencia()
         {
-            List<Incidencia> lista = new List<Incidencia>();
-            Incidencia oc;
             try
             {
-                List<sp_Incidencias_ListarResult> auxLista = IncidenciaCD.ListarIncidencias();
-
-                foreach (sp_Incidencias_ListarResult obj in auxLista)
-                {
-                    oc = new Incidencia(
-                        obj.IdIncidencia,
-                        obj.NumeroTicket,
-                        obj.Fecha,
-                        obj.Empleado,
-                        obj.IdArea,
-                        obj.TipoIncidencia,
-                        obj.Descripcion,
-                        obj.IdPrioridad,
-                        obj.IdEstado,
-                        obj.IdTecnicoAsignado,
-                        obj.FechaSolucion,
-                        obj.Observaciones
-                    );
-
-                    oc.NombreArea = obj.NombreArea;
-                    oc.NombrePrioridad = obj.NombrePrioridad;
-                    oc.NombreEstado = obj.NombreEstado;
-                    oc.TecnicoAsignado = obj.TecnicoAsignado;
-
-                    lista.Add(oc);
-                }
+                return IncidenciaCD.ListarIncidencias();
             }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al mostrar incidencias", ex);
             }
-            return lista;
         }
 
         public bool InsertIncidencia(Incidencia oe)
@@ -86,7 +58,7 @@ namespace Logica.Gestion_de_Logica
             {
                 ValidarIncidencia(oe);
 
-                List<sp_Estados_ListarResult> estados = EstadoCD.ListarEstados();
+                List<Estado> estados = EstadoCD.ListarEstados();
                 int idResuelto = ObtenerIdEstadoPorNombre(estados, ESTADO_RESUELTO);
                 int idCerrado = ObtenerIdEstadoPorNombre(estados, ESTADO_CERRADO);
                 bool esResueltaOCerrada = (oe.IdEstado == idResuelto || oe.IdEstado == idCerrado);
@@ -125,13 +97,13 @@ namespace Logica.Gestion_de_Logica
 
         private int ObtenerIdEstadoPorNombre(string nombreEstado)
         {
-            List<sp_Estados_ListarResult> estados = EstadoCD.ListarEstados();
+            List<Estado> estados = EstadoCD.ListarEstados();
             return ObtenerIdEstadoPorNombre(estados, nombreEstado);
         }
 
-        private int ObtenerIdEstadoPorNombre(List<sp_Estados_ListarResult> estados, string nombreEstado)
+        private int ObtenerIdEstadoPorNombre(List<Estado> estados, string nombreEstado)
         {
-            sp_Estados_ListarResult estado = estados.FirstOrDefault(e => e.Nombre == nombreEstado);
+            Estado estado = estados.FirstOrDefault(e => e.Nombre == nombreEstado);
 
             if (estado == null)
             {
@@ -155,8 +127,8 @@ namespace Logica.Gestion_de_Logica
 
         private void ValidarTecnico(int idUsuario)
         {
-            List<sp_Usuarios_ListarResult> usuarios = UsuarioCD.ListarUsuarios();
-            sp_Usuarios_ListarResult usuario = usuarios.FirstOrDefault(u => u.IdUsuario == idUsuario);
+            List<Usuario> usuarios = UsuarioCD.ListarUsuarios();
+            Usuario usuario = usuarios.FirstOrDefault(u => u.IdUsuario == idUsuario);
 
             if (usuario == null) throw new LogicaExcepciones("El técnico asignado no existe.", null);
             if (usuario.Rol != "Técnico") throw new LogicaExcepciones("El usuario asignado no tiene el rol de Técnico.", null);

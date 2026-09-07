@@ -1,7 +1,6 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.Linq;
-using Datos.Base_de_Datos;
+﻿using Dapper;
+using MySqlConnector;
+using System;
 
 namespace Datos.Gestion_de_Datos
 {
@@ -9,20 +8,18 @@ namespace Datos.Gestion_de_Datos
     {
         public static bool YaFueEnviado(int anio, int mes)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    int count = DB.ExecuteQuery<int>(
-                        "SELECT COUNT(*) FROM dbo.ReportesMensualesEnviados WHERE Anio = {0} AND Mes = {1}",
-                        anio, mes).First();
+                    string sql = "SELECT COUNT(*) FROM ReportesMensualesEnviados WHERE Anio = @anio AND Mes = @mes;";
+                    int count = conexion.ExecuteScalar<int>(sql, new { anio, mes });
                     return count > 0;
                 }
             }
-            catch (SqlException sqlEx)
+            catch (MySqlException sqlEx)
             {
-                throw new DatosExcepciones(SqlErrorTraductor.Traducir(sqlEx, "Error al verificar el reporte mensual"), sqlEx);
+                throw new DatosExcepciones("Error al verificar el reporte mensual: " + sqlEx.Message, sqlEx);
             }
             catch (Exception ex)
             {
@@ -32,23 +29,21 @@ namespace Datos.Gestion_de_Datos
 
         public static void RegistrarEnvio(int anio, int mes)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    DB.ExecuteCommand(
-                        "INSERT INTO dbo.ReportesMensualesEnviados (Anio, Mes, FechaEnvio) VALUES ({0}, {1}, GETDATE())",
-                        anio, mes);
+                    string sql = "INSERT INTO ReportesMensualesEnviados (Anio, Mes, FechaEnvio) VALUES (@anio, @mes, NOW());";
+                    conexion.Execute(sql, new { anio, mes });
                 }
             }
-            catch (SqlException sqlEx)
+            catch (MySqlException sqlEx)
             {
-                throw new DatosExcepciones(SqlErrorTraductor.Traducir(sqlEx, "Error al registrar el reporte mensual"), sqlEx);
+                throw new DatosExcepciones("Error al registrar el envío del reporte mensual: " + sqlEx.Message, sqlEx);
             }
             catch (Exception ex)
             {
-                throw new DatosExcepciones("Error al registrar el reporte mensual", ex);
+                throw new DatosExcepciones("Error al registrar el envío del reporte mensual", ex);
             }
         }
     }

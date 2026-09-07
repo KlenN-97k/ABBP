@@ -13,18 +13,14 @@ namespace Logica.Gestion_de_Logica
     {
         public List<Guia> ShowGuia()
         {
-            List<Guia> lista = new List<Guia>();
             try
             {
-                List<sp_Guias_ListarResult> auxLista = GuiaCD.ListarGuias();
-                foreach (sp_Guias_ListarResult obj in auxLista)
-                    lista.Add(new Guia(obj.IdGuia, obj.Titulo, obj.Problema, obj.Solucion));
+                return GuiaCD.ListarGuias();
             }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al mostrar guías", ex);
             }
-            return lista;
         }
 
         public bool InsertGuia(Guia oe)

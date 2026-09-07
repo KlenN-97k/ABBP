@@ -1,10 +1,6 @@
-﻿using Datos.Base_de_Datos;
+﻿using Dapper;
+using MySqlConnector;
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Datos.Gestion_de_Datos
 {
@@ -12,20 +8,14 @@ namespace Datos.Gestion_de_Datos
     {
         public static bool YaEscalado(int idIncidencia)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    int count = DB.ExecuteQuery<int>(
-                        "SELECT COUNT(*) FROM dbo.Incidencias WHERE IdIncidencia = {0} AND EscaladoSLA = 1",
-                        idIncidencia).First();
+                    string sql = "SELECT COUNT(*) FROM Incidencias WHERE IdIncidencia = @idIncidencia AND EscaladoSLA = 1;";
+                    int count = conexion.ExecuteScalar<int>(sql, new { idIncidencia });
                     return count > 0;
                 }
-            }
-            catch (SqlException sqlEx)
-            {
-                throw new DatosExcepciones(SqlErrorTraductor.Traducir(sqlEx, "Error al verificar el escalamiento SLA"), sqlEx);
             }
             catch (Exception ex)
             {
@@ -35,19 +25,12 @@ namespace Datos.Gestion_de_Datos
 
         public static void MarcarEscalado(int idIncidencia)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    DB.ExecuteCommand(
-                        "UPDATE dbo.Incidencias SET EscaladoSLA = 1 WHERE IdIncidencia = {0}",
-                        idIncidencia);
+                    conexion.Execute("UPDATE Incidencias SET EscaladoSLA = 1 WHERE IdIncidencia = @idIncidencia;", new { idIncidencia });
                 }
-            }
-            catch (SqlException sqlEx)
-            {
-                throw new DatosExcepciones(SqlErrorTraductor.Traducir(sqlEx, "Error al marcar el escalamiento SLA"), sqlEx);
             }
             catch (Exception ex)
             {
@@ -55,5 +38,4 @@ namespace Datos.Gestion_de_Datos
             }
         }
     }
-
 }

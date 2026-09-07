@@ -1,101 +1,76 @@
-﻿using Datos.Base_de_Datos;
+﻿using Dapper;
+using Entidades.Gestion_de_Entidades;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Datos.Gestion_de_Datos
 {
     public class AreaCD
     {
-        public static List<sp_Areas_ListarResult> ListarAreas()
+        public static List<Area> ListarAreas()
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    return DB.sp_Areas_Listar().ToList();
+                    return conexion.Query<Area>("SELECT IdArea, NombreArea FROM Areas ORDER BY NombreArea;").ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw new DatosExcepciones("Error al ejecutar el procedimiento Listar áreas", ex);
-            }
-            finally
-            {
-                DB = null;
+                throw new DatosExcepciones("Error al listar áreas", ex);
             }
         }
 
-        public static void InsertarArea(Entidades.Gestion_de_Entidades.Area oc)
+        public static void InsertarArea(Area oc)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    DB.sp_Areas_Insertar(oc.NombreArea);
-                    DB.SubmitChanges();
+                    conexion.Execute("INSERT INTO Areas (NombreArea) VALUES (@NombreArea);", oc);
                 }
             }
             catch (Exception ex)
             {
                 throw new DatosExcepciones("Error al insertar en la tabla Areas", ex);
             }
-            finally
-            {
-                DB = null;
-            }
         }
 
-        public static void ModificarArea(Entidades.Gestion_de_Entidades.Area oc)
+        public static void ModificarArea(Area oc)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    DB.sp_Areas_Modificar(oc.IdArea, oc.NombreArea);
-                    DB.SubmitChanges();
+                    conexion.Execute("UPDATE Areas SET NombreArea = @NombreArea WHERE IdArea = @IdArea;", oc);
                 }
             }
             catch (Exception ex)
             {
                 throw new DatosExcepciones("Error al modificar en la tabla Areas", ex);
             }
-            finally
-            {
-                DB = null;
-            }
         }
 
-        public static void EliminarArea(Entidades.Gestion_de_Entidades.Area oc)
+        public static void EliminarArea(Area oc)
         {
-            BDIncidenciasDataContext DB = null;
             try
             {
-                using (DB = new BDIncidenciasDataContext())
+                using (var conexion = ConexionMySQL.ObtenerConexion())
                 {
-                    DB.sp_Areas_Eliminar(oc.IdArea);
-                    DB.SubmitChanges();
+                    conexion.Execute("DELETE FROM Areas WHERE IdArea = @IdArea;", new { oc.IdArea });
                 }
             }
-            catch (SqlException sqlEx)
+            catch (MySqlException sqlEx)
             {
-                throw new DatosExcepciones(SqlErrorTraductor.Traducir(sqlEx, "Error al eliminar en la tabla Areas"), sqlEx);
+                throw new DatosExcepciones("Error al eliminar en la tabla Areas: " + sqlEx.Message, sqlEx);
             }
             catch (Exception ex)
             {
                 throw new DatosExcepciones("Error al eliminar en la tabla Areas", ex);
             }
-            finally
-            {
-                DB = null;
-            }
         }
     }
-
 }

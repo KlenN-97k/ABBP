@@ -13,18 +13,14 @@ namespace Logica.Gestion_de_Logica
     {
         public List<Prioridad> ShowPrioridad()
         {
-            List<Prioridad> lista = new List<Prioridad>();
             try
             {
-                List<sp_Prioridades_ListarResult> auxLista = PrioridadCD.ListarPrioridades();
-                foreach (sp_Prioridades_ListarResult obj in auxLista)
-                    lista.Add(new Prioridad(obj.IdPrioridad, obj.Nombre));
+                return PrioridadCD.ListarPrioridades();
             }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al mostrar prioridades", ex);
             }
-            return lista;
         }
 
         public bool InsertPrioridad(Prioridad oe)

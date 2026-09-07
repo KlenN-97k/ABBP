@@ -13,18 +13,14 @@ namespace Logica.Gestion_de_Logica
     {
         public List<Area> ShowArea()
         {
-            List<Area> lista = new List<Area>();
             try
             {
-                List<sp_Areas_ListarResult> auxLista = AreaCD.ListarAreas();
-                foreach (sp_Areas_ListarResult obj in auxLista)
-                    lista.Add(new Area(obj.IdArea, obj.NombreArea));
+                return AreaCD.ListarAreas();
             }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al mostrar áreas con el procedimiento", ex);
             }
-            return lista;
         }
 
         public bool InsertArea(Area oe)

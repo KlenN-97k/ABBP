@@ -33,7 +33,7 @@ namespace Entidades.Gestion_de_Entidades
         // Control de concurrencia optimista: viene del ROWVERSION de SQL Server.
         // Solo se llena al listar (ShowIncidencia); se usa en Modificar para detectar
         // si otra persona cambió la incidencia mientras la teníamos abierta.
-        private byte[] filaVersion;
+        private DateTime? filaVersion;
 
         public Incidencia()
         {
@@ -74,7 +74,7 @@ namespace Entidades.Gestion_de_Entidades
         public string NombreEstado { get => nombreEstado; set => nombreEstado = value; }
         public string TecnicoAsignado { get => tecnicoAsignado; set => tecnicoAsignado = value; }
 
-        public byte[] FilaVersion { get => filaVersion; set => filaVersion = value; }
+        public DateTime? FilaVersion { get => filaVersion; set => filaVersion = value; }
     }
 
 }

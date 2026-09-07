@@ -25,20 +25,14 @@ namespace Logica.Gestion_de_Logica
 
         public List<Auditoria> ShowAuditoria()
         {
-            List<Auditoria> lista = new List<Auditoria>();
             try
             {
-                var auxLista = AuditoriaCD.Listar();
-                foreach (var obj in auxLista)
-                {
-                    lista.Add(new Auditoria(obj.IdAuditoria, obj.Fecha, obj.IdUsuario, obj.NombreUsuario, obj.Accion, obj.Entidad, obj.EntidadId, obj.Detalle));
-                }
+                return AuditoriaCD.Listar();
             }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al mostrar auditoría", ex);
             }
-            return lista;
         }
     }
 }

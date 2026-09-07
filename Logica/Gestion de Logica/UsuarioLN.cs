@@ -19,30 +19,21 @@ namespace Logica.Gestion_de_Logica
 
         public List<Usuario> ShowUsuario()
         {
-            List<Usuario> lista = new List<Usuario>();
-            Usuario oc;
             try
             {
-                List<sp_Usuarios_ListarResult> auxLista = UsuarioCD.ListarUsuarios();
-                foreach (sp_Usuarios_ListarResult obj in auxLista)
-                {
-                    byte[] fotoBytes = obj.FotoPerfil != null ? obj.FotoPerfil.ToArray() : null;
-                    oc = new Usuario(obj.IdUsuario, obj.Nombre, obj.Apellido, obj.Correo, obj.Usuario, obj.Password, obj.Rol, obj.Estado, obj.TelegramChatId, fotoBytes);
-                    lista.Add(oc);
-                }
+                return UsuarioCD.ListarUsuarios();
             }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al mostrar usuarios", ex);
             }
-            return lista;
         }
 
         public Usuario Login(string usuarioLogin, string password)
         {
             try
             {
-                sp_Usuarios_LoginResult encontrado = UsuarioCD.BuscarPorUsuario(usuarioLogin);
+                UsuarioCD.LoginResultDTO encontrado = UsuarioCD.BuscarPorUsuario(usuarioLogin);
 
                 if (encontrado == null)
                 {
@@ -67,18 +58,13 @@ namespace Logica.Gestion_de_Logica
 
                 UsuarioCD.ResetearIntentos(encontrado.IdUsuario);
 
-                byte[] fotoBytes = encontrado.FotoPerfil != null ? encontrado.FotoPerfil.ToArray() : null;
-
                 return new Usuario(
                     encontrado.IdUsuario, encontrado.Nombre, encontrado.Apellido, encontrado.Correo,
-                    encontrado.Usuario, encontrado.Password, encontrado.Rol, encontrado.Estado,
-                    encontrado.TelegramChatId, fotoBytes
+                    encontrado.UsuarioLogin, encontrado.Password, encontrado.Rol, encontrado.Estado,
+                    encontrado.TelegramChatId, encontrado.FotoPerfil
                 );
             }
-            catch (LogicaExcepciones)
-            {
-                throw;
-            }
+            catch (LogicaExcepciones) { throw; }
             catch (Exception ex)
             {
                 throw new LogicaExcepciones("Error al validar credenciales de usuario", ex);
