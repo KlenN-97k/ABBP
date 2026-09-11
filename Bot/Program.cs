@@ -28,13 +28,16 @@ namespace Bot
         static void Main(string[] args)
         {
             // 1. Configuración del Sistema de Logs
+            string carpetaBase = AppDomain.CurrentDomain.BaseDirectory;
+            string rutaLogs = System.IO.Path.Combine(carpetaBase, "logs", "bot_.txt");
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
-                .WriteTo.Console() // Muestra los logs en la consola local
-                .WriteTo.File("logs\\bot_.txt",
-                    rollingInterval: RollingInterval.Day, // Un archivo nuevo cada día
-                    retainedFileCountLimit: 30) // Guarda máximo 30 días para no llenar el disco
-                .CreateLogger();
+                .WriteTo.Console()
+                .WriteTo.File(rutaLogs,
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 30)
+                            .CreateLogger();
 
             try
             {
