@@ -310,6 +310,15 @@ namespace Bot
             {
                 int idIncidencia = int.Parse(datosBoton.Split('_')[1]);
                 var logica = new Logica.Gestion_de_Logica.IncidenciaLN();
+
+                bool incidenciaExiste = logica.ShowIncidencia().Any(i => i.IdIncidencia == idIncidencia);
+                if (!incidenciaExiste)
+                {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id, "❌ Esta incidencia ya no existe (fue eliminada desde el sistema).", showAlert: true);
+                    await botClient.EditMessageText(chatId: chatId, messageId: callbackQuery.Message.MessageId, text: callbackQuery.Message.Text + "\n\n🗑️ *(Este ticket fue eliminado del sistema)*", parseMode: ParseMode.Markdown);
+                    return;
+                }
+
                 string resultado = logica.AceptarIncidenciaPorTelegram(idIncidencia, chatId);
 
                 if (resultado == "SUCCESS")

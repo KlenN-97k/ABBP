@@ -220,6 +220,12 @@ namespace Logica.Gestion_de_Logica
                 Usuario tecnico = new UsuarioLN().BuscarPorChatId(chatIdTelegram);
                 if (tecnico == null) return "❌ Usuario no encontrado o no vinculado.";
 
+                var incidenciaActual = ShowIncidencia().FirstOrDefault(i => i.IdIncidencia == idIncidencia);
+                if (incidenciaActual != null && (incidenciaActual.NombreEstado == "Resuelto" || incidenciaActual.NombreEstado == "Cerrado"))
+                {
+                    return $"⚠️ Este ticket ya estaba marcado como '{incidenciaActual.NombreEstado}'. No se repitió la acción.";
+                }
+
                 int nuevoIdEstado = ObtenerIdEstadoPorNombre(nuevoEstadoNombre);
                 bool actualizado = IncidenciaCD.ActualizarEstadoTelegram(idIncidencia, tecnico.IdUsuario, nuevoIdEstado, observacion);
 

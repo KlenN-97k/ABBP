@@ -23,6 +23,7 @@ namespace Presentacion
         private readonly EstadoLN estadoLN = new EstadoLN();
         private readonly UsuarioLN usuarioLN = new UsuarioLN();
         private readonly Usuario usuarioActual;
+        private readonly System.Windows.Forms.Timer tmrRefresco = new System.Windows.Forms.Timer { Interval = 15000 };
         private List<Incidencia> listaIncidencias;
         private List<Incidencia> listaIncidenciasCompleta;
         private Incidencia incidenciaSeleccionada;
@@ -30,6 +31,7 @@ namespace Presentacion
         private string ticketBusquedaActual = string.Empty;
         private bool ordenAscendente = true;
         private string columnaOrdenada = null;
+
         public FrmIncidencias(Usuario usuarioActual)
         {
             InitializeComponent();
@@ -48,6 +50,9 @@ namespace Presentacion
             AplicarRestriccionesPorRol();
             CargarGrid();
             LimpiarFormulario();
+            tmrRefresco.Tick += (s, e) => { if (incidenciaSeleccionada == null) CargarGrid(); };
+            tmrRefresco.Start();
+            this.FormClosed += (s, e) => tmrRefresco.Stop();
         }
         private void txtBusquedaRapida_TextChanged(object sender, EventArgs e)
         {
@@ -67,16 +72,7 @@ namespace Presentacion
                 ordenAscendente = true;
             }
 
-            var propInfo = typeof(Incidencia).GetProperty(propiedad);
-            if (propInfo == null) return;
-
-            listaIncidencias = ordenAscendente
-                ? listaIncidencias.OrderBy(i => propInfo.GetValue(i)).ToList()
-                : listaIncidencias.OrderByDescending(i => propInfo.GetValue(i)).ToList();
-
-            grid.DataSource = null;
-            grid.DataSource = listaIncidencias;
-            AplicarFormatoColumnas();
+            AplicarFiltro();
         }
         private bool ValidarCampos()
         {
@@ -183,6 +179,17 @@ namespace Presentacion
                         .Where(i => i.NumeroTicket != null &&
                                     i.NumeroTicket.IndexOf(ticketBusquedaActual, StringComparison.OrdinalIgnoreCase) >= 0)
                         .ToList();
+                }
+
+                if (columnaOrdenada != null)
+                {
+                    var propInfo = typeof(Incidencia).GetProperty(columnaOrdenada);
+                    if (propInfo != null)
+                    {
+                        listaIncidencias = ordenAscendente
+                            ? listaIncidencias.OrderBy(i => propInfo.GetValue(i)).ToList()
+                            : listaIncidencias.OrderByDescending(i => propInfo.GetValue(i)).ToList();
+                    }
                 }
 
                 grid.DataSource = null;
@@ -341,6 +348,7 @@ namespace Presentacion
         private async void btnGuardar_Click(object sender, EventArgs e)
         {
             if (!ValidarCampos()) return;
+            btnGuardar.Enabled = false;
 
             try
             {
@@ -420,6 +428,10 @@ namespace Presentacion
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnGuardar.Enabled = true;
             }
         }
 
