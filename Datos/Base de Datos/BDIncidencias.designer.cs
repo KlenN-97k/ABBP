@@ -2151,7 +2151,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary FotoPerfil
 		{
 			get
@@ -2813,7 +2813,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)", CanBeNull=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)")]
 		public System.Data.Linq.Binary FotoPerfil
 		{
 			get
@@ -3037,7 +3037,7 @@ namespace Datos.Base_de_Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)", CanBeNull=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FotoPerfil", DbType="VarBinary(MAX)")]
 		public System.Data.Linq.Binary FotoPerfil
 		{
 			get

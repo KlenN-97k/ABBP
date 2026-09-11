@@ -200,7 +200,7 @@ namespace Presentacion
 
         private void AplicarFormatoColumnas()
         {
-            foreach (string columna in new[] { "IdIncidencia", "IdArea", "IdPrioridad", "IdEstado", "IdTecnicoAsignado", "Descripcion", "Observaciones" })
+            foreach (string columna in new[] { "IdIncidencia", "IdArea", "IdPrioridad", "IdEstado", "IdTecnicoAsignado", "Descripcion", "Observaciones", "FilaVersion" })
             {
                 if (grid.Columns[columna] != null) grid.Columns[columna].Visible = false;
             }
