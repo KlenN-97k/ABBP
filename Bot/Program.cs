@@ -84,6 +84,8 @@ namespace Bot
             {
                 string token = ConfigurationManager.AppSettings["TelegramBotToken"];
                 cts = new CancellationTokenSource();
+                botClient = new TelegramBotClient(token, cancellationToken: cts.Token);
+
                 var receiverOptions = new ReceiverOptions
                 {
                     AllowedUpdates = Array.Empty<UpdateType>()
@@ -99,7 +101,6 @@ namespace Bot
                 Log.Information("Bot de Telegram conectado y escuchando mensajes correctamente.");
                 timerReporteMensual = new System.Threading.Timer(RevisarReporteMensual, null, TimeSpan.Zero, TimeSpan.FromHours(6));
                 timerSLA = new System.Threading.Timer(RevisarSLA, null, TimeSpan.FromMinutes(5), TimeSpan.FromHours(1)); 
-                botClient = new TelegramBotClient(token, cancellationToken: cts.Token);
 
             }
 
