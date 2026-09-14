@@ -84,8 +84,6 @@ namespace Bot
             {
                 string token = ConfigurationManager.AppSettings["TelegramBotToken"];
                 cts = new CancellationTokenSource();
-                botClient = new TelegramBotClient(token, cancellationToken: cts.Token);
-
                 var receiverOptions = new ReceiverOptions
                 {
                     AllowedUpdates = Array.Empty<UpdateType>()
