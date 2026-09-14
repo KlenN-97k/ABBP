@@ -118,7 +118,7 @@ namespace Bot
             try
             {
                 bool forzar = ConfigurationManager.AppSettings["ForzarReporteMensual"] == "true";
-                if (DateTime.Now.Day != 1) return;
+                if (DateTime.Now.Day != 1 && !forzar) return;
 
                 var reporteMensualLN = new ReporteMensualLN();
                 DateTime mesAnterior = DateTime.Now.AddMonths(-1);
