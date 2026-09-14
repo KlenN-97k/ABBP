@@ -21,11 +21,11 @@ jobs:
       uses: NuGet/setup-nuget@v1.1
 
     - name: 🔄 Restaurar paquetes NuGet (TopShelf, Serilog, BCrypt, etc.)
-      run: nuget restore ABBP.slnx
+      run: nuget restore APPB.slnx
 
     - name: 🚀 Compilar en modo Release
       # Compila todo optimizado para producción
-      run: msbuild ABBP.slnx /p:Configuration=Release 
+      run: msbuild APPB.slnx /p:Configuration=Release 
 
     - name: 💾 Guardar Artefacto - Bot (Servicio)
       uses: actions/upload-artifact@v4
